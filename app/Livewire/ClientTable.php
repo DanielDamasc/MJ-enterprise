@@ -57,6 +57,10 @@ final class ClientTable extends PowerGridComponent
     public function columns(): array
     {
         return [
+            Column::make('Id', 'id')
+                ->sortable()
+                ->searchable(),
+
             Column::make('Cliente', 'cliente')
                 ->sortable()
                 ->searchable(),
@@ -69,9 +73,9 @@ final class ClientTable extends PowerGridComponent
                 ->sortable()
                 ->searchable(),
 
-            Column::make('Email', 'email')
-                ->sortable()
-                ->searchable(),
+            // Column::make('Email', 'email')
+            //     ->sortable()
+            //     ->searchable(),
 
             Column::action('Action')
         ];
