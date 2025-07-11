@@ -18,6 +18,11 @@ final class LogsTable extends PowerGridComponent
 {
     public string $tableName = 'logsTable';
 
+    public string $sortField = 'updated_at';
+
+    public string $sortDirection = 'desc';
+
+
     public function setUp(): array
     {
         $this->showCheckBox();
