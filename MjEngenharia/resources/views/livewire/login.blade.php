@@ -62,7 +62,7 @@
                 </div>
 
                 <div class="text-sm">
-                    <a href="#" class="font-medium text-secondary-600 hover:text-secondary-500 transition-colors">
+                    <a href="{{ route('forgot-password') }}" class="font-medium text-secondary-600 hover:text-secondary-500 transition-colors">
                         Esqueceu sua senha?
                     </a>
                 </div>
