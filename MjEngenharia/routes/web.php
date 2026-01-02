@@ -2,6 +2,7 @@
 
 use App\Livewire\Inicio;
 use App\Livewire\Login;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 // ---------- GRUPO DE ROTAS PÚBLICAS ----------
@@ -12,4 +13,11 @@ Route::middleware('guest')->group(function () {
 // ---------- GRUPO DE ROTAS PROTEGIDAS ----------
 Route::middleware('auth')->group(function () {
     Route::get('/inicio', Inicio::class)->name('inicio');
+
+    Route::get('/logout', function () {
+        Auth::logout();
+        session()->invalidate();
+        session()->regenerateToken();
+        return redirect()->route('login');
+    })->name('logout');
 });

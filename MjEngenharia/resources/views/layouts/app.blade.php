@@ -27,6 +27,14 @@
 
                 </nav>
 
+                <div class="p-4 border-t border-primary-800 bg-primary-950 shrink-0">
+                    <a href="{{ route('logout') }}" 
+                    class="flex items-center gap-3 px-4 py-3 rounded-lg text-primary-200 hover:bg-red-500/10 hover:text-red-400 transition-colors group">
+
+                        <span class="font-semibold text-md">Logout</span>
+                    </a>
+                </div>
+
             </aside>
 
             <div class="flex-1 flex flex-col h-screen overflow-y-auto">
