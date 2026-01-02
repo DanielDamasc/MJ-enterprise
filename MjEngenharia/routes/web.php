@@ -4,7 +4,12 @@ use App\Livewire\Inicio;
 use App\Livewire\Login;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', Login::class);
+// ---------- GRUPO DE ROTAS PÚBLICAS ----------
+Route::middleware('guest')->group(function () {
+    Route::get('/login', Login::class)->name('login');
+});
 
-// ---------- AUTH CLASSES ----------
-Route::get('/inicio', Inicio::class);
+// ---------- GRUPO DE ROTAS PROTEGIDAS ----------
+Route::middleware('auth')->group(function () {
+    Route::get('/inicio', Inicio::class)->name('inicio');
+});
