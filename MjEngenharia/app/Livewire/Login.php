@@ -33,9 +33,9 @@ class Login extends Component
         // Tenta autenticar
         if (Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
             session()->regenerate();
-            
+
             // Redireciona para o dashboard ou rota pretendida
-            return redirect()->intended('inicio');
+            return redirect()->intended('/');
         }
 
         // Se falhar, adiciona erro ao campo email
@@ -46,6 +46,6 @@ class Login extends Component
     public function render()
     {
         // Define o layout se você não estiver usando o padrão
-        return view('livewire.login'); 
+        return view('livewire.login');
     }
 }

@@ -19,16 +19,16 @@
 
                 <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
 
-                    <a href="/inicio" wire:navigate
-                        class="flex items-center px-4 py-3 rounded-lg transition-colors 
-                            {{ request()->is('inicio') ? 'bg-secondary-700 text-white' : 'text-primary-200 hover:bg-primary-800 hover:text-white' }}">
+                    <a href="/" wire:navigate
+                        class="flex items-center px-4 py-3 rounded-lg transition-colors
+                            {{ request()->is('/') ? 'bg-secondary-700 text-white' : 'text-primary-200 hover:bg-primary-800 hover:text-white' }}">
                         <span class="font-semibold text-md">Início</span>
                     </a>
 
                 </nav>
 
                 <div class="p-4 border-t border-primary-800 bg-primary-950 shrink-0">
-                    <a href="{{ route('logout') }}" 
+                    <a href="{{ route('logout') }}"
                     class="flex items-center gap-3 px-4 py-3 rounded-lg text-primary-200 hover:bg-red-500/10 hover:text-red-400 transition-colors group">
 
                         <span class="font-semibold text-md">Logout</span>

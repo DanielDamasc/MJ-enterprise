@@ -1,3 +1,3 @@
 <div>
-    <p>teste de layout</p>
+    <p>tela de início</p>
 </div>

@@ -17,7 +17,8 @@ Route::middleware('guest')->group(function () {
 
 // ---------- GRUPO DE ROTAS PROTEGIDAS ----------
 Route::middleware('auth')->group(function () {
-    Route::get('/inicio', Inicio::class)->name('inicio');
+    // Rota Principal.
+    Route::get('/', Inicio::class);
 
     Route::get('/logout', function () {
         Auth::logout();
