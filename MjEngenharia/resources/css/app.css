@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+/* --- POWERGRID THEMES --- */
+
+@import '../../vendor/power-components/livewire-powergrid/resources/css/tailwind4.css';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@source '../../app/Livewire/*Table.php';
+@source '../../app/Livewire/**/*Table.php';
+@source '../../vendor/power-components/livewire-powergrid/src/Themes/Tailwind.php';
+@source '../../vendor/power-components/livewire-powergrid/resources/views/**/*.php';
+
 @theme {
     /* --- PALETA MJ ENGENHARIA --- */
 
@@ -39,4 +50,17 @@
     --color-auxiliar-400: #fbbf24;
     --color-auxiliar-500: #f59e0b; /* Um pouco mais escuro para texto legível */
     --color-auxiliar-600: #d97706;
+
+    /* TABELAS POWERGRID */
+    --color-pg-primary-50: oklch(0.985 0 0);
+    --color-pg-primary-100: oklch(0.97 0 0);
+    --color-pg-primary-200: oklch(0.922 0 0);
+    --color-pg-primary-300: oklch(0.87 0 0);
+    --color-pg-primary-400: oklch(0.708 0 0);
+    --color-pg-primary-500: oklch(0.556 0 0);
+    --color-pg-primary-600: oklch(0.439 0 0);
+    --color-pg-primary-700: oklch(0.371 0 0);
+    --color-pg-primary-800: oklch(0.269 0 0);
+    --color-pg-primary-900: oklch(0.205 0 0);
+    --color-pg-primary-950: oklch(0.145 0 0);
 }
