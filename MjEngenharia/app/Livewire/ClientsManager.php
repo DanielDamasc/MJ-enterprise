@@ -11,7 +11,8 @@ use Str;
 
 class ClientsManager extends Component
 {
-    public $nome = '';
+    public $cliente = '';
+    public $contato = '';
     public $telefone = '';
     public $email = '';
 
@@ -23,7 +24,8 @@ class ClientsManager extends Component
     protected function rules()
     {
         return [
-            'nome' => 'required',
+            'cliente' => 'required',
+            'contato' => 'required',
             'telefone' => 'required',
             'email' => [
                 'nullable',
@@ -34,7 +36,8 @@ class ClientsManager extends Component
     }
 
     protected $messages = [
-        'nome.required' => 'O campo nome é obrigatório.',
+        'cliente.required' => 'O campo cliente é obrigatório.',
+        'contato.required' => 'Informe o nome da pessoa de contato.',
         'telefone.required' => 'O campo telefone é obrigatório.',
         'telefone.unique' => 'O telefone já foi cadastrado.',
         'email.email' => 'Informe um endereço de email válido.',
@@ -49,7 +52,7 @@ class ClientsManager extends Component
 
     public function openCreate()
     {
-        $this->reset(['nome', 'telefone', 'email', 'clientId']);
+        $this->reset(['cliente', 'contato', 'telefone', 'email', 'clientId']);
         $this->resetValidation();
         $this->showCreate = true;
     }
@@ -75,7 +78,8 @@ class ClientsManager extends Component
         }
 
         Client::create([
-            'nome' => $this->nome,
+            'cliente' => $this->cliente,
+            'contato' => $this->contato,
             'telefone' => $telLimpo,
             'email' => $this->email,
         ]);
@@ -118,7 +122,8 @@ class ClientsManager extends Component
 
         if ($this->clientId) {
             $client = Client::find($this->clientId);
-            $this->nome = $client->nome;
+            $this->cliente = $client->cliente;
+            $this->contato = $client->contato;
             $this->telefone = $client->telefone;
             $this->email = $client->email ?? ''; // E-mail pode ser null.
         }
@@ -150,7 +155,8 @@ class ClientsManager extends Component
 
         if ($client) {
             $client->update([
-                'nome' => $this->nome,
+                'cliente' => $this->cliente,
+                'contato' => $this->contato,
                 'telefone' => $telLimpo,
                 'email' => $this->email,
             ]);

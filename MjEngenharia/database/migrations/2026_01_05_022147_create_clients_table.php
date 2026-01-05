@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
-            $table->string('nome');
+            $table->string('cliente');
+            $table->string('contato'); // Pessoa de contato
             $table->string('telefone', 11); // Tamanho padrão de 11 para telefone
             $table->string('email')->nullable(); // Email pode ser nulo
 

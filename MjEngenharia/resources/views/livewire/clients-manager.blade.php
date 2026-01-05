@@ -44,11 +44,23 @@
 
                             <div class="space-y-4">
                                 <div>
-                                    <label class="block mb-1 text-sm font-medium text-primary-700">Nome Completo</label>
-                                    <input type="text" wire:model="nome"
+                                    <label class="block mb-1 text-sm font-medium text-primary-700">Nome do Cliente
+                                        <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" wire:model="cliente"
                                         class="bg-primary-50 border border-primary-200 text-primary-900 text-sm rounded-lg focus:ring-secondary-500 focus:border-secondary-500 block w-full p-2.5"
                                         placeholder="Ex: João da Silva">
-                                    @error('nome') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                    @error('cliente') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                </div>
+
+                                <div>
+                                    <label class="block mb-1 text-sm font-medium text-primary-700">Pessoa de Contato
+                                        <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" wire:model="contato"
+                                        class="bg-primary-50 border border-primary-200 text-primary-900 text-sm rounded-lg focus:ring-secondary-500 focus:border-secondary-500 block w-full p-2.5"
+                                        placeholder="Ex: João da Silva">
+                                    @error('contato') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                                 </div>
 
                                 <div>
@@ -61,7 +73,9 @@
 
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block mb-1 text-sm font-medium text-primary-700">Telefone</label>
+                                        <label class="block mb-1 text-sm font-medium text-primary-700">Telefone de Contato
+                                            <span class="text-red-500">*</span>
+                                        </label>
                                         <input type="text" wire:model="telefone"
                                             class="bg-primary-50 border border-primary-200 text-primary-900 text-sm rounded-lg focus:ring-secondary-500 focus:border-secondary-500 block w-full p-2.5"
                                             placeholder="(00) 00000-0000"
@@ -115,11 +129,23 @@
 
                             <div class="space-y-4">
                                 <div>
-                                    <label class="block mb-1 text-sm font-medium text-primary-700">Nome Completo</label>
-                                    <input type="text" wire:model="nome"
+                                    <label class="block mb-1 text-sm font-medium text-primary-700">Nome do Cliente
+                                        <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" wire:model="cliente"
                                         class="bg-primary-50 border border-primary-200 text-primary-900 text-sm rounded-lg focus:ring-secondary-500 focus:border-secondary-500 block w-full p-2.5"
                                         placeholder="Ex: João da Silva">
-                                    @error('nome') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                    @error('cliente') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                </div>
+
+                                <div>
+                                    <label class="block mb-1 text-sm font-medium text-primary-700">Pessoa de Contato
+                                        <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" wire:model="contato"
+                                        class="bg-primary-50 border border-primary-200 text-primary-900 text-sm rounded-lg focus:ring-secondary-500 focus:border-secondary-500 block w-full p-2.5"
+                                        placeholder="Ex: João da Silva">
+                                    @error('contato') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                                 </div>
 
                                 <div>
@@ -132,7 +158,9 @@
 
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block mb-1 text-sm font-medium text-primary-700">Telefone</label>
+                                        <label class="block mb-1 text-sm font-medium text-primary-700">Telefone de Contato
+                                            <span class="text-red-500">*</span>
+                                        </label>
                                         <input type="text" wire:model="telefone"
                                             class="bg-primary-50 border border-primary-200 text-primary-900 text-sm rounded-lg focus:ring-secondary-500 focus:border-secondary-500 block w-full p-2.5"
                                             placeholder="(00) 00000-0000"

@@ -46,7 +46,8 @@ final class ClientTable extends PowerGridComponent
     {
         return PowerGrid::fields()
             ->add('id')
-            ->add('nome')
+            ->add('cliente')
+            ->add('contato')
             ->add('telefone')
             ->add('email');
     }
@@ -54,7 +55,11 @@ final class ClientTable extends PowerGridComponent
     public function columns(): array
     {
         return [
-            Column::make('Nome', 'nome')
+            Column::make('Cliente', 'cliente')
+                ->sortable()
+                ->searchable(),
+
+            Column::make(title: 'Pessoa de Contato', field: 'contato')
                 ->sortable()
                 ->searchable(),
 
