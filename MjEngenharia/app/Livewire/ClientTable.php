@@ -17,7 +17,7 @@ final class ClientTable extends PowerGridComponent
 {
     public string $tableName = 'clientTable';
 
-    protected $listeners = ['client-created' => '$refresh'];
+    protected $listeners = ['client-refresh' => '$refresh'];
 
     public function setUp(): array
     {
@@ -88,7 +88,7 @@ final class ClientTable extends PowerGridComponent
             Button::add('edit')
                 ->slot(Blade::render('<x-heroicon-o-pencil-square class="w-5 h-5" />'))
                 ->class('text-secondary-600 hover:text-secondary-800 p-1 mr-2 transition-colors')
-                ->dispatchTo('clients-manager', 'edit-client', ['id' => $row->id]),
+                ->dispatchTo('clients-manager', 'open-edit', ['id' => $row->id]),
 
             Button::add('delete')
                 ->slot(Blade::render('<x-heroicon-o-trash class="w-5 h-5" />'))

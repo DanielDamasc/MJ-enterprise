@@ -3,23 +3,35 @@
 namespace App\Livewire;
 
 use App\Models\Client;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Str;
 
 class ClientsManager extends Component
 {
-    public $showModal = false;
-
     public $nome = '';
     public $telefone = '';
     public $email = '';
 
-    protected $rules = [
-        'nome' => 'required',
-        'telefone' => 'required',
-        'email' => 'nullable|email|unique:clients,email',
-    ];
+    public $showCreate = false;
+    public $showDelete = false;
+    public $showEdit = false;
+    public $clientId = null;
+
+    protected function rules()
+    {
+        return [
+            'nome' => 'required',
+            'telefone' => 'required',
+            'email' => [
+                'nullable',
+                'email',
+                Rule::unique('clients', 'email')->ignore($this->clientId),
+            ],
+        ];
+    }
 
     protected $messages = [
         'nome.required' => 'O campo nome é obrigatório.',
@@ -30,16 +42,16 @@ class ClientsManager extends Component
 
     ];
 
-    public function openModal()
+    protected function normalizeTelefone($tel)
     {
-        $this->reset(['nome', 'telefone', 'email']);
-        $this->resetValidation();
-        $this->showModal = true;
+        return preg_replace('/[^0-9]/', '', $tel);
     }
 
-    public function closeModal()
+    public function openCreate()
     {
-        $this->showModal = false;
+        $this->reset(['nome', 'telefone', 'email', 'clientId']);
+        $this->resetValidation();
+        $this->showCreate = true;
     }
 
     // Função para cadastrar um novo cliente.
@@ -47,7 +59,8 @@ class ClientsManager extends Component
     {
         $this->validate();
 
-        $telLimpo = preg_replace('/[^0-9]/', '', $this->telefone);
+        // --- VALIDAÇÕES ESPECIAIS PARA TELEFONE ---
+        $telLimpo = $this->normalizeTelefone($this->telefone);
 
         $telExists = Client::where('telefone', $telLimpo)->exists();
 
@@ -63,15 +76,90 @@ class ClientsManager extends Component
 
         Client::create([
             'nome' => $this->nome,
-            'telefone' => $this->telefone,
+            'telefone' => $telLimpo,
             'email' => $this->email,
-            'created_at' => now(),
         ]);
 
-        $this->showModal = false;
+        $this->showCreate = false;
         session()->flash('message', 'Cliente cadastrado com sucesso!');
 
-        $this->dispatch('client-created');
+        $this->dispatch('client-refresh');
+    }
+
+    #[On('confirm-delete')]
+    public function confirmDelete($id)
+    {
+        $this->clientId = $id;
+        $this->showDelete = true;
+    }
+
+    public function delete()
+    {
+        if ($this->clientId) {
+            $client = Client::find($this->clientId);
+
+            if ($client) {
+                $client->delete();
+                session()->flash('message', 'Cliente deletado com sucesso.');
+            }
+        }
+
+        $this->showDelete = false;
+        $this->clientId = null;
+
+        $this->dispatch('client-refresh');
+    }
+
+    #[On('open-edit')]
+    public function openEdit($id)
+    {
+        $this->clientId = $id;
+        $this->showEdit = true;
+
+        if ($this->clientId) {
+            $client = Client::find($this->clientId);
+            $this->nome = $client->nome;
+            $this->telefone = $client->telefone;
+            $this->email = $client->email ?? ''; // E-mail pode ser null.
+        }
+    }
+
+    public function edit()
+    {
+        $this->validate();
+
+        // --- VALIDAÇÕES ESPECIAIS PARA TELEFONE ---
+        $telLimpo = $this->normalizeTelefone($this->telefone);
+
+        // Verifica se existe alguém com o telefone que não seja o cliente atual.
+        $telExists = Client::where('telefone', $telLimpo)
+                    ->where('id', '!=', $this->clientId)
+                    ->exists();
+
+        if ($telExists) {
+            $this->addError('telefone', 'Este telefone já foi cadastrado.');
+            return ;
+        }
+
+        if (Str::of($telLimpo)->length() !== 11) {
+            $this->addError('telefone', 'O telefone deve ter 11 dígitos.');
+            return ;
+        }
+
+        $client = Client::find($this->clientId);
+
+        if ($client) {
+            $client->update([
+                'nome' => $this->nome,
+                'telefone' => $telLimpo,
+                'email' => $this->email,
+            ]);
+        }
+
+        $this->showEdit = false;
+        session()->flash('message', 'Dados atualizados com sucesso!');
+
+        $this->dispatch('client-refresh');
     }
 
     #[Layout('layouts.app')]
