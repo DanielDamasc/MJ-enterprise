@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Client;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Blade;
 use PowerComponents\LivewirePowerGrid\Button;
 use PowerComponents\LivewirePowerGrid\Column;
 use PowerComponents\LivewirePowerGrid\Facades\Filter;
@@ -85,10 +86,14 @@ final class ClientTable extends PowerGridComponent
     {
         return [
             Button::add('edit')
-                ->slot('Edit: '.$row->id)
-                ->id()
-                ->class('pg-btn-white dark:ring-pg-primary-600 dark:border-pg-primary-600 dark:hover:bg-pg-primary-700 dark:ring-offset-pg-primary-800 dark:text-pg-primary-300 dark:bg-pg-primary-700')
-                ->dispatch('edit', ['rowId' => $row->id])
+                ->slot(Blade::render('<x-heroicon-o-pencil-square class="w-5 h-5" />'))
+                ->class('text-secondary-600 hover:text-secondary-800 p-1 mr-2 transition-colors')
+                ->dispatchTo('clients-manager', 'edit-client', ['id' => $row->id]),
+
+            Button::add('delete')
+                ->slot(Blade::render('<x-heroicon-o-trash class="w-5 h-5" />'))
+                ->class('text-red-600 hover:text-red-800 p-1 transition-colors')
+                ->dispatchTo('clients-manager', 'confirm-delete', ['id' => $row->id]),
         ];
     }
 
