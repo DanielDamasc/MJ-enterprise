@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\ClientsManager;
 use App\Livewire\ForgotPassword;
 use App\Livewire\Inicio;
 use App\Livewire\Login;
@@ -17,8 +18,8 @@ Route::middleware('guest')->group(function () {
 
 // ---------- GRUPO DE ROTAS PROTEGIDAS ----------
 Route::middleware('auth')->group(function () {
-    // Rota Principal.
     Route::get('/', Inicio::class);
+    Route::get('/clientes', ClientsManager::class)->name('clientes');
 
     Route::get('/logout', function () {
         Auth::logout();

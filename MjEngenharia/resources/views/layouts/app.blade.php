@@ -19,10 +19,17 @@
 
                 <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
 
+                    {{-- NAVIGATE OPTIONS --}}
                     <a href="/" wire:navigate
                         class="flex items-center px-4 py-3 rounded-lg transition-colors
                             {{ request()->is('/') ? 'bg-secondary-700 text-white' : 'text-primary-200 hover:bg-primary-800 hover:text-white' }}">
                         <span class="font-semibold text-md">Início</span>
+                    </a>
+
+                    <a href="/clientes" wire:navigate
+                        class="flex items-center px-4 py-3 rounded-lg transition-colors
+                            {{ request()->is('clientes') ? 'bg-secondary-700 text-white' : 'text-primary-200 hover:bg-primary-800 hover:text-white' }}">
+                        <span class="font-semibold text-md">Clientes</span>
                     </a>
 
                 </nav>

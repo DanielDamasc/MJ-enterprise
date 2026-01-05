@@ -16,6 +16,8 @@ final class ClientTable extends PowerGridComponent
 {
     public string $tableName = 'clientTable';
 
+    protected $listeners = ['client-created' => '$refresh'];
+
     public function setUp(): array
     {
         $this->showCheckBox();
@@ -51,7 +53,6 @@ final class ClientTable extends PowerGridComponent
     public function columns(): array
     {
         return [
-            Column::make('Id', 'id'),
             Column::make('Nome', 'nome')
                 ->sortable()
                 ->searchable(),

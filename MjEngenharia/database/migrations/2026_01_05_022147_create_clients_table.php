@@ -11,11 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('clients', function(Blueprint $table) {
+        Schema::create('clients', function (Blueprint $table) {
             $table->id();
             $table->string('nome');
             $table->string('telefone', 11); // Tamanho padrão de 11 para telefone
             $table->string('email')->nullable(); // Email pode ser nulo
+
+            $table->timestamp('created_at')->nullable();
+            $table->timestamp('updated_at')->nullable();
         });
     }
 
