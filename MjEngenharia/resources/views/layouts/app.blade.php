@@ -34,6 +34,13 @@
                         <span class="font-semibold text-md">Clientes</span>
                     </a>
 
+                    <a href="/ar-condicionados" wire:navigate
+                        class="flex items-center px-4 py-3 rounded-lg transition-colors
+                            {{ request()->is('ar-condicionados') ? 'bg-secondary-700 text-white' : 'text-primary-200 hover:bg-primary-800 hover:text-white' }}">
+                        <x-ionicon-snow-outline class="w-5 h-5 mr-2" />
+                        <span class="font-semibold text-md">Ar-condicionados</span>
+                    </a>
+
                 </nav>
 
                 <div class="p-4 border-t border-primary-800 bg-primary-950 shrink-0">

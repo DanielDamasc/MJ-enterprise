@@ -1,0 +1,183 @@
+<div>
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+
+        <div>
+            <h1 class="text-2xl font-bold text-primary-900 tracking-tight">
+                Gerenciamento de Ar-condicionados
+            </h1>
+            <p class="text-sm text-primary-600 mt-1">
+                Visualize e gerencie os equipamentos mantidos pela MJ Engenharia.
+            </p>
+        </div>
+
+        <div>
+            <button wire:click="openCreate" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-secondary-500 hover:bg-secondary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary-500 transition-all">
+                <x-heroicon-o-plus class="w-5 h-5 mr-1"/>
+                Novo Ar-condicionado
+            </button>
+        </div>
+    </div>
+
+    @if($showCreate)
+        <div class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-primary-950/75 backdrop-blur-sm p-4 md:inset-0 h-modal md:h-full transition-opacity">
+
+            <div class="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto bg-white rounded-xl shadow-2xl transform transition-all">
+
+                <div class="px-6 pt-4 flex justify-between items-center sticky top-0 bg-white z-10">
+                    <h3 class="text-xl font-bold text-primary-900">
+                        Cadastrar Ar-Condicionado
+                    </h3>
+                    <button wire:click="$set('showCreate', false)" type="button" class="text-primary-400 bg-transparent hover:bg-primary-50 hover:text-primary-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center transition-colors">
+                        <x-heroicon-o-x-mark class="w-5 h-5" />
+                    </button>
+                </div>
+
+                <form wire:submit.prevent="save" class="p-6 space-y-8">
+
+                    <div>
+                        <h4 class="text-sm uppercase tracking-wide text-blue-600 font-bold mb-4 border-b pb-2">
+                            Dados do Equipamento
+                        </h4>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                            <div class="col-span-1 md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Cliente Responsável</label>
+                                <select wire:model="cliente_id" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
+                                    <option value="">Selecione um cliente...</option>
+                                    @foreach($clientes as $client)
+                                        <option value="{{ $client->id }}">{{ $client->cliente }}</option>
+                                    @endforeach
+                                </select>
+                                @error('cliente_id') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Código Identificador</label>
+                                <input type="text" wire:model="codigo_ac" placeholder="Ex: AC01" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Marca</label>
+                                <input type="text" wire:model="marca" placeholder="Ex: LG, Samsung" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
+                                @error('marca') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Potência (BTUs)</label>
+                                <input type="number" wire:model="potencia" placeholder="Ex: 12000" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
+                                @error('potencia') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
+                                <select wire:model="tipo" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
+                                    <option value="">Selecione...</option>
+                                    <option value="hw">HW</option>
+                                    <option value="k7">K7</option>
+                                    <option value="piso_teto">Piso-teto</option>
+                                </select>
+                                @error('tipo') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Data Instalação</label>
+                                <input type="date" wire:model="instalacao" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Valor Cobrado (R$)</label>
+                                <input type="number" step="0.01" wire:model="valor" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
+                            </div>
+
+                            <div class="flex items-center h-full pt-6">
+                                <input type="checkbox" id="material" wire:model="valor_com_material" class="rounded text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 h-5 w-5">
+                                <label for="material" class="ml-2 text-sm text-gray-700">O valor inclui o material?</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="text-sm uppercase tracking-wide text-blue-600 font-bold mb-4 border-b pb-2 mt-8">
+                            Local de Instalação
+                        </h4>
+
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Ambiente Específico</label>
+                            <input type="text" wire:model="ambiente" placeholder="Ex: Sala de Reunião, Quarto Principal"
+                                class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+                            <div class="relative">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    CEP
+                                    <span wire:loading wire:target="cep" class="text-xs text-blue-600 font-normal ml-2">
+                                        Buscando...
+                                    </span>
+                                </label>
+                                <input type="text" wire:model.blur="cep" placeholder="00000-000" maxlength="9"
+                                    class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
+                                @error('cep') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Rua / Logradouro</label>
+                                <input type="text" wire:model="rua"
+                                    class="h-10 bg-gray-200 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3 bg-gray-50" readonly>
+                                @error('rua') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Número</label>
+                                <input type="text" wire:model="numero" placeholder="100"
+                                    class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
+                                @error('numero') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Bairro</label>
+                                <input type="text" wire:model="bairro"
+                                    class="h-10 bg-gray-200 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3 bg-gray-50" readonly>
+                                @error('bairro') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Complemento</label>
+                                <input type="text" wire:model="complemento" placeholder="Apto. 201"
+                                    class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Cidade</label>
+                                <input type="text" wire:model="cidade"
+                                    class="h-10 bg-gray-200 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3 bg-gray-50" readonly>
+                                @error('cidade') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">UF</label>
+                                <input type="text" wire:model="uf" maxlength="2"
+                                    class="h-10 bg-gray-200 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3 bg-gray-50 uppercase" readonly>
+                                @error('uf') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-end gap-3 pt-6 border-t border-gray-100">
+                        <button type="button" wire:click="$set('showCreate', false)" class="text-primary-600 bg-white hover:bg-primary-50 focus:ring-4 focus:outline-none focus:ring-primary-100 rounded-lg border border-primary-200 text-sm font-medium px-5 py-2.5 hover:text-primary-900 focus:z-10 transition-colors">
+                            Cancelar
+                        </button>
+                        <button type="submit" wire:loading.attr="disabled" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold shadow-lg shadow-blue-500/30 flex items-center">
+                            <span wire:loading.remove wire:target="save">Salvar Registro</span>
+                            <span wire:loading wire:target="save" class="flex items-center">
+                                Salvando...
+                            </span>
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    @endif
+</div>

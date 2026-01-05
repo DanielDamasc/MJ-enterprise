@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\AirConditionersManager;
 use App\Livewire\ClientsManager;
 use App\Livewire\ForgotPassword;
 use App\Livewire\Inicio;
@@ -20,6 +21,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/', Inicio::class);
     Route::get('/clientes', ClientsManager::class)->name('clientes');
+    Route::get('/ar-condicionados', AirConditionersManager::class)->name('ar-condicionados');
 
     Route::get('/logout', function () {
         Auth::logout();
