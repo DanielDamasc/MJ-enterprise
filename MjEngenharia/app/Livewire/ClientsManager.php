@@ -50,6 +50,12 @@ class ClientsManager extends Component
         return preg_replace('/[^0-9]/', '', $tel);
     }
 
+    public function closeModal()
+    {
+        $this->showCreate = $this->showDelete = $this->showEdit = false;
+        $this->resetValidation();
+    }
+
     public function openCreate()
     {
         $this->reset(['cliente', 'contato', 'telefone', 'email', 'clientId']);

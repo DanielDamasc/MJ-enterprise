@@ -109,6 +109,12 @@ class AirConditionersManager extends Component
         return Carbon::parse($value)->addDays(180);
     }
 
+    public function closeModal()
+    {
+        $this->showCreate = $this->showDelete = $this->showEdit = false;
+        $this->resetValidation();
+    }
+
     public function openCreate()
     {
         $this->reset([
