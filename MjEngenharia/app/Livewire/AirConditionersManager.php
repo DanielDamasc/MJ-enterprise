@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class AirConditionersManager extends Component
@@ -36,6 +37,8 @@ class AirConditionersManager extends Component
 
     // Outros Atributos.
     public $showCreate = false;
+    public $showDelete = false;
+    public $equipmentId = null;
 
     protected function rules()
     {
@@ -170,6 +173,30 @@ class AirConditionersManager extends Component
         } finally {
             $this->showCreate = false;
         }
+    }
+
+    #[On('confirm-delete')]
+    public function confirmDelete($id)
+    {
+        $this->equipmentId = $id;
+        $this->showDelete = true;
+    }
+
+    public function delete()
+    {
+        if ($this->equipmentId) {
+            $ac = AirConditioning::find($this->equipmentId);
+
+            if ($ac) {
+                $ac->delete();
+                session()->flash('message', 'Equipamento deletado com sucesso.');
+            }
+        }
+
+        $this->showDelete = false;
+        $this->equipmentId = null;
+
+        $this->dispatch('airConditioners-refresh');
     }
 
     #[Layout('layouts.app')]

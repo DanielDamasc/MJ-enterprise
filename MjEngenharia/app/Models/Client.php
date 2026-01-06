@@ -15,8 +15,17 @@ class Client extends Model
         'email'
     ];
 
+    protected static function booted()
+    {
+        static::deleting(function ($client) {
+            $client->air_conditioners->each(function ($ac) {
+                $ac->delete();
+            });
+        });
+    }
+
     public function air_conditioners()
     {
-        return $this->hasMany(AirConditioning::class);
+        return $this->hasMany(AirConditioning::class, 'cliente_id');
     }
 }

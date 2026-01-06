@@ -26,6 +26,13 @@ class AirConditioning extends Model
         'valor_com_material' // S/N se o valor cobrado inclui o material
     ];
 
+    protected static function booted()
+    {
+        static::deleting(function ($ac) {
+            $ac->address()->delete();
+        });
+    }
+
     public function client()
     {
         return $this->belongsTo(Client::class, 'cliente_id');

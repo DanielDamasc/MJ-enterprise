@@ -211,4 +211,42 @@
             </div>
         </div>
     @endif
+
+    @if ($showDelete)
+        <div class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-primary-950/75 backdrop-blur-sm p-4 md:inset-0 h-modal md:h-full transition-opacity">
+
+            <div class="relative w-full max-w-md h-full md:h-auto">
+                <div class="relative bg-white rounded-xl shadow-2xl border border-primary-100">
+
+                    <div class="p-6 text-center">
+                        <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-100 p-3 text-red-600">
+                            <x-ionicon-warning-sharp class="w-8 h-8" />
+                        </div>
+
+                        <h3 class="mb-5 text-lg font-normal text-gray-600">
+                            Tem certeza que deseja excluir este equipamento?
+                        </h3>
+
+                        <p class="text-sm text-gray-800 mb-6">
+                            Essa ação não pode ser desfeita e removerá todos os dados vinculados.
+                        </p>
+
+                        <div class="flex justify-center gap-3">
+
+                            <button wire:click="$set('showDelete', false)" type="button" class="text-primary-600 bg-white hover:bg-primary-50 focus:ring-4 focus:outline-none focus:ring-primary-100 rounded-lg border border-primary-200 text-sm font-medium px-5 py-2.5 hover:text-primary-900 focus:z-10 transition-colors">
+                                Cancelar
+                            </button>
+
+                            <button wire:click="delete" type="button" class="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-all shadow-md">
+                                Sim, excluir
+                            </button>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    @endif
+
 </div>
