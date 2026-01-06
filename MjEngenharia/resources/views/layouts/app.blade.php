@@ -27,19 +27,32 @@
                         <span class="font-semibold text-md">Início</span>
                     </a>
 
-                    <a href="/clientes" wire:navigate
-                        class="flex items-center px-4 py-3 rounded-lg transition-colors
-                            {{ request()->is('clientes') ? 'bg-secondary-700 text-white' : 'text-primary-200 hover:bg-primary-800 hover:text-white' }}">
-                        <x-heroicon-o-users class="w-5 h-5 mr-2" />
-                        <span class="font-semibold text-md">Clientes</span>
-                    </a>
+                    @role('adm')
+                        <a href="/executores" wire:navigate
+                            class="flex items-center px-4 py-3 rounded-lg transition-colors
+                                {{ request()->is('executores') ? 'bg-secondary-700 text-white' : 'text-primary-200 hover:bg-primary-800 hover:text-white' }}">
+                            <x-ionicon-build-sharp class="w-5 h-5 mr-2" />
+                            <span class="font-semibold text-md">Executores</span>
+                        </a>
+                    @endrole
 
-                    <a href="/ar-condicionados" wire:navigate
-                        class="flex items-center px-4 py-3 rounded-lg transition-colors
-                            {{ request()->is('ar-condicionados') ? 'bg-secondary-700 text-white' : 'text-primary-200 hover:bg-primary-800 hover:text-white' }}">
-                        <x-ionicon-snow-outline class="w-5 h-5 mr-2" />
-                        <span class="font-semibold text-md">Ar-condicionados</span>
-                    </a>
+                    @role('adm')
+                        <a href="/clientes" wire:navigate
+                            class="flex items-center px-4 py-3 rounded-lg transition-colors
+                                {{ request()->is('clientes') ? 'bg-secondary-700 text-white' : 'text-primary-200 hover:bg-primary-800 hover:text-white' }}">
+                            <x-heroicon-o-users class="w-5 h-5 mr-2" />
+                            <span class="font-semibold text-md">Clientes</span>
+                        </a>
+                    @endrole
+
+                    @role('adm')
+                        <a href="/ar-condicionados" wire:navigate
+                            class="flex items-center px-4 py-3 rounded-lg transition-colors
+                                {{ request()->is('ar-condicionados') ? 'bg-secondary-700 text-white' : 'text-primary-200 hover:bg-primary-800 hover:text-white' }}">
+                            <x-ionicon-snow-outline class="w-5 h-5 mr-2" />
+                            <span class="font-semibold text-md">Ar-condicionados</span>
+                        </a>
+                    @endrole
 
                 </nav>
 
