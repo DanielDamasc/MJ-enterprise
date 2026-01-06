@@ -2,8 +2,13 @@
 
 namespace App\Livewire;
 
+use App\Models\AirConditioning;
 use App\Models\Client;
+use Carbon\Carbon;
+use Exception;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -13,13 +18,12 @@ class AirConditionersManager extends Component
     public $cliente_id = null;
     public $codigo_ac = '';
     public $ambiente = '';
-    public $instalacao = ''; // date
-    public $prox_higienizacao = ''; // date
+    public $instalacao = '';
     public $marca = '';
-    public $potencia = 0; // integer
+    public $potencia = 0;
     public $tipo = '';
-    public $valor = 0; // decimal
-    public $valor_com_material = false; // bool
+    public $valor = 0;
+    public $valor_com_material = false;
 
     // Atributos de Endereço.
     public $cep = '';
@@ -33,21 +37,46 @@ class AirConditionersManager extends Component
     // Outros Atributos.
     public $showCreate = false;
 
-    // protected function rules()
-    // {
-    //     return [
-    //         'cliente_id' => 'required|integer|exists:clients,id',
-    //         'codigo_ac' => 'nullable',
-    //         'ambiente' => 'nullable',
-    //         'instalacao' => 'required|date',
-    //         'prox_higienizacao' => 'date',
-    //         'marca' => 'required',
-    //         'potencia' => 'required|integer',
-    //         'tipo' => 'required',
-    //         'valor' => 'required|numeric',
-    //         'valor_com_material' => 'boolean:strict'
-    //     ];
-    // }
+    protected function rules()
+    {
+        return [
+            'cliente_id' => 'required|integer|exists:clients,id',
+            'codigo_ac' => 'required|string|max:50',
+            'ambiente' => 'nullable|string|max:100',
+            'instalacao' => 'required|date',
+            'marca' => 'required|string|max:50',
+            'potencia' => 'required|integer|min:1',
+
+            'tipo' => ['required', Rule::in(['hw', 'k7', 'piso_teto'])],
+
+            'valor' => 'required|numeric|min:0',
+            'valor_com_material' => 'boolean',
+
+            'cep' => 'required|string|size:8',
+            'rua' => 'required|string|max:255',
+            'numero' => 'required|string|max:20',
+            'bairro' => 'required|string|max:100',
+            'complemento' => 'nullable|string|max:150',
+            'cidade' => 'required|string|max:100',
+            'uf' => 'required|string|size:2',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'cliente_id.required' => 'O campo cliente é obrigatório.',
+            'codigo_ac.required' => 'O campo código é obrigatório.',
+            'instalacao.required' => 'O campo instalação é obrigatório.',
+            'marca.required' => 'O campo marca é obrigatório.',
+            'potencia.required' => 'O campo potencia é obrigatório.',
+            'tipo.required' => 'O campo tipo é obrigatório.',
+            'valor.required' => 'O campo valor é obrigatório.',
+
+            'cep.required' => 'O campo cep é obrigatório.',
+            'numero.required' => 'O campo numero é obrigatório.',
+        ];
+    }
 
     public function updatedCep($value)
     {
@@ -71,22 +100,76 @@ class AirConditionersManager extends Component
         }
     }
 
+    public function nextSanitation($value)
+    {
+        return Carbon::parse($value)->addDays(180);
+    }
+
     public function openCreate()
     {
         $this->reset([
+            'cliente_id',
             'codigo_ac',
             'ambiente',
             'instalacao',
-            'prox_higienizacao',
             'marca',
             'potencia',
             'tipo',
             'valor',
-            'valor_com_material'
+            'valor_com_material',
+            'cep',
+            'rua',
+            'numero',
+            'bairro',
+            'complemento',
+            'cidade',
+            'uf'
         ]);
         $this->resetValidation();
-
         $this->showCreate = true;
+    }
+
+    public function save()
+    {
+        $this->validate();
+
+        $proximaLimpeza = $this->nextSanitation($this->instalacao);
+
+        try {
+            DB::beginTransaction();
+
+            $ac = AirConditioning::create([
+                'cliente_id' => $this->cliente_id,
+                'codigo_ac' => $this->codigo_ac,
+                'ambiente' => $this->ambiente,
+                'instalacao' => $this->instalacao,
+                'prox_higienizacao' => $proximaLimpeza,
+                'marca' => $this->marca,
+                'potencia' => $this->potencia,
+                'tipo' => $this->tipo,
+                'valor' => $this->valor,
+                'valor_com_material' => $this->valor_com_material
+            ]);
+
+            $ac->address()->create([
+                'cep' => $this->cep,
+                'rua' => $this->rua,
+                'numero' => $this->numero,
+                'bairro' => $this->bairro,
+                'complemento' => $this->complemento,
+                'cidade' => $this->cidade,
+                'uf' => $this->uf
+            ]);
+
+            DB::commit();
+
+            session()->flash('message', 'Equipamento cadastrado com sucesso!');
+            $this->dispatch('airConditioners-refresh');
+        } catch (Exception $e) {
+            DB::rollBack();
+        } finally {
+            $this->showCreate = false;
+        }
     }
 
     #[Layout('layouts.app')]

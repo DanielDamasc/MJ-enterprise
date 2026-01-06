@@ -18,6 +18,10 @@
         </div>
     </div>
 
+    <div>
+        @livewire('airConditioningTable')
+    </div>
+
     @if($showCreate)
         <div class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-primary-950/75 backdrop-blur-sm p-4 md:inset-0 h-modal md:h-full transition-opacity">
 
@@ -41,7 +45,9 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                             <div class="col-span-1 md:col-span-2">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Cliente Responsável</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Cliente Responsável
+                                    <span class="text-red-500">*</span>
+                                </label>
                                 <select wire:model="cliente_id" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
                                     <option value="">Selecione um cliente...</option>
                                     @foreach($clientes as $client)
@@ -52,24 +58,32 @@
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Código Identificador</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Código Identificador
+                                    <span class="text-red-500">*</span>
+                                </label>
                                 <input type="text" wire:model="codigo_ac" placeholder="Ex: AC01" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Marca</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Marca
+                                    <span class="text-red-500">*</span>
+                                </label>
                                 <input type="text" wire:model="marca" placeholder="Ex: LG, Samsung" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
                                 @error('marca') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Potência (BTUs)</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Potência (BTUs)
+                                    <span class="text-red-500">*</span>
+                                </label>
                                 <input type="number" wire:model="potencia" placeholder="Ex: 12000" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
                                 @error('potencia') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Tipo
+                                    <span class="text-red-500">*</span>
+                                </label>
                                 <select wire:model="tipo" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
                                     <option value="">Selecione...</option>
                                     <option value="hw">HW</option>
@@ -80,18 +94,24 @@
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Data Instalação</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Data Instalação
+                                    <span class="text-red-500">*</span>
+                                </label>
                                 <input type="date" wire:model="instalacao" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Valor Cobrado (R$)</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Valor Cobrado (R$)
+                                    <span class="text-red-500">*</span>
+                                </label>
                                 <input type="number" step="0.01" wire:model="valor" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
                             </div>
 
                             <div class="flex items-center h-full pt-6">
                                 <input type="checkbox" id="material" wire:model="valor_com_material" class="rounded text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 h-5 w-5">
-                                <label for="material" class="ml-2 text-sm text-gray-700">O valor inclui o material?</label>
+                                <label for="material" class="ml-2 text-sm text-gray-700">O valor inclui o material?
+                                    <span class="text-red-500">*</span>
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -112,6 +132,7 @@
                             <div class="relative">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">
                                     CEP
+                                    <span class="text-red-500">*</span>
                                     <span wire:loading wire:target="cep" class="text-xs text-blue-600 font-normal ml-2">
                                         Buscando...
                                     </span>
@@ -122,21 +143,27 @@
                             </div>
 
                             <div class="md:col-span-2">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Rua / Logradouro</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Rua / Logradouro
+                                    <span class="text-red-500">*</span>
+                                </label>
                                 <input type="text" wire:model="rua"
                                     class="h-10 bg-gray-200 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3 bg-gray-50" readonly>
                                 @error('rua') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Número</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Número
+                                    <span class="text-red-500">*</span>
+                                </label>
                                 <input type="text" wire:model="numero" placeholder="100"
                                     class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
                                 @error('numero') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Bairro</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Bairro
+                                    <span class="text-red-500">*</span>
+                                </label>
                                 <input type="text" wire:model="bairro"
                                     class="h-10 bg-gray-200 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3 bg-gray-50" readonly>
                                 @error('bairro') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
@@ -149,14 +176,18 @@
                             </div>
 
                             <div class="md:col-span-2">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Cidade</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Cidade
+                                    <span class="text-red-500">*</span>
+                                </label>
                                 <input type="text" wire:model="cidade"
                                     class="h-10 bg-gray-200 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3 bg-gray-50" readonly>
                                 @error('cidade') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">UF</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">UF
+                                    <span class="text-red-500">*</span>
+                                </label>
                                 <input type="text" wire:model="uf" maxlength="2"
                                     class="h-10 bg-gray-200 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3 bg-gray-50 uppercase" readonly>
                                 @error('uf') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
@@ -168,7 +199,7 @@
                         <button type="button" wire:click="$set('showCreate', false)" class="text-primary-600 bg-white hover:bg-primary-50 focus:ring-4 focus:outline-none focus:ring-primary-100 rounded-lg border border-primary-200 text-sm font-medium px-5 py-2.5 hover:text-primary-900 focus:z-10 transition-colors">
                             Cancelar
                         </button>
-                        <button type="submit" wire:loading.attr="disabled" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-semibold shadow-lg shadow-blue-500/30 flex items-center">
+                        <button type="submit" wire:loading.attr="disabled" class="text-white bg-secondary-500 hover:bg-secondary-600 focus:ring-4 focus:outline-none focus:ring-secondary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-all shadow-md hover:shadow-lg disabled:opacity-50">
                             <span wire:loading.remove wire:target="save">Salvar Registro</span>
                             <span wire:loading wire:target="save" class="flex items-center">
                                 Salvando...

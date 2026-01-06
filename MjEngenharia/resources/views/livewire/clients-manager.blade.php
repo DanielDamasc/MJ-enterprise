@@ -19,7 +19,7 @@
     </div>
 
     <div>
-        @livewire('client-table')
+        @livewire('clientTable')
     </div>
 
     @if ($showCreate)

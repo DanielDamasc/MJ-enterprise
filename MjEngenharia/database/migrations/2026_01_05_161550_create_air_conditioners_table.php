@@ -18,7 +18,7 @@ return new class extends Migration
 
             $table->string('codigo_ac');
 
-            $table->string('ambiente');
+            $table->string('ambiente')->nullable();
 
             $table->date('instalacao');
             $table->date('prox_higienizacao');
