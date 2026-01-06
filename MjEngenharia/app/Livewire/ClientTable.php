@@ -90,6 +90,11 @@ final class ClientTable extends PowerGridComponent
     public function actions(Client $row): array
     {
         return [
+            Button::add('details')
+                ->slot(Blade::render('<x-heroicon-m-square-3-stack-3d class="w-5 h-5" />'))
+                ->class('text-auxiliar-400 hover:text-auxiliar-600 p-1 mr-2 transition-colors')
+                ->dispatchTo('clients-manager', 'open-details', ['id' => $row->id]),
+
             Button::add('edit')
                 ->slot(Blade::render('<x-heroicon-o-pencil-square class="w-5 h-5" />'))
                 ->class('text-secondary-600 hover:text-secondary-800 p-1 mr-2 transition-colors')

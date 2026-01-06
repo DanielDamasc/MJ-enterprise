@@ -143,4 +143,106 @@
             </div>
         </div>
     @endif
+
+    @if($showDetails)
+        <div class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-primary-950/75 backdrop-blur-sm p-4">
+            <div class="relative w-full max-w-6xl max-h-[90vh] overflow-y-auto bg-gray-50 rounded-xl shadow-2xl">
+
+                {{-- CABEÇALHO --}}
+                <div class="flex items-center justify-between p-5 border-b border-gray-200 rounded-t shadow-sm">
+                    <h3 class="text-xl font-bold text-primary-900">
+                        Listagem de Ar-Condicionados
+                    </h3>
+
+                    <button wire:click="closeDetails" type="button" class="text-primary-400 bg-transparent hover:bg-primary-50 hover:text-primary-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center transition-colors">
+                        <x-heroicon-o-x-mark class="w-5 h-5" />
+                    </button>
+                </div>
+
+                {{-- LISTA DE CARDS --}}
+                <div class="p-6">
+                    @if(count($equipmentList) > 0)
+                        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                            @foreach($equipmentList as $ac)
+                                <div class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col">
+
+                                    {{-- Topo: Identificação --}}
+                                    <div class="p-5 flex justify-between items-start border-b border-gray-50">
+                                        <div class="flex items-center gap-3">
+                                            <div class="bg-blue-50 text-blue-600 p-2 rounded-lg">
+                                                <x-ionicon-snow-outline class="w-5 h-5" />
+                                            </div>
+                                            <div>
+                                                <h4 class="font-bold text-gray-900 text-lg">{{ $ac->codigo_ac }}</h4>
+                                                <p class="text-xs text-gray-500 uppercase font-semibold tracking-wider">{{ $ac->marca }} • {{ $ac->tipo }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <span class="block text-sm font-bold text-gray-700">{{ number_format($ac->potencia, 0, ',', '.') }}</span>
+                                            <span class="text-xs text-gray-400">BTUs</span>
+                                        </div>
+                                    </div>
+
+                                    {{-- Corpo: Localização --}}
+                                    <div class="p-5 flex-1 space-y-4">
+                                        <div class="flex items-start gap-3">
+                                            <x-heroicon-o-map-pin class="w-5 h-5 text-gray-400 mt-0.5 shrink-0" />
+                                            <div>
+                                                <span class="block text-sm font-medium text-gray-900">
+                                                    {{ $ac->ambiente ?? 'Ambiente não informado' }}
+                                                </span>
+                                                @if($ac->address)
+                                                    <span class="text-xs text-gray-500 block leading-relaxed mt-0.5">
+                                                        {{ $ac->address->rua }}, {{ $ac->address->numero }} <br>
+                                                        {{ $ac->address->bairro }} - {{ $ac->address->cidade }}/{{ $ac->address->uf }}
+                                                    </span>
+                                                @else
+                                                    <span class="text-xs text-gray-400 italic">Endereço não cadastrado</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- Rodapé: Datas --}}
+                                    <div class="px-5 py-3 bg-gray-50 rounded-b-xl border-t border-gray-100 flex justify-between items-center text-sm">
+                                        <div class="flex flex-col">
+                                            <span class="text-xs text-gray-500">Instalação</span>
+                                            <span class="font-medium text-gray-700">
+                                                {{ \Carbon\Carbon::parse($ac->instalacao)->format('d/m/Y') }}
+                                            </span>
+                                        </div>
+                                        <div class="flex flex-col text-right">
+                                            <span class="text-xs text-gray-500">Próx. Higienização</span>
+                                            <span class="font-medium text-blue-600">
+                                                {{ \Carbon\Carbon::parse($ac->prox_higienizacao)->format('d/m/Y') }}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        {{-- Empty State (Sem equipamentos) --}}
+                        <div class="text-center py-12 flex flex-col items-center justify-center">
+                            <div class="bg-gray-100 rounded-full p-4 mb-3">
+                                <x-heroicon-o-cube class="w-8 h-8 text-gray-400" />
+                            </div>
+                            <h3 class="text-base font-medium text-gray-900">Nenhum equipamento</h3>
+                            <p class="text-sm text-gray-500">Este cliente não possui ar-condicionados vinculados.</p>
+                        </div>
+                    @endif
+                </div>
+
+                {{-- Botão Fechar --}}
+                <div class="p-6 border-t border-gray-200 bg-white rounded-b-xl flex justify-end sticky bottom-0 z-10">
+                    <button wire:click="closeDetails" class="text-primary-600 bg-white hover:bg-primary-50 focus:ring-4 focus:outline-none focus:ring-primary-100 rounded-lg border border-primary-200 text-sm font-medium px-5 py-2.5 hover:text-primary-900 focus:z-10 transition-colors">
+                        Fechar
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    @endif
+
 </div>

@@ -16,10 +16,13 @@ class ClientsManager extends Component
     public $telefone = '';
     public $email = '';
 
+    public $showDetails = false;
     public $showCreate = false;
     public $showDelete = false;
     public $showEdit = false;
     public $clientId = null;
+
+    public $equipmentList = [];
 
     protected function rules()
     {
@@ -54,6 +57,25 @@ class ClientsManager extends Component
     {
         $this->showCreate = $this->showDelete = $this->showEdit = false;
         $this->resetValidation();
+    }
+
+    public function closeDetails()
+    {
+        $this->showDetails = false;
+        $this->equipmentList = [];
+    }
+
+    #[On('open-details')]
+    public function openDetails($id)
+    {
+        $this->clientId = $id;
+
+        $client = Client::with('air_conditioners')->find($this->clientId);
+        if ($client) {
+            $this->equipmentList = $client->air_conditioners;
+        }
+
+        $this->showDetails = true;
     }
 
     public function openCreate()
