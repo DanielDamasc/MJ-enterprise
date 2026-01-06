@@ -38,6 +38,7 @@ class AirConditionersManager extends Component
     // Outros Atributos.
     public $showCreate = false;
     public $showDelete = false;
+    public $showEdit = false;
     public $equipmentId = null;
 
     protected function rules()
@@ -55,7 +56,7 @@ class AirConditionersManager extends Component
             'valor' => 'required|numeric|min:0',
             'valor_com_material' => 'boolean',
 
-            'cep' => 'required|string|size:8',
+            'cep' => 'required|string|max:9',
             'rua' => 'required|string|max:255',
             'numero' => 'required|string|max:20',
             'bairro' => 'required|string|max:100',
@@ -197,6 +198,83 @@ class AirConditionersManager extends Component
         $this->equipmentId = null;
 
         $this->dispatch('airConditioners-refresh');
+    }
+
+    #[On('open-edit')]
+    public function openEdit($id)
+    {
+        $this->equipmentId = $id;
+        $this->showEdit = true;
+
+        if ($this->equipmentId) {
+            $ac = AirConditioning::with('address')->find($this->equipmentId);
+            $this->cliente_id = $ac->cliente_id;
+            $this->codigo_ac = $ac->codigo_ac;
+            $this->ambiente = $ac->ambiente ?? '';
+            $this->instalacao = $ac->instalacao;
+            $this->marca = $ac->marca;
+            $this->potencia = $ac->potencia;
+            $this->tipo = $ac->tipo;
+            $this->valor = $ac->valor;
+            $this->valor_com_material = $ac->valor_com_material ? true : false;
+
+            $this->cep = $ac->address->cep;
+            $this->rua = $ac->address->rua;
+            $this->numero = $ac->address->numero;
+            $this->bairro = $ac->address->bairro;
+            $this->complemento = $ac->address->complemento ?? '';
+            $this->cidade = $ac->address->cidade;
+            $this->uf = $ac->address->uf;
+        }
+    }
+
+    public function edit()
+    {
+        $this->validate();
+
+        $proximaLimpeza = $this->nextSanitation($this->instalacao);
+
+        try {
+            DB::beginTransaction();
+
+            $ac = AirConditioning::with('address')->find($this->equipmentId);
+
+            if ($ac) {
+                $ac->update([
+                    'cliente_id' => $this->cliente_id,
+                    'codigo_ac' => $this->codigo_ac,
+                    'ambiente' => $this->ambiente,
+                    'instalacao' => $this->instalacao,
+                    'prox_higienizacao' => $proximaLimpeza,
+                    'marca' => $this->marca,
+                    'potencia' => $this->potencia,
+                    'tipo' => $this->tipo,
+                    'valor' => $this->valor,
+                    'valor_com_material' => $this->valor_com_material
+                ]);
+
+                $ac->address()->updateOrCreate(
+            [],
+            [
+                        'cep' => $this->cep,
+                        'rua' => $this->rua,
+                        'numero' => $this->numero,
+                        'bairro' => $this->bairro,
+                        'complemento' => $this->complemento,
+                        'cidade' => $this->cidade,
+                        'uf' => $this->uf
+                    ]);
+            }
+
+            DB::commit();
+
+            session()->flash('message', 'Dados atualizados com sucesso!');
+            $this->dispatch('airConditioners-refresh');
+        } catch (Exception $e) {
+            DB::rollBack();
+        } finally {
+            $this->showEdit = false;
+        }
     }
 
     #[Layout('layouts.app')]

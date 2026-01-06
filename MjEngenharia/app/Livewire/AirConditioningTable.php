@@ -128,8 +128,8 @@ final class AirConditioningTable extends PowerGridComponent
         return [
             Button::add('edit')
                 ->slot(Blade::render('<x-heroicon-o-pencil-square class="w-5 h-5" />'))
-                ->class('text-secondary-600 hover:text-secondary-800 p-1 mr-2 transition-colors'),
-                // ->dispatchTo('air-conditioners-manager', 'open-edit', ['id' => $row->id]),
+                ->class('text-secondary-600 hover:text-secondary-800 p-1 mr-2 transition-colors')
+                ->dispatchTo('air-conditioners-manager', 'open-edit', ['id' => $row->id]),
 
             Button::add('delete')
                 ->slot(Blade::render('<x-heroicon-o-trash class="w-5 h-5" />'))
