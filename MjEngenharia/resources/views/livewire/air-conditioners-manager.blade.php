@@ -43,8 +43,8 @@
                             Dados do Equipamento
                         </h4>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                            <div class="col-span-1 md:col-span-2">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5">
+                            <div class="col-span-1 md:col-span-2 lg:col-span-6">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Cliente Responsável
                                     <span class="text-red-500">*</span>
                                 </label>
@@ -57,14 +57,27 @@
                                 @error('cliente_id') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>
 
-                            <div>
+                            <div class="col-span-1 md:col-span-2 lg:col-span-6">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Executor
+                                    <span class="text-red-500">*</span>
+                                </label>
+                                <select wire:model="executor_id" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
+                                    <option value="">Selecione um executor...</option>
+                                    @foreach($executores as $executor)
+                                        <option value="{{ $executor->id }}">{{ $executor->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('executor_id') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="col-span-1 md:col-span-1 lg:col-span-2">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Código Identificador
                                     <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" wire:model="codigo_ac" placeholder="Ex: AC01" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
                             </div>
 
-                            <div>
+                            <div class="col-span-1 md:col-span-1 lg:col-span-4">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Marca
                                     <span class="text-red-500">*</span>
                                 </label>
@@ -72,7 +85,7 @@
                                 @error('marca') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>
 
-                            <div>
+                            <div class="col-span-1 md:col-span-1 lg:col-span-3">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Potência (BTUs)
                                     <span class="text-red-500">*</span>
                                 </label>
@@ -80,7 +93,7 @@
                                 @error('potencia') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>
 
-                            <div>
+                            <div class="col-span-1 md:col-span-1 lg:col-span-3">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Tipo
                                     <span class="text-red-500">*</span>
                                 </label>
@@ -93,32 +106,34 @@
                                 @error('tipo') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>
 
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Data Instalação
+                            <div class="col-span-1 md:col-span-1 lg:col-span-3">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Última Higienização
                                     <span class="text-red-500">*</span>
                                 </label>
-                                <input type="date" wire:model="instalacao" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
+                                <input type="date" wire:model="ultima_higienizacao" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
                             </div>
 
-                            <div>
+                            <div class="col-span-1 md:col-span-1 lg:col-span-3">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Valor Cobrado (R$)
                                     <span class="text-red-500">*</span>
                                 </label>
                                 <input type="number" step="0.01" wire:model="valor" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
                             </div>
 
-                            <div class="flex items-center h-full pt-6">
-                                <input type="checkbox" id="material" wire:model="valor_com_material" class="rounded text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 h-5 w-5">
-                                <label for="material" class="ml-2 text-sm text-gray-700">O valor inclui o material?
-                                    <span class="text-red-500">*</span>
-                                </label>
+                            <div class="col-span-1 md:col-span-2 lg:col-span-6 flex items-end pb-3">
+                                <div class="flex items-center">
+                                    <input type="checkbox" id="condensadora" wire:model="limpou_condensadora" class="rounded text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 h-5 w-5">
+                                    <label for="condensadora" class="ml-2 text-sm text-gray-700">Limpou a condensadora na última higienização?
+                                        <span class="text-red-500">*</span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <div>
                         <h4 class="text-sm uppercase tracking-wide text-blue-600 font-bold mb-4 border-b pb-2 mt-8">
-                            Local de Instalação
+                            Local do Equipamento
                         </h4>
 
                         <div class="mb-4">

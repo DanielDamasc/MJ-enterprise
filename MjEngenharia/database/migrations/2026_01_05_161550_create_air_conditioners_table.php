@@ -15,12 +15,13 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('cliente_id')->constrained('clients')->onDelete('cascade');
+            $table->foreignId('executor_id')->constrained('users')->onDelete('cascade');
 
             $table->string('codigo_ac');
 
             $table->string('ambiente')->nullable();
 
-            $table->date('instalacao');
+            $table->date('ultima_higienizacao');
             $table->date('prox_higienizacao');
 
             $table->string('marca');
@@ -28,7 +29,7 @@ return new class extends Migration
             $table->string('tipo');
 
             $table->decimal('valor');
-            $table->boolean('valor_com_material');
+            $table->boolean('limpou_condensadora');
 
             $table->timestamps();
         });

@@ -46,4 +46,18 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    protected static function booted()
+    {
+        static::deleting(function ($executor) {
+            $executor->air_conditioners->each(function ($ac) {
+                $ac->delete();
+            });
+        });
+    }
+
+    public function air_conditioners()
+    {
+        return $this->hasMany(AirConditioning::class, 'executor_id');
+    }
 }
