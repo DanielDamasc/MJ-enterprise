@@ -28,4 +28,9 @@ class Client extends Model
     {
         return $this->hasMany(AirConditioning::class, 'cliente_id');
     }
+
+    public function servicos()
+    {
+        return $this->hasMany(OrderService::class, 'cliente_id');
+    }
 }

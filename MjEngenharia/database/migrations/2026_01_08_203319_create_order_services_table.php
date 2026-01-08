@@ -1,0 +1,40 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('order_services', function (Blueprint $table) {
+            $table->id();
+
+            // onDelete restrict para prevenir deletar um ar-condicionado que tenha service.
+            $table->foreignId('ac_id')->constrained('air_conditioners')->onDelete('restrict');
+            $table->foreignId('cliente_id')->constrained('clients')->onDelete('restrict');
+            $table->foreignId('executor_id')->constrained('users');
+
+            $table->string('tipo');
+            $table->date('data_servico');
+            $table->decimal('valor', 10, 2);
+            $table->string('status')->default('agendado');
+
+            $table->json('detalhes')->nullable();
+
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('order_services');
+    }
+};

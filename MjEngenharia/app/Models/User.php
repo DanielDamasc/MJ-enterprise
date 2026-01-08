@@ -60,4 +60,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(AirConditioning::class, 'executor_id');
     }
+
+    public function servicos()
+    {
+        return $this->hasMany(OrderService::class, 'executor_id');
+    }
 }
