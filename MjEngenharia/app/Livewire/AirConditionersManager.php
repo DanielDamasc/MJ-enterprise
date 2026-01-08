@@ -22,6 +22,7 @@ class AirConditionersManager extends Component
     public $codigo_ac = '';
     public $ambiente = '';
     public $ultima_higienizacao = '';
+    public $prox_higienizacao = '';
     public $marca = '';
     public $potencia = 0;
     public $tipo = '';
@@ -225,6 +226,7 @@ class AirConditionersManager extends Component
             $this->codigo_ac = $ac->codigo_ac;
             $this->ambiente = $ac->ambiente ?? '';
             $this->ultima_higienizacao = $ac->ultima_higienizacao;
+            $this->prox_higienizacao = $ac->prox_higienizacao;
             $this->marca = $ac->marca;
             $this->potencia = $ac->potencia;
             $this->tipo = $ac->tipo;
@@ -245,8 +247,6 @@ class AirConditionersManager extends Component
     {
         $this->validate();
 
-        $proximaLimpeza = $this->nextSanitation($this->ultima_higienizacao);
-
         try {
             DB::beginTransaction();
 
@@ -259,7 +259,7 @@ class AirConditionersManager extends Component
                     'codigo_ac' => $this->codigo_ac,
                     'ambiente' => $this->ambiente,
                     'ultima_higienizacao' => $this->ultima_higienizacao,
-                    'prox_higienizacao' => $proximaLimpeza,
+                    'prox_higienizacao' => $this->prox_higienizacao,
                     'marca' => $this->marca,
                     'potencia' => $this->potencia,
                     'tipo' => $this->tipo,
