@@ -34,7 +34,7 @@ final class AirConditioningTable extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return AirConditioning::query()->with(['client', 'user']);
+        return AirConditioning::query()->with(['client']);
     }
 
     public function relationSearch(): array
@@ -42,9 +42,6 @@ final class AirConditioningTable extends PowerGridComponent
         return [
             'client' => [
                 'cliente'
-            ],
-            'user' => [
-                'name'
             ],
         ];
     }
@@ -57,19 +54,11 @@ final class AirConditioningTable extends PowerGridComponent
             ->add('cliente', function (AirConditioning $model) {
                 return $model->client->cliente ?? '-';
             })
-            ->add('executor_id')
-            ->add('executor', function (AirConditioning $model) {
-                return $model->user->name ?? '-';
-            })
             ->add('codigo_ac')
             ->add('ambiente')
-            ->add('ultima_higienizacao_formatted', fn (AirConditioning $model) => Carbon::parse($model->ultima_higienizacao)->format('d/m/Y'))
-            ->add('prox_higienizacao_formatted', fn (AirConditioning $model) => Carbon::parse($model->prox_higienizacao)->format('d/m/Y'))
             ->add('marca')
             ->add('potencia')
             ->add('tipo')
-            ->add('valor')
-            ->add('limpou_condensadora')
             ->add('created_at');
     }
 
@@ -86,33 +75,17 @@ final class AirConditioningTable extends PowerGridComponent
 
             Column::make('Cliente', 'cliente'),
 
-            Column::make('Executor', 'executor'),
+            Column::make('Ambiente', 'ambiente')
+                ->sortable()
+                ->searchable(),
 
-            // Column::make('Ambiente', 'ambiente')
-            //     ->sortable()
-            //     ->searchable(),
+            Column::make('Potência (BTUs)', 'potencia')
+                ->sortable()
+                ->searchable(),
 
-            Column::make('Última Higienização', 'ultima_higienizacao_formatted', 'ultima_higienizacao')
-                ->sortable(),
-
-            Column::make('Próxima Higienização', 'prox_higienizacao_formatted', 'prox_higienizacao')
-                ->sortable(),
-
-            // Column::make('Potência (BTUs)', 'potencia')
-            //     ->sortable()
-            //     ->searchable(),
-
-            // Column::make('Tipo', 'tipo')
-            //     ->sortable()
-            //     ->searchable(),
-
-            // Column::make('Valor', 'valor')
-            //     ->sortable()
-            //     ->searchable(),
-
-            // Column::make('Limpou a condensadora', 'limpou_condensadora')
-            //     ->sortable()
-            //     ->searchable(),
+            Column::make('Tipo', 'tipo')
+                ->sortable()
+                ->searchable(),
 
             Column::action('Action')
         ];
@@ -121,8 +94,6 @@ final class AirConditioningTable extends PowerGridComponent
     public function filters(): array
     {
         return [
-            // Filter::datepicker('ultima_higienizacao'),
-            // Filter::datepicker('prox_higienizacao'),
         ];
     }
 

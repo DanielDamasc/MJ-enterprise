@@ -18,16 +18,12 @@ class AirConditionersManager extends Component
 {
     // Atributos de Ar-condicionado.
     public $cliente_id = null;
-    public $executor_id = null;
+    public $prox_higienizacao = '';
     public $codigo_ac = '';
     public $ambiente = '';
-    public $ultima_higienizacao = '';
-    public $prox_higienizacao = '';
     public $marca = '';
     public $potencia = 0;
     public $tipo = '';
-    public $valor = 0;
-    public $limpou_condensadora = false;
 
     // Atributos de Endereço.
     public $cep = '';
@@ -48,17 +44,12 @@ class AirConditionersManager extends Component
     {
         return [
             'cliente_id' => 'required|integer|exists:clients,id',
-            'executor_id' => 'required|integer|exists:users,id',
             'codigo_ac' => 'required|string|max:50',
             'ambiente' => 'nullable|string|max:100',
-            'ultima_higienizacao' => 'required|date',
             'marca' => 'required|string|max:50',
             'potencia' => 'required|integer|min:1',
 
             'tipo' => ['required', Rule::in(['hw', 'k7', 'piso_teto'])],
-
-            'valor' => 'required|numeric|min:0',
-            'limpou_condensadora' => 'boolean',
 
             'cep' => 'required|string|max:9',
             'rua' => 'required|string|max:255',
@@ -74,13 +65,10 @@ class AirConditionersManager extends Component
     {
         return [
             'cliente_id.required' => 'O campo cliente é obrigatório.',
-            'executor_id.required' => 'O campo executor é obrigatório.',
             'codigo_ac.required' => 'O campo código é obrigatório.',
-            'ultima_higienizacao.required' => 'O campo última higienização é obrigatório.',
             'marca.required' => 'O campo marca é obrigatório.',
             'potencia.required' => 'O campo potencia é obrigatório.',
             'tipo.required' => 'O campo tipo é obrigatório.',
-            'valor.required' => 'O campo valor é obrigatório.',
 
             'cep.required' => 'O campo cep é obrigatório.',
             'numero.required' => 'O campo numero é obrigatório.',
@@ -109,10 +97,10 @@ class AirConditionersManager extends Component
         }
     }
 
-    public function nextSanitation($value)
-    {
-        return Carbon::parse($value)->addDays(180);
-    }
+    // public function nextSanitation($value)
+    // {
+    //     return Carbon::parse($value)->addDays(180);
+    // }
 
     public function closeModal()
     {
@@ -124,15 +112,11 @@ class AirConditionersManager extends Component
     {
         $this->reset([
             'cliente_id',
-            'executor_id',
             'codigo_ac',
             'ambiente',
-            'ultima_higienizacao',
             'marca',
             'potencia',
             'tipo',
-            'valor',
-            'limpou_condensadora',
             'cep',
             'rua',
             'numero',
@@ -149,23 +133,17 @@ class AirConditionersManager extends Component
     {
         $this->validate();
 
-        $proximaLimpeza = $this->nextSanitation($this->ultima_higienizacao);
-
         try {
             DB::beginTransaction();
 
             $ac = AirConditioning::create([
                 'cliente_id' => $this->cliente_id,
-                'executor_id' => $this->executor_id,
                 'codigo_ac' => $this->codigo_ac,
                 'ambiente' => $this->ambiente,
-                'ultima_higienizacao' => $this->ultima_higienizacao,
-                'prox_higienizacao' => $proximaLimpeza,
                 'marca' => $this->marca,
                 'potencia' => $this->potencia,
                 'tipo' => $this->tipo,
-                'valor' => $this->valor,
-                'limpou_condensadora' => $this->limpou_condensadora
+                'prox_higienizacao' => null
             ]);
 
             $ac->address()->create([
@@ -222,16 +200,11 @@ class AirConditionersManager extends Component
         if ($this->equipmentId) {
             $ac = AirConditioning::with('address')->find($this->equipmentId);
             $this->cliente_id = $ac->cliente_id;
-            $this->executor_id = $ac->executor_id;
             $this->codigo_ac = $ac->codigo_ac;
             $this->ambiente = $ac->ambiente ?? '';
-            $this->ultima_higienizacao = $ac->ultima_higienizacao;
-            $this->prox_higienizacao = $ac->prox_higienizacao;
             $this->marca = $ac->marca;
             $this->potencia = $ac->potencia;
             $this->tipo = $ac->tipo;
-            $this->valor = $ac->valor;
-            $this->limpou_condensadora = $ac->limpou_condensadora ? true : false;
 
             $this->cep = $ac->address->cep;
             $this->rua = $ac->address->rua;
@@ -255,16 +228,11 @@ class AirConditionersManager extends Component
             if ($ac) {
                 $ac->update([
                     'cliente_id' => $this->cliente_id,
-                    'executor_id' => $this->executor_id,
                     'codigo_ac' => $this->codigo_ac,
                     'ambiente' => $this->ambiente,
-                    'ultima_higienizacao' => $this->ultima_higienizacao,
-                    'prox_higienizacao' => $this->prox_higienizacao,
                     'marca' => $this->marca,
                     'potencia' => $this->potencia,
                     'tipo' => $this->tipo,
-                    'valor' => $this->valor,
-                    'limpou_condensadora' => $this->limpou_condensadora
                 ]);
 
                 $ac->address()->updateOrCreate(
@@ -295,11 +263,9 @@ class AirConditionersManager extends Component
     public function render()
     {
         $clientes = Client::orderBy('cliente')->get();
-        $executores = User::role('executor')->orderBy('name')->get();
 
         return view('livewire.air-conditioners-manager', [
             'clientes' => $clientes,
-            'executores' => $executores
         ]);
     }
 }

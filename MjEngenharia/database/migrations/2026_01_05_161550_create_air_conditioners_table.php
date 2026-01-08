@@ -15,21 +15,14 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('cliente_id')->constrained('clients')->onDelete('cascade');
-            $table->foreignId('executor_id')->constrained('users')->onDelete('cascade');
+
+            $table->date('prox_higienizacao')->nullable();
 
             $table->string('codigo_ac');
-
             $table->string('ambiente')->nullable();
-
-            $table->date('ultima_higienizacao');
-            $table->date('prox_higienizacao');
-
             $table->string('marca');
             $table->integer('potencia');
             $table->string('tipo');
-
-            $table->decimal('valor');
-            $table->boolean('limpou_condensadora');
 
             $table->timestamps();
         });

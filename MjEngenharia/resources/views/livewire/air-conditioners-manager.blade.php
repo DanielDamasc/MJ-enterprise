@@ -57,19 +57,6 @@
                                 @error('cliente_id') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>
 
-                            <div class="col-span-1 md:col-span-2 lg:col-span-6">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Executor
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <select wire:model="executor_id" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
-                                    <option value="">Selecione um executor...</option>
-                                    @foreach($executores as $executor)
-                                        <option value="{{ $executor->id }}">{{ $executor->name }}</option>
-                                    @endforeach
-                                </select>
-                                @error('executor_id') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
-                            </div>
-
                             <div class="col-span-1 md:col-span-1 lg:col-span-2">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Código Identificador
                                     <span class="text-red-500">*</span>
@@ -104,38 +91,6 @@
                                     <option value="piso_teto">Piso-teto</option>
                                 </select>
                                 @error('tipo') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
-                            </div>
-
-                            <div class="col-span-1 md:col-span-1 lg:col-span-3">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Última Higienização
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <input type="date" wire:model="ultima_higienizacao" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
-                            </div>
-
-                            @if ($showEdit)
-                                <div class="col-span-1 md:col-span-1 lg:col-span-3">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Próxima Higienização
-                                        <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="date" wire:model="prox_higienizacao" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
-                                </div>
-                            @endif
-
-                            <div class="col-span-1 md:col-span-1 lg:col-span-3">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Valor Cobrado (R$)
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <input type="number" step="0.01" wire:model="valor" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
-                            </div>
-
-                            <div class="col-span-1 md:col-span-2 lg:col-span-6 flex items-end pb-3">
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="condensadora" wire:model="limpou_condensadora" class="rounded text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 h-5 w-5">
-                                    <label for="condensadora" class="ml-2 text-sm text-gray-700">Limpou a condensadora na última higienização?
-                                        <span class="text-red-500">*</span>
-                                    </label>
-                                </div>
                             </div>
                         </div>
                     </div>

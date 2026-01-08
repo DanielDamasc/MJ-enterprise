@@ -56,11 +56,6 @@ class User extends Authenticatable
         });
     }
 
-    public function air_conditioners()
-    {
-        return $this->hasMany(AirConditioning::class, 'executor_id');
-    }
-
     public function servicos()
     {
         return $this->hasMany(OrderService::class, 'executor_id');

@@ -204,7 +204,7 @@
                                     </div>
 
                                     {{-- Rodapé: Datas --}}
-                                    <div class="px-5 py-3 bg-gray-50 rounded-b-xl border-t border-gray-100 flex justify-between items-center text-sm">
+                                    {{-- <div class="px-5 py-3 bg-gray-50 rounded-b-xl border-t border-gray-100 flex justify-between items-center text-sm">
                                         <div class="flex flex-col">
                                             <span class="text-xs text-gray-500">Última Higienização</span>
                                             <span class="font-medium text-gray-700">
@@ -217,7 +217,7 @@
                                                 {{ \Carbon\Carbon::parse($ac->prox_higienizacao)->format('d/m/Y') }}
                                             </span>
                                         </div>
-                                    </div>
+                                    </div> --}}
 
                                 </div>
                             @endforeach
