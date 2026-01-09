@@ -83,7 +83,12 @@ class AirConditionersManager extends Component
             return ;
         }
 
-        $response = Http::get("https://viacep.com.br/ws/{$cep}/json/");
+        $response = Http::withOptions([
+            'verify' => false,
+        ])
+        ->withUserAgent('MjEngenharia')
+        ->timeout(5)
+        ->get("https://viacep.com.br/ws/{$cep}/json/");
 
         if ($response->successful() && !isset($response['erro'])) {
             $dados = $response->json();

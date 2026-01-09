@@ -151,14 +151,21 @@ class ServicesManager extends Component
         $this->showDelete = true;
     }
 
+    #[On('delete')]
     public function delete()
     {
         if ($this->serviceId) {
             $service = OrderService::find($this->serviceId);
 
             if ($service) {
+                if ($service->status == ServiceStatus::CONCLUIDO) {
+                    $this->dispatch('error', 'Não é possível excluir um serviço já finalizado!');
+                    return ;
+                }
+
                 $service->delete();
                 session()->flash('message', 'Ordem de Serviço deletada com sucesso.');
+                $this->dispatch('notify', 'Serviço movido para a lixeira.');
             }
         }
 

@@ -4,9 +4,11 @@ namespace App\Models;
 
 use App\Enums\ServiceStatus;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class OrderService extends Model
 {
+    use SoftDeletes;
     protected $table = 'order_services';
 
     protected $fillable = [

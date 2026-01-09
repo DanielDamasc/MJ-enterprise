@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Enums\ServiceStatus;
 use App\Models\OrderService;
 use Blade;
 use Illuminate\Support\Carbon;
@@ -10,6 +11,7 @@ use PowerComponents\LivewirePowerGrid\Button;
 use PowerComponents\LivewirePowerGrid\Column;
 use PowerComponents\LivewirePowerGrid\Facades\Filter;
 use PowerComponents\LivewirePowerGrid\Facades\PowerGrid;
+use PowerComponents\LivewirePowerGrid\Facades\Rule;
 use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 
@@ -151,15 +153,13 @@ final class ServicesTable extends PowerGridComponent
         ];
     }
 
-    /*
     public function actionRules($row): array
     {
        return [
             // Hide button edit for ID 1
-            Rule::button('edit')
-                ->when(fn($row) => $row->id === 1)
+            Rule::button('delete')
+                ->when(fn($row) => $row->status == ServiceStatus::CONCLUIDO)
                 ->hide(),
         ];
     }
-    */
 }
