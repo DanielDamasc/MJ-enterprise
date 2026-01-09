@@ -22,7 +22,7 @@
         @livewire('servicesTable')
     </div>
 
-    @if ($showCreate)
+    @if ($showCreate || $showEdit)
         <div class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-primary-950/75 backdrop-blur-sm p-4 md:inset-0 h-modal md:h-full transition-opacity">
 
             <div class="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto bg-white rounded-xl shadow-2xl transform transition-all">
@@ -30,14 +30,14 @@
                 {{-- HEADER --}}
                 <div class="px-6 pt-4 flex justify-between items-center sticky top-0 bg-white z-10 border-b border-gray-100 pb-4">
                     <h3 class="text-xl font-bold text-primary-900">
-                        Nova Ordem de Serviço
+                        {{ $showCreate ? 'Nova Ordem de Serviço' : 'Editar Ordem de Serviço' }}
                     </h3>
                     <button wire:click="closeModal" type="button" class="text-primary-400 bg-transparent hover:bg-primary-50 hover:text-primary-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center transition-colors">
                         <x-heroicon-o-x-mark class="w-5 h-5" />
                     </button>
                 </div>
 
-                <form wire:submit="save" class="p-6 space-y-8">
+                <form wire:submit="{{ $showCreate ? 'save' : 'edit' }}" class="p-6 space-y-8">
 
                     {{-- SEÇÃO 1: QUEM E ONDE --}}
                     <div>
@@ -52,13 +52,20 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Cliente
                                     <span class="text-red-500">*</span>
                                 </label>
-                                <select wire:model.live="cliente_id" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
-                                    <option value="">Selecione o cliente...</option>
-                                    @foreach($clientes as $client)
-                                        <option value="{{ $client->id }}">{{ $client->cliente }}</option>
-                                    @endforeach
-                                </select>
-                                @error('cliente_id') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                @if ($showEdit)
+                                    <div class="h-10 bg-gray-100 border border-gray-200 rounded-lg flex items-center px-3 text-gray-600 cursor-not-allowed select-none">
+                                        {{ $cliente_label }}
+                                    </div>
+                                    <small class="text-xs text-gray-500 mt-1">O cliente não pode ser alterado na edição.</small>
+                                @else
+                                    <select wire:model.live="cliente_id" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
+                                        <option value="">Selecione o cliente...</option>
+                                        @foreach($clientes as $client)
+                                            <option value="{{ $client->id }}">{{ $client->cliente }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('cliente_id') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                @endif
                             </div>
 
                             {{-- EXECUTOR --}}
@@ -87,7 +94,9 @@
                                             <label class="flex items-start space-x-3 p-3 bg-white border border-gray-200 rounded-lg cursor-pointer hover:border-blue-400 hover:shadow-sm transition-all group">
                                                 <div class="flex items-center h-5">
                                                     <input type="checkbox" wire:model="ac_ids" value="{{ $ac->id }}"
-                                                        class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+                                                        class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                                                        @disabled($showEdit)
+                                                    >
                                                 </div>
                                                 <div class="text-sm">
                                                     <p class="font-bold text-gray-800 group-hover:text-blue-700 transition-colors">{{ $ac->codigo_ac }}</p>
@@ -129,11 +138,18 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de Serviço
                                     <span class="text-red-500">*</span>
                                 </label>
-                                <select wire:model.live="tipo" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
-                                    <option value="">Selecione...</option>
-                                    <option value="higienizacao">Higienização</option>
-                                </select>
-                                @error('tipo') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                @if ($showEdit)
+                                    <div class="h-10 bg-gray-100 border border-gray-200 rounded-lg flex items-center px-3 text-gray-600 cursor-not-allowed select-none">
+                                        {{ $tipo_label }}
+                                    </div>
+                                    <small class="text-xs text-gray-500 mt-1">O cliente não pode ser alterado na edição.</small>
+                                @else
+                                    <select wire:model.live="tipo" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
+                                        <option value="">Selecione...</option>
+                                        <option value="higienizacao">Higienização</option>
+                                    </select>
+                                    @error('tipo') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                @endif
                             </div>
 
                             {{-- DATA --}}
@@ -159,12 +175,19 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Status Atual
                                     <span class="text-red-500">*</span>
                                 </label>
-                                <select wire:model="status" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
-                                    @foreach($statusServico as $_)
-                                        <option value="{{ $_->value }}">{{ $_->label() }}</option>
-                                    @endforeach
-                                </select>
-                                @error('status') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                @if ($showEdit)
+                                    <div class="h-10 bg-gray-100 border border-gray-200 rounded-lg flex items-center px-3 text-gray-600 cursor-not-allowed select-none">
+                                        {{ $status_label }}
+                                    </div>
+                                    <small class="text-xs text-gray-500 mt-1">O status não pode ser alterado na edição.</small>
+                                @else
+                                    <select wire:model="status" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
+                                        @foreach($statusServico as $_)
+                                            <option value="{{ $_->value }}">{{ $_->label() }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('status') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                @endif
                             </div>
 
                             {{-- CAMPOS DINÂMICOS (JSON) --}}
@@ -197,14 +220,7 @@
                             Cancelar
                         </button>
                         <button type="submit" wire:loading.attr="disabled" class="text-white bg-secondary-500 hover:bg-secondary-600 focus:ring-4 focus:outline-none focus:ring-secondary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-all shadow-md hover:shadow-lg disabled:opacity-50">
-                            <span wire:loading.remove wire:target="save">Gerar Ordens de Serviço</span>
-                            <span wire:loading wire:target="save" class="flex items-center gap-2">
-                                <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                Processando...
-                            </span>
+                            <span wire:loading.remove wire:target="{{ $showCreate ? 'save' : 'edit' }}">{{ $showCreate ? 'Criar' : 'Salvar Alterações' }}</span>
                         </button>
                     </div>
 

@@ -31,9 +31,16 @@ class ServicesManager extends Component
     public $status = ServiceStatus::AGENDADO->value;
     public array $detalhes = [];
 
+    // Outros Atributos.
     public $showCreate = false;
     public $showDelete = false;
+    public $showEdit = false;
     public $showConfirm = false;
+
+    // Atributos Auxiliares.
+    public $cliente_label = '';
+    public $status_label = '';
+    public $tipo_label = '';
 
     protected function rules()
     {
@@ -93,7 +100,7 @@ class ServicesManager extends Component
 
     public function closeModal()
     {
-        $this->showCreate = $this->showDelete = $this->showConfirm = false;
+        $this->showCreate = $this->showDelete = $this->showEdit = $this->showConfirm = false;
         $this->resetValidation();
     }
 
@@ -220,6 +227,61 @@ class ServicesManager extends Component
             } else {
                 $this->dispatch('error', 'Apenas serviços agendados podem ser concluídos.');
             }
+        }
+
+        $this->closeModal();
+        $this->serviceId = null;
+
+        $this->dispatch('service-refresh');
+    }
+
+    #[On('open-edit')]
+    public function openEdit($id)
+    {
+        $this->serviceId = $id;
+        $this->showEdit = true;
+
+        if ($this->serviceId) {
+            $service = OrderService::find($this->serviceId);
+
+            $this->acs_disponiveis = AirConditioning::where('cliente_id', $service->cliente_id)->get();
+            $this->cliente_label = $service->client->cliente ?? 'Cliente não encontrado';
+            $this->status_label = $service->status->label();
+            $this->tipo_label = $service->tipo;
+
+            $this->ac_ids = [$service->ac_id];
+            $this->cliente_id = $service->cliente_id;
+            $this->executor_id = $service->executor_id;
+            $this->tipo = $service->tipo;
+            $this->data_servico = $service->data_servico;
+            $this->valor = $service->valor;
+            $this->status = $service->status;
+            $this->detalhes = $service->detalhes;
+        }
+    }
+
+    #[On('edit')]
+    public function edit()
+    {
+        $this->validate();
+
+        $service = OrderService::find($this->serviceId);
+
+        // Verifica se o status é agendado.
+        if ($service->status === ServiceStatus::AGENDADO) {
+
+            $service->update([
+                // Somente estes atributos podem ser editados.
+                'executor_id' => $this->executor_id,
+                'data_servico' => $this->data_servico,
+                'valor' => $this->valor,
+                'detalhes' => $this->detalhes,
+            ]);
+
+            session()->flash('message', 'Dados atualizados com sucesso!');
+            $this->dispatch('notify', 'Dados atualizados com sucesso!');
+        } else {
+            $this->dispatch('error', 'Apenas serviços agendados podem ser editados.');
         }
 
         $this->closeModal();
