@@ -249,4 +249,41 @@
             </div>
         </div>
     @endif
+
+    @if ($showConfirm)
+        <div class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-primary-950/75 backdrop-blur-sm p-4 md:inset-0 h-modal md:h-full transition-opacity">
+
+            <div class="relative w-full max-w-md h-full md:h-auto">
+                <div class="relative bg-white rounded-xl shadow-2xl border border-primary-100">
+
+                    <div class="p-6 text-center">
+                        <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-green-100 p-3 text-green-600">
+                            <x-heroicon-o-check-circle class="w-8 h-8" />
+                        </div>
+
+                        <h3 class="mb-5 text-lg font-normal text-gray-600">
+                            Deseja concluir o serviço?
+                        </h3>
+
+                        <p class="text-sm text-gray-800 mb-6">
+                            Essa ação mudará o status de forma definitiva, e não pode ser revertida.
+                        </p>
+
+                        <div class="flex justify-center gap-3">
+
+                            <button wire:click="closeModal" type="button" class="text-primary-600 bg-white hover:bg-primary-50 focus:ring-4 focus:outline-none focus:ring-primary-100 rounded-lg border border-primary-200 text-sm font-medium px-5 py-2.5 hover:text-primary-900 focus:z-10 transition-colors">
+                                Cancelar
+                            </button>
+
+                            <button wire:click="serviceDone" type="button" class="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-all shadow-md">
+                                Concluir
+                            </button>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    @endif
 </div>

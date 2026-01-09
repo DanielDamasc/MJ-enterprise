@@ -33,6 +33,7 @@ class ServicesManager extends Component
 
     public $showCreate = false;
     public $showDelete = false;
+    public $showConfirm = false;
 
     protected function rules()
     {
@@ -92,7 +93,7 @@ class ServicesManager extends Component
 
     public function closeModal()
     {
-        $this->showCreate = $this->showDelete = false;
+        $this->showCreate = $this->showDelete = $this->showConfirm = false;
         $this->resetValidation();
     }
 
@@ -166,6 +167,58 @@ class ServicesManager extends Component
                 $service->delete();
                 session()->flash('message', 'Ordem de Serviço deletada com sucesso.');
                 $this->dispatch('notify', 'Serviço movido para a lixeira.');
+            }
+        }
+
+        $this->closeModal();
+        $this->serviceId = null;
+
+        $this->dispatch('service-refresh');
+    }
+
+    #[On('confirm-service-done')]
+    public function confirmServiceDone($id)
+    {
+        $this->serviceId = $id;
+        $this->showConfirm = true;
+    }
+
+    #[On('done')]
+    public function serviceDone()
+    {
+        if ($this->serviceId) {
+            $service = OrderService::find($this->serviceId);
+
+            if (!$service) {
+                $this->dispatch('error', 'Serviço não encontrado.');
+                return ;
+            }
+
+            // Valida se a data permite que o serviço seja concluído.
+            if (Carbon::parse($service->data_servico)->startOfDay()->isFuture()) {
+                $this->dispatch('error', 'Não é possível finalizar um serviço agendado para o futuro.');
+                return ;
+            }
+
+            // Verifica se o status é agendado.
+            if ($service->status->value == ServiceStatus::AGENDADO->value) {
+                $service->update([
+                    'status' => ServiceStatus::CONCLUIDO->value
+                ]);
+
+                // Atualiza a data da próxima higienização.
+                if ($service->tipo == 'higienizacao') {
+                    $ac = $service->air_conditioner;
+                    if ($ac) {
+                        $ac->prox_higienizacao = $this->nextSanitation($service->data_servico);
+                        $ac->save();
+                    }
+                }
+
+                session()->flash('message', 'Ordem de serviço concluída');
+                $this->dispatch('notify', 'Ordem de serviço concluída.');
+            } else {
+                $this->dispatch('error', 'Apenas serviços agendados podem ser concluídos.');
             }
         }
 
