@@ -206,6 +206,8 @@ class AirConditionersManager extends Component
             $this->potencia = $ac->potencia;
             $this->tipo = $ac->tipo;
 
+            $this->prox_higienizacao = $ac->prox_higienizacao ?? '';
+
             $this->cep = $ac->address->cep;
             $this->rua = $ac->address->rua;
             $this->numero = $ac->address->numero;
@@ -233,6 +235,8 @@ class AirConditionersManager extends Component
                     'marca' => $this->marca,
                     'potencia' => $this->potencia,
                     'tipo' => $this->tipo,
+
+                    'prox_higienizacao' => $this->prox_higienizacao ? $this->prox_higienizacao : null,
                 ]);
 
                 $ac->address()->updateOrCreate(

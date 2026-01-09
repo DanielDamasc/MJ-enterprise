@@ -255,7 +255,7 @@ class ServicesManager extends Component
             $this->tipo = $service->tipo;
             $this->data_servico = $service->data_servico;
             $this->valor = $service->valor;
-            $this->status = $service->status;
+            $this->status = $service->status->value;
             $this->detalhes = $service->detalhes;
         }
     }
