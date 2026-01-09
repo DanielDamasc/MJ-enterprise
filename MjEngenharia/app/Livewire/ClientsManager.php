@@ -112,7 +112,7 @@ class ClientsManager extends Component
             'email' => $this->email,
         ]);
 
-        $this->showCreate = false;
+        $this->closeModal();
         session()->flash('message', 'Cliente cadastrado com sucesso!');
 
         $this->dispatch('client-refresh');
@@ -136,7 +136,7 @@ class ClientsManager extends Component
             }
         }
 
-        $this->showDelete = false;
+        $this->closeModal();
         $this->clientId = null;
 
         $this->dispatch('client-refresh');
@@ -190,7 +190,7 @@ class ClientsManager extends Component
             ]);
         }
 
-        $this->showEdit = false;
+        $this->closeModal();
         session()->flash('message', 'Dados atualizados com sucesso!');
 
         $this->dispatch('client-refresh');

@@ -97,11 +97,6 @@ class AirConditionersManager extends Component
         }
     }
 
-    // public function nextSanitation($value)
-    // {
-    //     return Carbon::parse($value)->addDays(180);
-    // }
-
     public function closeModal()
     {
         $this->showCreate = $this->showDelete = $this->showEdit = false;
@@ -163,7 +158,7 @@ class AirConditionersManager extends Component
         } catch (Exception $e) {
             DB::rollBack();
         } finally {
-            $this->showCreate = false;
+            $this->closeModal();
         }
     }
 
@@ -185,7 +180,7 @@ class AirConditionersManager extends Component
             }
         }
 
-        $this->showDelete = false;
+        $this->closeModal();
         $this->equipmentId = null;
 
         $this->dispatch('airConditioners-refresh');
@@ -255,7 +250,7 @@ class AirConditionersManager extends Component
         } catch (Exception $e) {
             DB::rollBack();
         } finally {
-            $this->showEdit = false;
+            $this->closeModal();
         }
     }
 

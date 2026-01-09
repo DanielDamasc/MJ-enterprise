@@ -7,6 +7,7 @@ use App\Livewire\ForgotPassword;
 use App\Livewire\Inicio;
 use App\Livewire\Login;
 use App\Livewire\ResetPassword;
+use App\Livewire\ServicesManager;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -34,5 +35,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/executores', EmployeeManager::class)->name('executores');
         Route::get('/clientes', ClientsManager::class)->name('clientes');
         Route::get('/ar-condicionados', AirConditionersManager::class)->name('ar-condicionados');
+        Route::get('/servicos', ServicesManager::class)->name('servicos');
     });
 });
