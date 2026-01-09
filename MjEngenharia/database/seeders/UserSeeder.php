@@ -24,5 +24,14 @@ class UserSeeder extends Seeder
         ]);
 
         $admin->assignRole('adm');
+
+        $executor = User::create([
+            'name' => 'Executor Teste',
+            'email' => 'juhazarao@gmail.com',
+            'email_verified_at' => now(),
+            'password' => Hash::make('asdasdasd'),
+        ]);
+
+        $executor->assignRole('executor');
     }
 }
