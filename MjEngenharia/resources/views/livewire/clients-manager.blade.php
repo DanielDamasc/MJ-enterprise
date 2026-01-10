@@ -208,7 +208,11 @@
                                         <div class="flex flex-col text-right">
                                             <span class="text-xs text-gray-500">Próx. Higienização</span>
                                             <span class="font-medium text-blue-600">
-                                                {{ \Carbon\Carbon::parse($ac->prox_higienizacao)->format('d/m/Y') }}
+                                                @if ($ac->prox_higienizacao == null)
+                                                    --/--/----
+                                                @else
+                                                    {{ \Carbon\Carbon::parse($ac->prox_higienizacao)->format('d/m/Y')}}
+                                                @endif
                                             </span>
                                         </div>
                                     </div>

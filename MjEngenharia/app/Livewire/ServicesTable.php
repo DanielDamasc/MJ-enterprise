@@ -163,6 +163,11 @@ final class ServicesTable extends PowerGridComponent
                 ->class('text-green-600 hover:text-green-800 p-1 transition-colors')
                 ->dispatchTo('services-manager', 'confirm-service-done', ['id' => $row->id]),
 
+            Button::add('cancel')
+                ->slot(Blade::render('<x-heroicon-o-x-circle class="w-5 h-5" />'))
+                ->class('text-red-600 hover:text-red-800 p-1 transition-colors')
+                ->dispatchTo('services-manager', 'confirm-service-cancel', ['id' => $row->id]),
+
             Button::add('edit')
                 ->slot(Blade::render('<x-heroicon-o-pencil-square class="w-5 h-5" />'))
                 ->class('text-secondary-600 hover:text-secondary-800 p-1 mr-2 transition-colors')
@@ -179,6 +184,10 @@ final class ServicesTable extends PowerGridComponent
     {
        return [
            Rule::button('done')
+               ->when(fn($row) => $row->status != ServiceStatus::AGENDADO)
+               ->hide(),
+
+            Rule::button('cancel')
                ->when(fn($row) => $row->status != ServiceStatus::AGENDADO)
                ->hide(),
 

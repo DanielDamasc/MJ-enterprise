@@ -36,6 +36,7 @@ class ServicesManager extends Component
     public $showDelete = false;
     public $showEdit = false;
     public $showConfirm = false;
+    public $showCancel = false;
 
     // Atributos Auxiliares.
     public $cliente_label = '';
@@ -100,7 +101,7 @@ class ServicesManager extends Component
 
     public function closeModal()
     {
-        $this->showCreate = $this->showDelete = $this->showEdit = $this->showConfirm = false;
+        $this->showCreate = $this->showDelete = $this->showEdit = $this->showConfirm = $this->showCancel = false;
         $this->resetValidation();
     }
 
@@ -208,7 +209,7 @@ class ServicesManager extends Component
             }
 
             // Verifica se o status é agendado.
-            if ($service->status->value == ServiceStatus::AGENDADO->value) {
+            if ($service->status == ServiceStatus::AGENDADO) {
                 $service->update([
                     'status' => ServiceStatus::CONCLUIDO->value
                 ]);
@@ -226,6 +227,43 @@ class ServicesManager extends Component
                 $this->dispatch('notify', 'Ordem de serviço concluída.');
             } else {
                 $this->dispatch('error', 'Apenas serviços agendados podem ser concluídos.');
+            }
+        }
+
+        $this->closeModal();
+        $this->serviceId = null;
+
+        $this->dispatch('service-refresh');
+    }
+
+    #[On('confirm-service-cancel')]
+    public function confirmServiceCancel($id)
+    {
+        $this->serviceId = $id;
+        $this->showCancel = true;
+    }
+
+    #[On('cancel')]
+    public function serviceCancel()
+    {
+        if ($this->serviceId) {
+            $service = OrderService::find($this->serviceId);
+
+            if (!$service) {
+                $this->dispatch('error', 'Serviço não encontrado.');
+                return ;
+            }
+
+            // O serviço só pode ser cancelado se ele estiver agendado.
+            if ($service->status == ServiceStatus::AGENDADO) {
+                $service->update([
+                    'status' => ServiceStatus::CANCELADO->value
+                ]);
+
+                session()->flash('message', 'Ordem de serviço cancelada.');
+                $this->dispatch('notify', 'Ordem de serviço cancelada.');
+            } else {
+                $this->dispatch('error', 'Apenas serviços agendados podem ser cancelados.');
             }
         }
 
