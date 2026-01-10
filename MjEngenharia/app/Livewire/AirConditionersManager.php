@@ -179,6 +179,12 @@ class AirConditionersManager extends Component
         if ($this->equipmentId) {
             $ac = AirConditioning::find($this->equipmentId);
 
+            if ($ac->servicos->isNotEmpty()) {
+                $this->dispatch('notify-error', 'Não se pode deletar um ar-condicionado com serviço vinculado.');
+                $this->closeModal();
+                return ;
+            }
+
             if ($ac) {
                 $ac->delete();
                 $this->dispatch('notify-success', 'Equipamento deletado com sucesso.');

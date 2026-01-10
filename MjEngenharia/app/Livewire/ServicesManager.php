@@ -151,7 +151,7 @@ class ServicesManager extends Component
         }
 
         $this->closeModal();
-        
+
         $qtd = count($this->ac_ids);
         $msg = $qtd > 1 ? "$qtd Ordens de serviço criadas com sucesso!" : "Ordem de serviço criada com sucesso!";
 
@@ -210,6 +210,7 @@ class ServicesManager extends Component
             // Valida se a data permite que o serviço seja concluído.
             if (Carbon::parse($service->data_servico)->startOfDay()->isFuture()) {
                 $this->dispatch('notify-error', 'Não é possível finalizar um serviço agendado para o futuro.');
+                $this->closeModal();
                 return ;
             }
 

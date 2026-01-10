@@ -81,6 +81,12 @@ class EmployeeManager extends Component
         if ($this->userId) {
             $user = User::find($this->userId);
 
+            if ($user->servicos->isNotEmpty()) {
+                $this->dispatch('notify-error', 'Não se pode deletar um executor com serviço vinculado.');
+                $this->closeModal();
+                return ;
+            }
+
             if ($user) {
                 $user->delete();
                 $this->dispatch('notify-success', 'Executor deletado com sucesso.');
