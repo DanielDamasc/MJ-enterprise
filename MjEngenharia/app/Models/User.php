@@ -47,15 +47,6 @@ class User extends Authenticatable
         ];
     }
 
-    protected static function booted()
-    {
-        static::deleting(function ($executor) {
-            $executor->air_conditioners->each(function ($ac) {
-                $ac->delete();
-            });
-        });
-    }
-
     public function servicos()
     {
         return $this->hasMany(OrderService::class, 'executor_id');
