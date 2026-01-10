@@ -158,7 +158,7 @@ class AirConditionersManager extends Component
 
             DB::commit();
 
-            session()->flash('message', 'Equipamento cadastrado com sucesso!');
+            $this->dispatch('notify-success', 'Ar-condicionado cadastrado com sucesso!');
             $this->dispatch('airConditioners-refresh');
         } catch (Exception $e) {
             DB::rollBack();
@@ -181,7 +181,7 @@ class AirConditionersManager extends Component
 
             if ($ac) {
                 $ac->delete();
-                session()->flash('message', 'Equipamento deletado com sucesso.');
+                $this->dispatch('notify-success', 'Equipamento deletado com sucesso.');
             }
         }
 
@@ -254,7 +254,7 @@ class AirConditionersManager extends Component
 
             DB::commit();
 
-            session()->flash('message', 'Dados atualizados com sucesso!');
+            $this->dispatch('notify-success', 'Dados atualizados com sucesso!');
             $this->dispatch('airConditioners-refresh');
         } catch (Exception $e) {
             DB::rollBack();

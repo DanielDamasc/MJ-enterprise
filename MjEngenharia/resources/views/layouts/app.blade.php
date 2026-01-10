@@ -92,6 +92,8 @@
             </div>
 
         </div>
+
+        <x-notification />
     </body>
     {{--
         Usando um truque sujo para forçar o tailwind a gerar essas classes:

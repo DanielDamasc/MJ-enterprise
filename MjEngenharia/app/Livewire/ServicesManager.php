@@ -148,9 +148,15 @@ class ServicesManager extends Component
                 }
             }
 
-            $this->closeModal();
-            $this->dispatch('service-refresh');
         }
+
+        $this->closeModal();
+        
+        $qtd = count($this->ac_ids);
+        $msg = $qtd > 1 ? "$qtd Ordens de serviço criadas com sucesso!" : "Ordem de serviço criada com sucesso!";
+
+        $this->dispatch('notify-success', $msg);
+        $this->dispatch('service-refresh');
     }
 
     #[On('confirm-delete')]
@@ -168,13 +174,12 @@ class ServicesManager extends Component
 
             if ($service) {
                 if ($service->status == ServiceStatus::CONCLUIDO) {
-                    $this->dispatch('error', 'Não é possível excluir um serviço já finalizado!');
+                    $this->dispatch('notify-error', 'Não é possível excluir um serviço já finalizado!');
                     return ;
                 }
 
                 $service->delete();
-                session()->flash('message', 'Ordem de Serviço deletada com sucesso.');
-                $this->dispatch('notify', 'Serviço movido para a lixeira.');
+                $this->dispatch('notify-success', 'Serviço movido para a lixeira.');
             }
         }
 
@@ -198,13 +203,13 @@ class ServicesManager extends Component
             $service = OrderService::find($this->serviceId);
 
             if (!$service) {
-                $this->dispatch('error', 'Serviço não encontrado.');
+                $this->dispatch('notify-error', 'Serviço não encontrado.');
                 return ;
             }
 
             // Valida se a data permite que o serviço seja concluído.
             if (Carbon::parse($service->data_servico)->startOfDay()->isFuture()) {
-                $this->dispatch('error', 'Não é possível finalizar um serviço agendado para o futuro.');
+                $this->dispatch('notify-error', 'Não é possível finalizar um serviço agendado para o futuro.');
                 return ;
             }
 
@@ -223,10 +228,9 @@ class ServicesManager extends Component
                     }
                 }
 
-                session()->flash('message', 'Ordem de serviço concluída');
-                $this->dispatch('notify', 'Ordem de serviço concluída.');
+                $this->dispatch('notify-success', 'Ordem de serviço concluída.');
             } else {
-                $this->dispatch('error', 'Apenas serviços agendados podem ser concluídos.');
+                $this->dispatch('notify-error', 'Apenas serviços agendados podem ser concluídos.');
             }
         }
 
@@ -250,7 +254,7 @@ class ServicesManager extends Component
             $service = OrderService::find($this->serviceId);
 
             if (!$service) {
-                $this->dispatch('error', 'Serviço não encontrado.');
+                $this->dispatch('notify-error', 'Serviço não encontrado.');
                 return ;
             }
 
@@ -260,10 +264,9 @@ class ServicesManager extends Component
                     'status' => ServiceStatus::CANCELADO->value
                 ]);
 
-                session()->flash('message', 'Ordem de serviço cancelada.');
-                $this->dispatch('notify', 'Ordem de serviço cancelada.');
+                $this->dispatch('notify-success', 'Ordem de serviço cancelada.');
             } else {
-                $this->dispatch('error', 'Apenas serviços agendados podem ser cancelados.');
+                $this->dispatch('notify-error', 'Apenas serviços agendados podem ser cancelados.');
             }
         }
 
@@ -316,10 +319,9 @@ class ServicesManager extends Component
                 'detalhes' => $this->detalhes,
             ]);
 
-            session()->flash('message', 'Dados atualizados com sucesso!');
-            $this->dispatch('notify', 'Dados atualizados com sucesso!');
+            $this->dispatch('notify-success', 'Dados atualizados com sucesso!');
         } else {
-            $this->dispatch('error', 'Apenas serviços agendados podem ser editados.');
+            $this->dispatch('notify-error', 'Apenas serviços agendados podem ser editados.');
         }
 
         $this->closeModal();

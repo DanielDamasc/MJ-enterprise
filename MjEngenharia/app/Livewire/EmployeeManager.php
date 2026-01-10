@@ -64,7 +64,7 @@ class EmployeeManager extends Component
         $user->assignRole('executor'); // Atribui o perfil de executor.
 
         $this->showCreate = false;
-        session()->flash('message', 'Executor cadastrado com sucesso!');
+        $this->dispatch('notify-success', 'Executor cadastrado com sucesso!');
 
         $this->dispatch('employee-refresh');
     }
@@ -83,7 +83,7 @@ class EmployeeManager extends Component
 
             if ($user) {
                 $user->delete();
-                session()->flash('message', 'Executor deletado com sucesso.');
+                $this->dispatch('notify-success', 'Executor deletado com sucesso.');
             }
         }
 
@@ -120,7 +120,7 @@ class EmployeeManager extends Component
         }
 
         $this->showEdit = false;
-        session()->flash('message', 'Dados atualizados com sucesso!');
+        $this->dispatch('notify-success', 'Dados atualizados com sucesso!');
 
         $this->dispatch('employee-refresh');
     }

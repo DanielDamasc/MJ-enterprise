@@ -113,7 +113,7 @@ class ClientsManager extends Component
         ]);
 
         $this->closeModal();
-        session()->flash('message', 'Cliente cadastrado com sucesso!');
+        $this->dispatch('notify-success', 'Cliente cadastrado com sucesso!');
 
         $this->dispatch('client-refresh');
     }
@@ -132,7 +132,7 @@ class ClientsManager extends Component
 
             if ($client) {
                 $client->delete();
-                session()->flash('message', 'Cliente deletado com sucesso.');
+                $this->dispatch('notify-success', 'Cliente deletado com sucesso.');
             }
         }
 
@@ -191,7 +191,7 @@ class ClientsManager extends Component
         }
 
         $this->closeModal();
-        session()->flash('message', 'Dados atualizados com sucesso!');
+        $this->dispatch('notify-success', 'Dados atualizados com sucesso!');
 
         $this->dispatch('client-refresh');
     }
