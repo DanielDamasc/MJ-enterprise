@@ -130,7 +130,7 @@ class ClientsManager extends Component
         if ($this->clientId) {
             $client = Client::find($this->clientId);
 
-            if ($client->servicos->isNotEmpty()) {
+            if ($client->servicos()->withTrashed()->exists()) {
                 $this->dispatch('notify-error', 'Não se pode deletar um cliente com serviço vinculado.');
                 $this->closeModal();
                 return ;
