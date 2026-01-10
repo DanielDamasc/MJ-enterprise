@@ -23,12 +23,12 @@ class AirConditioning extends Model
         'prox_higienizacao',
     ];
 
-    protected static function booted()
-    {
-        static::deleting(function ($ac) {
-            $ac->address()->delete();
-        });
-    }
+    // protected static function booted()
+    // {
+    //     static::deleting(function ($ac) {
+    //         $ac->address()->delete();
+    //     });
+    // }
 
     public function client()
     {
