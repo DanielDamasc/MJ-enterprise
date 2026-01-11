@@ -76,10 +76,23 @@
 
                 </nav>
 
-                <div class="p-4 border-t border-primary-800 bg-primary-950 shrink-0">
+                <div class="p-4 border-t border-primary-800 bg-primary-950 shrink-0 space-y-1">
+
+                    <div class="flex items-center gap-3 px-4 py-2 mb-2 rounded-lg bg-primary-900/50 border border-primary-800/50">
+                        <div class="shrink-0">
+                            <x-heroicon-o-user-circle class="w-8 h-8 text-primary-400" />
+                        </div>
+                        <div class="flex flex-col overflow-hidden">
+                            <span class="text-xs text-primary-400 font-medium">Olá,</span>
+                            <span class="font-bold text-sm text-white truncate" title="{{ auth()->user()->name }}">
+                                {{ auth()->user()->name }}
+                            </span>
+                        </div>
+                    </div>
+
                     <a href="{{ route('logout') }}"
                     class="flex items-center gap-3 px-4 py-3 rounded-lg text-primary-200 hover:bg-red-500/10 hover:text-red-400 transition-colors group">
-                        <x-ionicon-exit-outline class="w-5 h-5" />
+                        <x-ionicon-exit-outline class="w-5 h-5 group-hover:text-red-400 transition-colors" />
                         <span class="font-semibold text-md">Logout</span>
                     </a>
                 </div>
