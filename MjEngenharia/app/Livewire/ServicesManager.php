@@ -8,6 +8,7 @@ use App\Models\Client;
 use App\Models\OrderService;
 use App\Models\User;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Validation\Rules\Enum;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -207,31 +208,11 @@ class ServicesManager extends Component
                 return ;
             }
 
-            // Valida se a data permite que o serviço seja concluído.
-            if (Carbon::parse($service->data_servico)->startOfDay()->isFuture()) {
-                $this->dispatch('notify-error', 'Não é possível finalizar um serviço agendado para o futuro.');
-                $this->closeModal();
-                return ;
-            }
-
-            // Verifica se o status é agendado.
-            if ($service->status == ServiceStatus::AGENDADO) {
-                $service->update([
-                    'status' => ServiceStatus::CONCLUIDO->value
-                ]);
-
-                // Atualiza a data da próxima higienização.
-                if ($service->tipo == 'higienizacao') {
-                    $ac = $service->air_conditioner;
-                    if ($ac) {
-                        $ac->prox_higienizacao = $this->nextSanitation($service->data_servico);
-                        $ac->save();
-                    }
-                }
-
-                $this->dispatch('notify-success', 'Ordem de serviço concluída.');
-            } else {
-                $this->dispatch('notify-error', 'Apenas serviços agendados podem ser concluídos.');
+            try {
+                $service->concluir();
+                $this->dispatch('notify-success', 'Serviço concluído com sucesso!');
+            } catch (Exception $e) {
+                $this->dispatch('notify-error', $e->getMessage());
             }
         }
 

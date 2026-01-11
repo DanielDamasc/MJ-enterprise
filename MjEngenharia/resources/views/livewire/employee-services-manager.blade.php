@@ -80,7 +80,7 @@
                         Abrir no Maps
                     </a>
 
-                    <button class="flex items-center justify-center bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition shadow-sm text-sm font-bold">
+                    <button wire:click="concluirService({{ $service->id }})" class="flex items-center justify-center bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition shadow-sm text-sm font-bold">
                         Concluir Serviço
                     </button>
                 </div>

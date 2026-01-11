@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use App\Enums\ServiceStatus;
+use Carbon\Carbon;
+use DB;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -31,6 +34,41 @@ class OrderService extends Model
         'status' => ServiceStatus::class,
         'detalhes' => 'array',
     ];
+
+    // 1. Método para concluir service
+    public function concluir()
+    {
+        if (Carbon::parse($this->data_servico)->startOfDay()->isFuture()) {
+            throw new Exception('Não é possível finalizar um serviço agendado para uma data futura.');
+        }
+
+        if ($this->status !== ServiceStatus::AGENDADO) {
+            throw new Exception('Apenas serviços agendados podem ser concluídos.');
+        }
+
+        DB::transaction(function () {
+
+            // Atualiza o status do serviço.
+            $this->update([
+                'status' => ServiceStatus::CONCLUIDO->value,
+            ]);
+
+            // Atualiza a data da próxima higienização.
+            if ($this->tipo == 'higienizacao' && $this->air_conditioner) {
+                $proxData = $this->proximaHigienizacao($this->data_servico);
+
+                $this->air_conditioner->update([
+                    'prox_higienizacao' => $proxData
+                ]);
+            }
+        });
+    }
+
+    // 2. Método para calcular a próxima higienização
+    private function proximaHigienizacao($dataServico)
+    {
+        return Carbon::parse($dataServico)->addDays(180);
+    }
 
     public function air_conditioner()
     {
