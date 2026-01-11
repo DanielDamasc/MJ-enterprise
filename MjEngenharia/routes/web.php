@@ -3,6 +3,7 @@
 use App\Livewire\AirConditionersManager;
 use App\Livewire\ClientsManager;
 use App\Livewire\EmployeeManager;
+use App\Livewire\EmployeeServicesManager;
 use App\Livewire\ForgotPassword;
 use App\Livewire\Inicio;
 use App\Livewire\Login;
@@ -22,8 +23,6 @@ Route::middleware('guest')->group(function () {
 // ---------- GRUPO DE ROTAS PROTEGIDAS ----------
 Route::middleware('auth')->group(function () {
 
-    Route::get('/', Inicio::class);
-
     Route::get('/logout', function () {
         Auth::logout();
         session()->invalidate();
@@ -31,10 +30,17 @@ Route::middleware('auth')->group(function () {
         return redirect()->route('login');
     })->name('logout');
 
+    // ----- ROTAS DO ADMIN -----
     Route::group(['middleware' => ['role:adm']], function () {
+        Route::get('/', Inicio::class);
         Route::get('/executores', EmployeeManager::class)->name('executores');
         Route::get('/clientes', ClientsManager::class)->name('clientes');
         Route::get('/ar-condicionados', AirConditionersManager::class)->name('ar-condicionados');
         Route::get('/servicos', ServicesManager::class)->name('servicos');
+    });
+
+    // ----- ROTAS DO EXECUTOR -----
+    Route::group(['middleware' => ['role:executor']], function () {
+        Route::get('/servicos-executor', EmployeeServicesManager::class)->name('servicos-executor');
     });
 });

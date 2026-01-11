@@ -34,8 +34,13 @@ class Login extends Component
         if (Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
             session()->regenerate();
 
-            // Redireciona para o dashboard ou rota pretendida
-            return redirect()->intended('/');
+            $user = Auth::user();
+
+            if ($user->hasRole('executor')) {
+                return redirect()->to('/servicos-executor');
+            }
+
+            return redirect()->to('/');
         }
 
         // Se falhar, adiciona erro ao campo email

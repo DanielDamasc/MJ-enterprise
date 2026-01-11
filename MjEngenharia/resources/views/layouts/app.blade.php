@@ -20,12 +20,14 @@
                 <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
 
                     {{-- NAVIGATE OPTIONS --}}
-                    <a href="/" wire:navigate
-                        class="flex items-center px-4 py-3 rounded-lg transition-colors
-                            {{ request()->is('/') ? 'bg-secondary-700 text-white' : 'text-primary-200 hover:bg-primary-800 hover:text-white' }}">
-                        <x-heroicon-o-home class="w-5 h-5 mr-2" />
-                        <span class="font-semibold text-md">Início</span>
-                    </a>
+                    @role('adm')
+                        <a href="/" wire:navigate
+                            class="flex items-center px-4 py-3 rounded-lg transition-colors
+                                {{ request()->is('/') ? 'bg-secondary-700 text-white' : 'text-primary-200 hover:bg-primary-800 hover:text-white' }}">
+                            <x-heroicon-o-home class="w-5 h-5 mr-2" />
+                            <span class="font-semibold text-md">Início</span>
+                        </a>
+                    @endrole
 
                     @role('adm')
                         <a href="/executores" wire:navigate
@@ -60,6 +62,15 @@
                                 {{ request()->is('servicos') ? 'bg-secondary-700 text-white' : 'text-primary-200 hover:bg-primary-800 hover:text-white' }}">
                             <x-heroicon-s-clipboard-document-check class="w-5 h-5 mr-2" />
                             <span class="font-semibold text-md">Ordens de Serviço</span>
+                        </a>
+                    @endrole
+
+                    @role('executor')
+                        <a href="/servicos-executor" wire:navigate
+                            class="flex items-center px-4 py-3 rounded-lg transition-colors
+                                {{ request()->is('servicos-executor') ? 'bg-secondary-700 text-white' : 'text-primary-200 hover:bg-primary-800 hover:text-white' }}">
+                            <x-ionicon-calendar-sharp class="w-5 h-5 mr-2" />
+                            <span class="font-semibold text-md">Agendamentos</span>
                         </a>
                     @endrole
 
