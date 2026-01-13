@@ -13,18 +13,8 @@ class ClientSeeder extends Seeder
      */
     public function run(): void
     {
-        Client::create([
-            'cliente' => 'Tatiane Meira',
-            'contato' => 'Tatiane',
-            'telefone' => '38999999999',
-            'email' => 'tatiane@gmail.com'
-        ]);
-
-        Client::create([
-            'cliente' => 'Kênia Rocha',
-            'contato' => 'Daniel',
-            'telefone' => '38988888888',
-            'email' => null
-        ]);
+        Client::factory()
+            ->count(5)
+            ->create();
     }
 }
