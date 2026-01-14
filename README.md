@@ -4,7 +4,8 @@
 
 **Project Name:** MJ Engenharia
 
-**Purpose:** Sistema web completo para gerenciar clientes, equipamentos, técnicos (executores), e ordens de serviço. Notificação de clientes, geração de relatórios, construção de dashboards, e otimização geral dos processos da MJ Engenharia. 
+**Purpose:** Sistema web completo para gerenciar clientes, equipamentos, executores, e ordens de serviço.
+Notificações de clientes, geração de relatórios e dashboards, e otimização dos processos da MJ Engenharia. 
 
 **Target Users:**
 - Administradores
@@ -19,7 +20,7 @@
 1. **Automatizar o controle dos serviços** para os administradores
 2. **Automatizar a visualização de agendamentos** para os executores
 3. **Automatizar envio de notificações** para os clientes
-4. **Automatizar a produção de relatórios**
+4. **Automatizar a produção de relatórios e documentos**
 
 ---
 
@@ -29,7 +30,7 @@
 - PHP 8.2+
 - Composer
 - Node.js & NPM
-- MySQL/PostgreSQL
+- MySQL
 
 ### Quick Start
 ```bash
@@ -46,12 +47,6 @@ cp .env.example .env
 php artisan key:generate
 
 # Configure database in .env
-# DB_CONNECTION=mysql
-# DB_HOST=127.0.0.1
-# DB_PORT=3306
-# DB_DATABASE=mj_engenharia
-# DB_USERNAME=root
-# DB_PASSWORD=
 
 # Run migrations & seeders
 php artisan migrate --seed
@@ -81,8 +76,8 @@ php artisan serve
 
 ### Priority 2 (Medium Impact)
 - [ ] **Dashboard com KPIs**
-  - Dados Gerais
-  - Gráficos Informativos
+  - Informações gerais do sistema
+  - Gráficos com informações relevantes
 
 - [ ] **Histórico de Alterações**
   - Auditoria de ações (quem fez o quê)
@@ -92,10 +87,6 @@ php artisan serve
   - Instalável em smartphones
 
 ### Priority 3 (Nice to Have)
-- [ ] **Calendário Visual**
-  - Visualização de agendamentos em calendário
-  - Drag & drop para reagendar
-
 - [ ] **Geolocalização**
   - Mapa com localizações de serviços
   - Otimização de rotas para técnicos
@@ -109,6 +100,5 @@ php artisan serve
 ---
 
 **Last Updated:** 13/01/2026
-**Version:** 1.0
 **Laravel Version:** 12.0
 **PHP Version:** 8.2+
