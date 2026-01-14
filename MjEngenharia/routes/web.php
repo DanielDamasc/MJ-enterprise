@@ -7,6 +7,7 @@ use App\Livewire\EmployeeServicesManager;
 use App\Livewire\ForgotPassword;
 use App\Livewire\Inicio;
 use App\Livewire\Login;
+use App\Livewire\LogsManager;
 use App\Livewire\ResetPassword;
 use App\Livewire\ServicesManager;
 use Illuminate\Support\Facades\Auth;
@@ -37,6 +38,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/clientes', ClientsManager::class)->name('clientes');
         Route::get('/ar-condicionados', AirConditionersManager::class)->name('ar-condicionados');
         Route::get('/servicos', ServicesManager::class)->name('servicos');
+        Route::get('/logs', LogsManager::class)->name('logs');
     });
 
     // ----- ROTAS DO EXECUTOR -----

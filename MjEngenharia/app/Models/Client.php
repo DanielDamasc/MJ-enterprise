@@ -4,11 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Client extends Model
 {
-    use HasFactory;
-    
+    use HasFactory, LogsActivity;
+
     protected $table = 'clients';
 
     protected $fillable = [
@@ -17,6 +19,12 @@ class Client extends Model
         'telefone',
         'email'
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable();
+    }
 
     protected static function booted()
     {

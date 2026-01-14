@@ -84,6 +84,15 @@
                     </a>
                 @endrole
 
+                @role('adm')
+                    <a href="/logs" wire:navigate
+                        class="flex items-center px-4 py-3 rounded-lg transition-colors
+                            {{ request()->is('logs') ? 'bg-secondary-700 text-white' : 'text-primary-200 hover:bg-primary-800 hover:text-white' }}">
+                        <x-heroicon-s-folder class="w-5 h-5 mr-2" />
+                        <span class="font-semibold text-md">Logs</span>
+                    </a>
+                @endrole
+
                 @role('executor')
                     <a href="/servicos-executor" wire:navigate
                         class="flex items-center px-4 py-3 rounded-lg transition-colors
