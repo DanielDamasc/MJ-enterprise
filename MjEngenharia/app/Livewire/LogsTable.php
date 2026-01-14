@@ -32,7 +32,7 @@ final class LogsTable extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return ActivityLog::query();
+        return ActivityLog::query()->with('causer');
     }
 
     public function relationSearch(): array
@@ -52,7 +52,7 @@ final class LogsTable extends PowerGridComponent
             ->add('causer_type')
             ->add('causer_id')
             ->add('causer_name', function(ActivityLog $model) {
-                return $model->causerName();
+                return $model->causer_label;
             })
             ->add('properties')
             ->add('updated_at');

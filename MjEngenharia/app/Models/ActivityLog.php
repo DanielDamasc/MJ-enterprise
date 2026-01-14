@@ -5,6 +5,7 @@ namespace App\Models;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class ActivityLog extends Model
 {
@@ -25,27 +26,13 @@ class ActivityLog extends Model
         'properties' => 'array',
     ];
 
-    public function causerName()
+    public function causer(): MorphTo
     {
-        // 1. Get causer Id
-        $causerId = $this->causer_id;
+        return $this->morphTo();
+    }
 
-        // 2. Get user instance and classname
-        $user = User::where('id', $causerId)->first();
-
-        // 3. Verify if the causer is a user
-        if ($user) {
-            $className = get_class($user);
-
-            // 3. Verify classname and get causer Name
-            if ($this->causer_type == $className) {
-                $causerName = $user->name;
-            }
-        } else {
-            throw new Exception('O causador da operação não é um usuário.');
-        }
-
-        // 4. Return causer Name
-        return $causerName;
+    public function getCauserLabelAttribute()
+    {
+        return $this->causer?->name ?? 'Usuário Excluído';
     }
 }
