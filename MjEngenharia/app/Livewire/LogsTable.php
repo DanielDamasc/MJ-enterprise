@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\ActivityLog;
+use Blade;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use PowerComponents\LivewirePowerGrid\Button;
@@ -95,7 +96,7 @@ final class LogsTable extends PowerGridComponent
                 ->sortable()
                 ->searchable(),
 
-            // Column::action('Action')
+            Column::action('Action')
         ];
     }
 
@@ -111,11 +112,15 @@ final class LogsTable extends PowerGridComponent
         $this->js('alert('.$rowId.')');
     }
 
-    // public function actions(ActivityLog $row): array
-    // {
-    //     return [
-    //     ];
-    // }
+    public function actions(ActivityLog $row): array
+    {
+        return [
+            Button::add('show')
+                ->slot(Blade::render('<x-heroicon-s-eye class="w-5 h-5" />'))
+                ->class('text-primary-600 hover:text-primary-800 p-1 mr-2 transition-colors')
+                ->dispatchTo('logs-manager', 'show', ['id' => $row->id]),
+        ];
+    }
 
     /*
     public function actionRules($row): array

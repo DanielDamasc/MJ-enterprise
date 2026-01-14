@@ -8,10 +8,12 @@ use DB;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class OrderService extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, LogsActivity;
     protected $table = 'order_services';
 
     protected $fillable = [
@@ -34,6 +36,12 @@ class OrderService extends Model
         'status' => ServiceStatus::class,
         'detalhes' => 'array',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable();
+    }
 
     // 1. Método para concluir service
     public function concluir()
