@@ -45,6 +45,9 @@
                             </h4>
                             @foreach ($createdData as $key => $value)
                                 @if (is_array($value) || is_object($value))
+                                    <label class="block mb-1 text-sm font-medium text-primary-700">
+                                        {{ $key }}
+                                    </label>
                                     <pre class="text-xs bg-gray-100 p-2 rounded">{{ json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>
                                 @else
                                     <div>
@@ -65,6 +68,9 @@
                             </h4>
                             @foreach ($deletedData as $key => $value)
                                 @if (is_array($value) || is_object($value))
+                                    <label class="block mb-1 text-sm font-medium text-primary-700">
+                                        {{ $key }}
+                                    </label>
                                     <pre class="text-xs bg-gray-100 p-2 rounded">{{ json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}</pre>
                                 @else
                                     <div>

@@ -21,6 +21,34 @@ class LogsManager extends Component
         $this->showModal = false;
     }
 
+    private function findDifferences(array $old, array $new): array
+    {
+        // Variáveis que vão receber as diff
+        $diffOld = [];
+        $diffNew = [];
+
+        // Coloca a união de todas as chaves possíveis em um array
+        $allKeys = array_unique(array_merge(array_keys($old), array_keys($new)));
+
+        // Itera sobre todas as chaves
+        foreach ($allKeys as $key) {
+            // Armazena os valores antigos e novos
+            $valueOld = $old[$key] ?? null;
+            $valueNew = $new[$key] ?? null;
+
+            // Faz a comparação dos valores, serve para array e para string
+            if ($valueOld !== $valueNew) {
+                $diffOld[$key] = $valueOld;
+                $diffNew[$key] = $valueNew;
+            }
+        }
+
+        return [
+            'old' => $diffOld,
+            'new' => $diffNew
+        ];
+    }
+
     #[On('show')]
     public function show($id)
     {
@@ -60,12 +88,11 @@ class LogsManager extends Component
             $oldData = $log->properties["old"];
             $newData = $log->properties["attributes"];
 
-            $newAttr = array_diff($newData, $oldData);
-            $oldAttr = array_diff($oldData, $newData);
+            $diff = $this->findDifferences($oldData, $newData);
 
             $this->updatedData = [
-                'old' => $oldAttr,
-                'new' => $newAttr,
+                'old' => $diff['old'],
+                'new' => $diff['new'],
             ];
         }
 
