@@ -43,8 +43,8 @@
                     <a href="/" wire:navigate
                         class="flex items-center px-4 py-3 rounded-lg transition-colors
                             {{ request()->is('/') ? 'bg-secondary-700 text-white' : 'text-primary-200 hover:bg-primary-800 hover:text-white' }}">
-                        <x-heroicon-o-home class="w-5 h-5 mr-2" />
-                        <span class="font-semibold text-md">Início</span>
+                        <x-heroicon-s-home class="w-5 h-5 mr-2" />
+                        <span class="font-semibold text-md">Visão Geral</span>
                     </a>
                 @endrole
 
@@ -52,7 +52,7 @@
                     <a href="/executores" wire:navigate
                         class="flex items-center px-4 py-3 rounded-lg transition-colors
                             {{ request()->is('executores') ? 'bg-secondary-700 text-white' : 'text-primary-200 hover:bg-primary-800 hover:text-white' }}">
-                        <x-ionicon-build-sharp class="w-5 h-5 mr-2" />
+                        <x-heroicon-s-briefcase class="h-5 w-5 mr-2" />
                         <span class="font-semibold text-md">Executores</span>
                     </a>
                 @endrole
@@ -61,7 +61,7 @@
                     <a href="/clientes" wire:navigate
                         class="flex items-center px-4 py-3 rounded-lg transition-colors
                             {{ request()->is('clientes') ? 'bg-secondary-700 text-white' : 'text-primary-200 hover:bg-primary-800 hover:text-white' }}">
-                        <x-heroicon-o-users class="w-5 h-5 mr-2" />
+                        <x-heroicon-s-users class="w-5 h-5 mr-2" />
                         <span class="font-semibold text-md">Clientes</span>
                     </a>
                 @endrole
