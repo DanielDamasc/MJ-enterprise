@@ -95,7 +95,6 @@
                                                 <div class="flex items-center h-5">
                                                     <input type="checkbox" wire:model="ac_ids" value="{{ $ac->id }}"
                                                         class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                                                        @disabled($showEdit)
                                                     >
                                                 </div>
                                                 <div class="text-sm">

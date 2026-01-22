@@ -8,6 +8,7 @@ use App\Models\Client;
 use App\Models\OrderService;
 use App\Models\User;
 use Carbon\Carbon;
+use DB;
 use Exception;
 use Illuminate\Validation\Rules\Enum;
 use Livewire\Attributes\Layout;
@@ -100,6 +101,12 @@ class ServicesManager extends Component
         return Carbon::parse($value)->addDays(180);
     }
 
+    protected function calculateTotal()
+    {
+        $qntACs = count($this->ac_ids);
+        return $qntACs * $this->valor;
+    }
+
     public function closeModal()
     {
         $this->showCreate = $this->showDelete = $this->showEdit = $this->showConfirm = $this->showCancel = false;
@@ -127,36 +134,43 @@ class ServicesManager extends Component
     {
         $this->validate();
 
-        foreach ($this->ac_ids as $acId) {
-            OrderService::create([
-                'ac_id' => $acId,
+        // 1. Calculando o valor total do serviço.
+        $total = $this->calculateTotal();
+
+        DB::transaction(function() use ($total) {
+            $os = OrderService::create([
                 'cliente_id' => $this->cliente_id,
                 'executor_id' => $this->executor_id,
-
                 'tipo' => $this->tipo,
                 'data_servico' => $this->data_servico,
-                'valor' => $this->valor,
                 'status' => $this->status,
-                'detalhes' => $this->detalhes
+                'detalhes' => $this->detalhes,
+                'total' => $total
             ]);
 
-            // Atualiza a data da próxima higienização se o serviço atual estiver concluído.
-            if ($this->tipo == 'higienizacao' && $this->status == ServiceStatus::CONCLUIDO->value) {
-                $ac = AirConditioning::find($acId);
-                if ($ac) {
-                    $ac->prox_higienizacao = $this->nextSanitation($this->data_servico);
-                    $ac->save();
-                }
+            // 2. Prepara os dados para inserir na tabela pivô.
+            $pivotData = [];
+            foreach ($this->ac_ids as $acId) {
+                $pivotData[$acId] = ['valor' => $this->valor];
             }
 
-        }
+            // dd($pivotData);
+
+            // 3. Salva os dados na tabela pivô.
+            $os->airConditioners()->attach($pivotData);
+
+            // 4. Lógica de atualizar a próxima higienização.
+            if ($this->tipo == 'higienizacao' && $this->status == ServiceStatus::CONCLUIDO->value) {
+                AirConditioning::whereIn('id', $this->ac_ids)
+                    ->update([
+                        'prox_higienizacao' => $this->nextSanitation($this->data_servico)
+                    ]);
+            }
+        });
 
         $this->closeModal();
 
-        $qtd = count($this->ac_ids);
-        $msg = $qtd > 1 ? "$qtd Ordens de serviço criadas com sucesso!" : "Ordem de serviço criada com sucesso!";
-
-        $this->dispatch('notify-success', $msg);
+        $this->dispatch('notify-success', 'Ordem de Serviço criada com sucesso!');
         $this->dispatch('service-refresh');
     }
 
@@ -265,21 +279,24 @@ class ServicesManager extends Component
         $this->showEdit = true;
 
         if ($this->serviceId) {
-            $service = OrderService::find($this->serviceId);
+            $service = OrderService::with('airConditioners')->find($this->serviceId);
 
             $this->acs_disponiveis = AirConditioning::where('cliente_id', $service->cliente_id)->get();
             $this->cliente_label = $service->client->cliente ?? 'Cliente não encontrado';
             $this->status_label = $service->status->label();
             $this->tipo_label = $service->tipo;
 
-            $this->ac_ids = [$service->ac_id];
             $this->cliente_id = $service->cliente_id;
             $this->executor_id = $service->executor_id;
             $this->tipo = $service->tipo;
             $this->data_servico = $service->data_servico;
-            $this->valor = $service->valor;
             $this->status = $service->status->value;
             $this->detalhes = $service->detalhes;
+
+            $this->ac_ids = $service->airConditioners->pluck('id')->toArray();
+            // Tenta pegar o valor unitário do primeiro AC na pivot.
+            $firstAc = $service->airConditioners->first();
+            $this->valor = $firstAc ? $firstAc->pivot->valor : 0;
         }
     }
 
@@ -288,18 +305,34 @@ class ServicesManager extends Component
     {
         $this->validate();
 
+        // 1. Calculando o valor total do serviço.
+        $total = $this->calculateTotal();
+
         $service = OrderService::find($this->serviceId);
 
         // Verifica se o status é agendado.
         if ($service->status === ServiceStatus::AGENDADO) {
 
-            $service->update([
-                // Somente estes atributos podem ser editados.
-                'executor_id' => $this->executor_id,
-                'data_servico' => $this->data_servico,
-                'valor' => $this->valor,
-                'detalhes' => $this->detalhes,
-            ]);
+            DB::transaction(function () use ($service, $total) {
+
+                $service->update([
+                    // Somente alguns atributos podem ser atualizados.
+                    'executor_id' => $this->executor_id,
+                    'data_servico' => $this->data_servico,
+                    'detalhes' => $this->detalhes,
+                    'total' => $total
+                ]);
+
+                // 2. Prepara os dados para atualizar a tabela pivô.
+                $pivotData = [];
+                foreach ($this->ac_ids as $acId) {
+                    $pivotData[$acId] = ['valor' => $this->valor];
+                }
+
+                // 3. Atualiza os dados da tabela pivô.
+                $service->airConditioners()->sync($pivotData);
+
+            });
 
             $this->dispatch('notify-success', 'Dados atualizados com sucesso!');
         } else {

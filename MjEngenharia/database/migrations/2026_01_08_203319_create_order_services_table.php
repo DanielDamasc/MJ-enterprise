@@ -15,13 +15,12 @@ return new class extends Migration
             $table->id();
 
             // onDelete restrict para prevenir deletar um ar-condicionado que tenha service.
-            $table->foreignId('ac_id')->constrained('air_conditioners')->onDelete('restrict');
             $table->foreignId('cliente_id')->constrained('clients')->onDelete('restrict');
             $table->foreignId('executor_id')->constrained('users');
 
             $table->string('tipo');
             $table->date('data_servico');
-            $table->decimal('valor', 10, 2);
+            $table->decimal('total', 10, 2);
             $table->string('status')->default('agendado');
 
             $table->json('detalhes')->nullable();

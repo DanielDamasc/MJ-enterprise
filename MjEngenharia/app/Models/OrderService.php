@@ -18,14 +18,13 @@ class OrderService extends Model
 
     protected $fillable = [
         // Chaves Estrangeiras
-        'ac_id',
         'cliente_id',
         'executor_id',
 
         // Atributos
         'tipo',
         'data_servico',
-        'valor',
+        'total', // Valor total, persistido como soma dos valores unitários
         'status', // enum
 
         // Campo Json para atributos específicos
@@ -78,9 +77,15 @@ class OrderService extends Model
         return Carbon::parse($dataServico)->addDays(180);
     }
 
-    public function air_conditioner()
+    public function airConditioners()
     {
-        return $this->belongsTo(AirConditioning::class, 'ac_id');
+        return $this->belongsToMany(AirConditioning::class,
+            'order_service_items',
+            'order_service_id',
+            'air_conditioning_id',
+            'id',
+            'id')
+            ->withPivot('valor');
     }
 
     public function client()

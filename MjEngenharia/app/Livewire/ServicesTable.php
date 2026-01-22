@@ -43,15 +43,12 @@ final class ServicesTable extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return OrderService::query()->with(['air_conditioner', 'client', 'user']);
+        return OrderService::query()->with(['client', 'user']);
     }
 
     public function relationSearch(): array
     {
         return [
-            'air_conditioner' => [
-                'codigo_ac',
-            ],
             'client' => [
                 'cliente',
             ],
@@ -66,9 +63,6 @@ final class ServicesTable extends PowerGridComponent
         return PowerGrid::fields()
             ->add('id')
             ->add('ac_id')
-            ->add('codigo_ac', function (OrderService $model) {
-                return $model->air_conditioner->codigo_ac ?? '-';
-            })
             ->add('cliente_id')
             ->add('cliente', function (OrderService $model) {
                 return $model->client->cliente ?? '-';
@@ -79,7 +73,7 @@ final class ServicesTable extends PowerGridComponent
             })
             ->add('tipo')
             ->add('data_servico_formatted', fn (OrderService $model) => Carbon::parse($model->data_servico)->format('d/m/Y'))
-            ->add('valor')
+            ->add('total')
             ->add('status_formatted', function (OrderService $model) {
                 $color = $model->status->color();
                 $label = $model->status->label();
@@ -101,8 +95,6 @@ final class ServicesTable extends PowerGridComponent
     public function columns(): array
     {
         return [
-            Column::make('Código AC', 'codigo_ac'),
-
             Column::make('Cliente', 'cliente'),
 
             Column::make('Executor', 'name'),
@@ -114,7 +106,7 @@ final class ServicesTable extends PowerGridComponent
             Column::make('Data do Serviço', 'data_servico_formatted', 'data_servico')
                 ->sortable(),
 
-            Column::make('Valor', 'valor')
+            Column::make('Total', 'total')
                 ->sortable()
                 ->searchable(),
 
