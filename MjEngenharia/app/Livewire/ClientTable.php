@@ -49,7 +49,8 @@ final class ClientTable extends PowerGridComponent
             ->add('cliente')
             ->add('contato')
             ->add('telefone')
-            ->add('email');
+            ->add('email')
+            ->add('tipo');
     }
 
     public function columns(): array

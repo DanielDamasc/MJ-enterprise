@@ -15,6 +15,7 @@ class ClientsManager extends Component
     public $contato = '';
     public $telefone = '';
     public $email = '';
+    public $tipo = '';
 
     public $showDetails = false;
     public $showCreate = false;
@@ -35,6 +36,11 @@ class ClientsManager extends Component
                 'email',
                 Rule::unique('clients', 'email')->ignore($this->clientId),
             ],
+            'tipo' => [
+                'required',
+                'string',
+                Rule::in(['residencial', 'comercial']),
+            ]
         ];
     }
 
@@ -45,7 +51,7 @@ class ClientsManager extends Component
         'telefone.unique' => 'O telefone já foi cadastrado.',
         'email.email' => 'Informe um endereço de email válido.',
         'email.unique' => 'O email já foi cadastrado.',
-
+        'tipo.required' => 'O campo tipo é obrigatório.',
     ];
 
     protected function normalizeTelefone($tel)
@@ -80,7 +86,7 @@ class ClientsManager extends Component
 
     public function openCreate()
     {
-        $this->reset(['cliente', 'contato', 'telefone', 'email', 'clientId']);
+        $this->reset(['cliente', 'contato', 'telefone', 'email', 'tipo', 'clientId']);
         $this->resetValidation();
         $this->showCreate = true;
     }
@@ -110,6 +116,7 @@ class ClientsManager extends Component
             'contato' => $this->contato,
             'telefone' => $telLimpo,
             'email' => $this->email,
+            'tipo' => $this->tipo,
         ]);
 
         $this->closeModal();
@@ -160,6 +167,7 @@ class ClientsManager extends Component
             $this->contato = $client->contato;
             $this->telefone = $client->telefone;
             $this->email = $client->email ?? ''; // E-mail pode ser null.
+            $this->tipo = $client->tipo;
         }
     }
 
@@ -193,6 +201,7 @@ class ClientsManager extends Component
                 'contato' => $this->contato,
                 'telefone' => $telLimpo,
                 'email' => $this->email,
+                'tipo' => $this->tipo,
             ]);
         }
 

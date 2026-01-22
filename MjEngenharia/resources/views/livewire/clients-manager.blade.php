@@ -84,6 +84,18 @@
                                         @error('telefone') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                                     </div>
                                 </div>
+
+                                <div>
+                                    <label class="block mb-1 text-sm font-medium text-primary-700">Tipo do Cliente
+                                        <span class="text-red-500">*</span>
+                                    </label>
+                                    <select wire:model="tipo" class="bg-primary-50 border border-primary-200 text-primary-900 text-sm rounded-lg focus:ring-secondary-500 focus:border-secondary-500 block w-full p-2.5">
+                                        <option value="">Selecione...</option>
+                                        <option value="residencial">Residencial</option>
+                                        <option value="comercial">Comercial</option>
+                                    </select>
+                                    @error('tipo') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                </div>
                             </div>
 
                         </div>

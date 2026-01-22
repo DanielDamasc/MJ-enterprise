@@ -2,7 +2,9 @@
 
 namespace Database\Factories;
 
+use Arr;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Client>
@@ -21,6 +23,7 @@ class ClientFactory extends Factory
             'contato' => fake()->name(),
             'telefone' => $this->gerarTelefoneCelular(),
             'email' => fake()->unique()->safeEmail(),
+            'tipo' => Arr::random(['residencial', 'comercial'])
         ];
     }
 

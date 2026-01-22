@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('contato'); // Pessoa de contato
             $table->string('telefone', 11); // Tamanho padrão de 11 para telefone
             $table->string('email')->nullable(); // Email pode ser nulo
+            $table->string('tipo'); // residencial ou comercial
 
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();

@@ -17,7 +17,8 @@ class Client extends Model
         'cliente',
         'contato',
         'telefone',
-        'email'
+        'email',
+        'tipo' // residencial ou comercial
     ];
 
     public function getActivitylogOptions(): LogOptions
