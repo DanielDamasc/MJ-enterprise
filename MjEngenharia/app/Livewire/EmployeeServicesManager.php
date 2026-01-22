@@ -11,6 +11,24 @@ use Livewire\Component;
 
 class EmployeeServicesManager extends Component
 {
+    public $showEquipmentsModal = false;
+    public $selectedService = null;
+
+    public function showEquipments($serviceId)
+    {
+        $this->selectedService = OrderService::with(['airConditioners' => function($query) {
+            $query->orderBy('codigo_ac');
+        }])->find($serviceId);
+
+        $this->showEquipmentsModal = true;
+    }
+
+    public function closeEquipments()
+    {
+        $this->showEquipmentsModal = false;
+        $this->selectedService = null;
+    }
+
     protected function nextSanitation($value)
     {
         return Carbon::parse($value)->addDays(180);
@@ -40,7 +58,7 @@ class EmployeeServicesManager extends Component
     {
         $user = auth()->user();
 
-        $services = OrderService::with(['air_conditioner.address', 'client'])
+        $services = OrderService::with(['airConditioners.address', 'client'])
             ->where('executor_id', $user->id)
             ->where('status', ServiceStatus::AGENDADO->value)
             ->orderBy('data_servico', 'asc')
