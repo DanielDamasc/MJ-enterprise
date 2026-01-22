@@ -96,11 +96,6 @@ class ServicesManager extends Component
         }
     }
 
-    protected function nextSanitation($value)
-    {
-        return Carbon::parse($value)->addDays(180);
-    }
-
     protected function calculateTotal()
     {
         $qntACs = count($this->ac_ids);
@@ -154,17 +149,16 @@ class ServicesManager extends Component
                 $pivotData[$acId] = ['valor' => $this->valor];
             }
 
-            // dd($pivotData);
-
             // 3. Salva os dados na tabela pivô.
             $os->airConditioners()->attach($pivotData);
 
             // 4. Lógica de atualizar a próxima higienização.
             if ($this->tipo == 'higienizacao' && $this->status == ServiceStatus::CONCLUIDO->value) {
-                AirConditioning::whereIn('id', $this->ac_ids)
-                    ->update([
-                        'prox_higienizacao' => $this->nextSanitation($this->data_servico)
-                    ]);
+                $proxData = $os->proximaHigienizacao($this->data_servico);
+                
+                $os->airConditioners()->update([
+                    'prox_higienizacao' => $proxData
+                ]);
             }
         });
 

@@ -60,7 +60,7 @@
                                     Equipamentos
                                 </h4>
                                 <span class="text-xs font-bold bg-blue-50 text-blue-700 px-2 py-1 rounded-full">
-                                    Total: {{ $service->airConditioners->count() }}
+                                    Qtd: {{ $service->airConditioners->count() }}
                                 </span>
                             </div>
 

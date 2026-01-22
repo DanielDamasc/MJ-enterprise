@@ -72,9 +72,19 @@ class OrderService extends Model
     }
 
     // 2. Método para calcular a próxima higienização
-    private function proximaHigienizacao($dataServico)
+    public function proximaHigienizacao($dataServico)
     {
-        return Carbon::parse($dataServico)->addDays(180);
+        if (!$this->client) {
+            throw new Exception('Não há Cliente vinculado à Ordem de Serviço.');
+        }
+
+        if ($this->client->tipo == 'comercial') {
+            return Carbon::parse($dataServico)->addMonths(6);
+        }
+        if ($this->client->tipo == 'residencial') {
+            return Carbon::parse($dataServico)->addMonths(12);
+        }
+        throw new Exception('Erro ao calcular a data da próxima higienização.');
     }
 
     public function airConditioners()
