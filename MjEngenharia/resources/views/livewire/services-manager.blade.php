@@ -146,6 +146,9 @@
                                     <select wire:model.live="tipo" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
                                         <option value="">Selecione...</option>
                                         <option value="higienizacao">Higienização</option>
+                                        <option value="manutencao">Manutenção</option>
+                                        <option value="carga_gas">Carga de Gás</option>
+                                        <option value="correcao_vazamento">Correção de Vazamento</option>
                                     </select>
                                     @error('tipo') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                                 @endif
@@ -195,7 +198,7 @@
                                     <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 animate-fade-in-down">
                                         <h5 class="text-sm font-bold text-blue-800 mb-3 flex items-center">
                                             <x-heroicon-o-clipboard-document-list class="w-4 h-4 mr-2"/>
-                                            Checklist: {{ ucfirst($tipo) }}
+                                            Checklist: {{ $tipo }}
                                         </h5>
 
                                         @if($tipo === 'higienizacao')
