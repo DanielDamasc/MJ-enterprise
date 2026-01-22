@@ -21,6 +21,7 @@ class AirConditionersManager extends Component
     public $prox_higienizacao = '';
     public $codigo_ac = '';
     public $ambiente = '';
+    public $modelo = '';
     public $marca = '';
     public $potencia = 0;
     public $tipo = '';
@@ -46,7 +47,8 @@ class AirConditionersManager extends Component
             'cliente_id' => 'required|integer|exists:clients,id',
             'codigo_ac' => 'required|string|max:50',
             'ambiente' => 'nullable|string|max:100',
-            'marca' => 'required|string|max:50',
+            'modelo' => 'nullable|string|max:100',
+            'marca' => 'nullable|string|max:50',
             'potencia' => 'required|integer|min:1',
 
             'tipo' => ['required', Rule::in(['hw', 'k7', 'piso_teto'])],
@@ -66,7 +68,6 @@ class AirConditionersManager extends Component
         return [
             'cliente_id.required' => 'O campo cliente é obrigatório.',
             'codigo_ac.required' => 'O campo código é obrigatório.',
-            'marca.required' => 'O campo marca é obrigatório.',
             'potencia.required' => 'O campo potencia é obrigatório.',
             'tipo.required' => 'O campo tipo é obrigatório.',
 
@@ -114,6 +115,7 @@ class AirConditionersManager extends Component
             'cliente_id',
             'codigo_ac',
             'ambiente',
+            'modelo',
             'marca',
             'potencia',
             'tipo',
@@ -140,6 +142,7 @@ class AirConditionersManager extends Component
                 'cliente_id' => $this->cliente_id,
                 'codigo_ac' => $this->codigo_ac,
                 'ambiente' => $this->ambiente,
+                'modelo' => $this->modelo,
                 'marca' => $this->marca,
                 'potencia' => $this->potencia,
                 'tipo' => $this->tipo,
@@ -208,7 +211,8 @@ class AirConditionersManager extends Component
             $this->cliente_id = $ac->cliente_id;
             $this->codigo_ac = $ac->codigo_ac;
             $this->ambiente = $ac->ambiente ?? '';
-            $this->marca = $ac->marca;
+            $this->modelo = $ac->modelo ?? '';
+            $this->marca = $ac->marca ?? '';
             $this->potencia = $ac->potencia;
             $this->tipo = $ac->tipo;
 
@@ -238,6 +242,7 @@ class AirConditionersManager extends Component
                     'cliente_id' => $this->cliente_id,
                     'codigo_ac' => $this->codigo_ac,
                     'ambiente' => $this->ambiente,
+                    'modelo' => $this->modelo,
                     'marca' => $this->marca,
                     'potencia' => $this->potencia,
                     'tipo' => $this->tipo,

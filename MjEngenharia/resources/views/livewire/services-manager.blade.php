@@ -99,7 +99,7 @@
                                                 </div>
                                                 <div class="text-sm">
                                                     <p class="font-bold text-gray-800 group-hover:text-blue-700 transition-colors">{{ $ac->codigo_ac }}</p>
-                                                    <p class="text-gray-600 text-xs mt-0.5">{{ $ac->ambiente }} • {{ $ac->marca }} • {{ $ac->potencia }} BTUs</p>
+                                                    <p class="text-gray-600 text-xs mt-0.5">{{ $ac->ambiente }} • {{ $ac->marca ? $ac->marca : 'N/A' }} • {{ $ac->potencia }} BTUs</p>
                                                 </div>
                                             </label>
                                         @endforeach

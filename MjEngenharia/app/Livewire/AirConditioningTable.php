@@ -56,6 +56,7 @@ final class AirConditioningTable extends PowerGridComponent
             })
             ->add('codigo_ac')
             ->add('ambiente')
+            ->add('modelo')
             ->add('marca')
             ->add('potencia')
             ->add('tipo')

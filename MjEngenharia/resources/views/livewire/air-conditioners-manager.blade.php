@@ -65,9 +65,13 @@
                             </div>
 
                             <div class="col-span-1 md:col-span-1 lg:col-span-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Marca
-                                    <span class="text-red-500">*</span>
-                                </label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Modelo</label>
+                                <input type="text" wire:model="modelo" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
+                                @error('modelo') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="col-span-1 md:col-span-1 lg:col-span-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Marca</label>
                                 <input type="text" wire:model="marca" placeholder="Ex: LG, Samsung" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
                                 @error('marca') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>

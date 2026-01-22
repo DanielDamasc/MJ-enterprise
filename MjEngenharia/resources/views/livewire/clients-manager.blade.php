@@ -174,7 +174,7 @@
                                             </div>
                                             <div>
                                                 <h4 class="font-bold text-gray-900 text-lg">{{ $ac->codigo_ac }}</h4>
-                                                <p class="text-xs text-gray-500 uppercase font-semibold tracking-wider">{{ $ac->marca }} • {{ $ac->tipo }}</p>
+                                                <p class="text-xs text-gray-500 uppercase font-semibold tracking-wider">{{ $ac->marca ? $ac->marca : 'N/A' }} • {{ $ac->tipo }}</p>
                                             </div>
                                         </div>
                                         <div class="text-right">

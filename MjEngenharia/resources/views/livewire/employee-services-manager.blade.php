@@ -70,7 +70,7 @@
                                 @foreach($service->airConditioners->take(3) as $ac)
                                     <div class="flex justify-between items-center text-sm">
                                         <div class="truncate pr-2">
-                                            <span class="font-bold text-gray-700">{{ $ac->marca }}</span>
+                                            <span class="font-bold text-gray-700">{{ $ac->marca ? $ac->marca : 'Marca N/A' }}</span>
                                             <span class="text-xs text-gray-500 block">{{ $ac->ambiente }}</span>
                                         </div>
                                     </div>
@@ -173,20 +173,19 @@
 
                                 <div class="flex-grow">
                                     <div class="flex justify-between">
-                                        {{-- modelo --}}
-                                        <h4 class="font-bold text-gray-800 text-sm">{{ $ac->marca }}</h4>
-                                        <span class="text-sm font-mono font-bold text-gray-500">
-                                            CÓDIGO: {{ $ac->codigo_ac }}
+                                        <h4 class="font-bold text-gray-800 text-sm">{{ $ac->marca ? $ac->marca : 'Marca N/A' }}</h4>
+                                        <span class="text-sm font-mono font-bold text-gray-600">
+                                            {{ $ac->codigo_ac }}
                                         </span>
                                     </div>
-                                    <p class="text-sm text-gray-600">
-                                        <span class="font-semibold text-blue-600 bg-blue-50 px-1 rounded text-xs uppercase">
+                                    <p class="text-sm text-gray-600 mt-1">
+                                        <span class="font-semibold text-blue-600 rounded text-xs uppercase">
                                             {{ $ac->ambiente }}
                                         </span>
-                                        • {{ $ac->potencia }} BTUs • {{ $ac->marca }}
+                                        • {{ $ac->potencia }} BTUs • {{ $ac->modelo ? $ac->modelo : 'Modelo N/A' }}
                                     </p>
                                     @if($ac->pivot->valor > 0)
-                                        <p class="text-sm text-green-600 mt-1">Valor Unitário: R$ {{ $ac->pivot->valor }}</p>
+                                        <p class="text-sm text-green-600 mt-1">Valor Unitário: <strong>R$ {{ $ac->pivot->valor }}</strong></p>
                                     @endif
                                 </div>
                             </div>
@@ -198,7 +197,7 @@
                 {{-- Rodapé do Modal --}}
                 <div class="p-4 border-t border-gray-100 flex justify-between items-center bg-gray-50">
                     <span class="text-sm font-bold text-gray-600">
-                        Qtd: {{ $selectedService->airConditioners->count() }} equipamentos
+                        Qtd: {{ $selectedService->airConditioners->count() }}
                     </span>
 
                     {{-- Botão para já concluir direto do modal se quiser --}}

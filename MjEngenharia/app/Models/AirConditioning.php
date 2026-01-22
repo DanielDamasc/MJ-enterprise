@@ -18,6 +18,7 @@ class AirConditioning extends Model
         // dados básicos do AC
         'codigo_ac',
         'ambiente',
+        'modelo',
         'marca',
         'potencia',
         'tipo',

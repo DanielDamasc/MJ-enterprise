@@ -20,7 +20,8 @@ return new class extends Migration
 
             $table->string('codigo_ac');
             $table->string('ambiente')->nullable();
-            $table->string('marca');
+            $table->string('modelo')->nullable();
+            $table->string('marca')->nullable();
             $table->integer('potencia');
             $table->string('tipo');
 
