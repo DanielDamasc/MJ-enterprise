@@ -34,7 +34,9 @@ final class AirConditioningTable extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return AirConditioning::query()->with(['client']);
+        return AirConditioning::query()
+            ->with(['client'])
+            ->orderByRaw('prox_higienizacao IS NULL ASC, prox_higienizacao ASC');
     }
 
     public function relationSearch(): array
@@ -60,6 +62,13 @@ final class AirConditioningTable extends PowerGridComponent
             ->add('marca')
             ->add('potencia')
             ->add('tipo')
+            ->add('prox_higienizacao_formatted', function (AirConditioning $model) {
+                if ($model->prox_higienizacao) {
+                    return Carbon::parse($model->prox_higienizacao)->format('d/m/Y');
+                }
+                return '--/--/----';
+            })
+            ->add('prox_higienizacao')
             ->add('created_at');
     }
 
@@ -84,9 +93,11 @@ final class AirConditioningTable extends PowerGridComponent
                 ->sortable()
                 ->searchable(),
 
-            Column::make('Tipo', 'tipo')
-                ->sortable()
-                ->searchable(),
+            // Column::make('Tipo', 'tipo')
+            //     ->sortable()
+            //     ->searchable(),
+
+            Column::make('Próxima Higienização', 'prox_higienizacao_formatted', 'prox_higienizacao'),
 
             Column::action('Action')
         ];
@@ -95,6 +106,10 @@ final class AirConditioningTable extends PowerGridComponent
     public function filters(): array
     {
         return [
+            Filter::datepicker('prox_higienizacao')
+                ->params([
+                    'locale'     => 'pt',
+                ]),
         ];
     }
 
