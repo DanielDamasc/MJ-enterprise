@@ -124,7 +124,7 @@
                             </button>
                         @endif
 
-                        <button wire:click="concluirService({{ $service->id }})" class="flex items-center justify-center bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition shadow-sm text-sm font-bold">
+                        <button wire:click="concluirTotal({{ $service->id }})" class="flex items-center justify-center bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition shadow-sm text-sm font-bold">
                             Concluir Serviço
                         </button>
                     </div>
@@ -165,13 +165,17 @@
                     {{-- Agrupamento opcional: Se quiser agrupar visualmente --}}
                     <div class="divide-y divide-gray-200">
                         @foreach($selectedService->airConditioners as $ac)
-                            <div class="p-4 bg-white flex items-start hover:bg-gray-50 transition">
+                            <label class="p-4 bg-white flex items-start hover:bg-gray-50 transition
+                                        {{ in_array($ac->id, $selectedEquipmentsIds) ? 'ring-1 ring-blue-500' : 'opacity-60 hover:opacity-100' }}">
                                 {{-- Checkbox Visual (apenas visual para ajudar o tecnico) --}}
                                 <div class="flex-shrink-0 mt-1 mr-3">
-                                    <div class="w-5 h-5 border-2 border-gray-300 rounded-full"></div>
+                                    <input type="checkbox"
+                                            value="{{ $ac->id }}"
+                                            wire:model.live="selectedEquipmentsIds"
+                                            class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
                                 </div>
 
-                                <div class="flex-grow">
+                                <div class="flex-grow select-none">
                                     <div class="flex justify-between">
                                         <h4 class="font-bold text-gray-800 text-sm">{{ $ac->marca ? $ac->marca : 'Marca N/A' }}</h4>
                                         <span class="text-sm font-mono font-bold text-gray-600">
@@ -188,7 +192,7 @@
                                         <p class="text-sm text-green-600 mt-1">Valor Unitário: <strong>R$ {{ $ac->pivot->valor }}</strong></p>
                                     @endif
                                 </div>
-                            </div>
+                            </label>
                         @endforeach
                     </div>
 
@@ -196,15 +200,30 @@
 
                 {{-- Rodapé do Modal --}}
                 <div class="p-4 border-t border-gray-100 flex justify-between items-center bg-gray-50">
-                    <span class="text-sm font-bold text-gray-600">
-                        Qtd: {{ $selectedService->airConditioners->count() }}
-                    </span>
+                    <div class="flex flex-col">
+                        <span class="text-sm text-gray-500">
+                            Resumo da Execução
+                        </span>
+                        <span class="font-bold text-gray-900 text-lg">
+                            {{ count($selectedEquipmentsIds) }} <span class="text-sm font-normal text-gray-500">/{{ $selectedService->airConditioners->count() }} equipamentos</span>
+                        </span>
+                    </div>
 
                     {{-- Botão para já concluir direto do modal se quiser --}}
-                    <button wire:click="concluirService({{ $selectedService->id }})"
-                            wire:confirm="Concluir todos os {{ $selectedService->airConditioners->count() }} itens?"
-                            class="text-white bg-secondary-500 hover:bg-secondary-600 focus:ring-4 focus:outline-none focus:ring-secondary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-all shadow-md hover:shadow-lg disabled:opacity-50">
-                        Concluir Serviço
+                    <button
+                        wire:click="concluirParcial"
+                        @if (count($selectedEquipmentsIds) == 0)
+                            disabled
+                        @endif
+                        class="text-white bg-secondary-500 hover:bg-secondary-600 focus:ring-4 focus:outline-none focus:ring-secondary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center transition-all shadow-md hover:shadow-lg disabled:opacity-50">
+                            <div class="flex items-center justify-center w-full">
+                                <x-heroicon-m-check class="w-5 h-5 mr-2"/>
+                                @if(count($selectedEquipmentsIds) < $selectedService->airConditioners->count())
+                                    Concluir Parcial
+                                @else
+                                    Concluir Total
+                                @endif
+                            </div>
                     </button>
                 </div>
             </div>
