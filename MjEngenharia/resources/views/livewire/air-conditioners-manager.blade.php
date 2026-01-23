@@ -57,12 +57,17 @@
                                 @error('cliente_id') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>
 
-                            <div class="col-span-1 md:col-span-1 lg:col-span-2">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Código Identificador
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <input type="text" wire:model="codigo_ac" placeholder="Ex: AC01" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
-                            </div>
+                            @if ($showEdit)
+                                <div class="col-span-1 md:col-span-1 lg:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Código Identificador
+                                    </label>
+                                    <input
+                                        type="text"
+                                        wire:model="codigo_ac"
+                                        readonly
+                                        class="h-10 bg-gray-200 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3 bg-gray-50">
+                                </div>
+                            @endif
 
                             <div class="col-span-1 md:col-span-1 lg:col-span-4">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Modelo</label>

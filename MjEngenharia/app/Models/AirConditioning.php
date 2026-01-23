@@ -33,12 +33,33 @@ class AirConditioning extends Model
             ->logFillable();
     }
 
-    // protected static function booted()
-    // {
-    //     static::deleting(function ($ac) {
-    //         $ac->address()->delete();
-    //     });
-    // }
+    public static function gerarCodigo($clienteId)
+    {
+        // 1. Pega o útlimo AC criado.
+        $ultimoAC = self::where('cliente_id', $clienteId)
+            ->latest('id')
+            ->first();
+
+        // 2. Caso nenhum tenha sido criado, quer dizer que é o primeiro.
+        if (!$ultimoAC) {
+            return 'AC1';
+        }
+
+        // 3. Tenta extrair apenas o número do código do último AC criado (ex: AC8 => 8).
+        $ultimoCod = (int) filter_var($ultimoAC->codigo_ac, FILTER_SANITIZE_NUMBER_INT);
+
+        // 4. Fallback com a contagem para caso a etapa anterior falhe.
+        if ($ultimoCod <= 0) {
+            $contagem = self::where('cliente_id', $clienteId)->count();
+            return 'AC' . ($contagem + 1);
+        }
+
+        // 4. Próximo número do código.
+        $proximoCod = $ultimoCod + 1;
+
+        // 5. Retorna o código.
+        return 'AC' . $proximoCod;
+    }
 
     public function client()
     {

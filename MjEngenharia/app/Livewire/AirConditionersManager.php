@@ -19,12 +19,12 @@ class AirConditionersManager extends Component
     // Atributos de Ar-condicionado.
     public $cliente_id = null;
     public $prox_higienizacao = '';
-    public $codigo_ac = '';
     public $ambiente = '';
     public $modelo = '';
     public $marca = '';
     public $potencia = 0;
     public $tipo = '';
+    public $codigo_ac = '';
 
     // Atributos de Endereço.
     public $cep = '';
@@ -45,7 +45,6 @@ class AirConditionersManager extends Component
     {
         return [
             'cliente_id' => 'required|integer|exists:clients,id',
-            'codigo_ac' => 'required|string|max:50',
             'ambiente' => 'nullable|string|max:100',
             'modelo' => 'nullable|string|max:100',
             'marca' => 'nullable|string|max:50',
@@ -67,7 +66,6 @@ class AirConditionersManager extends Component
     {
         return [
             'cliente_id.required' => 'O campo cliente é obrigatório.',
-            'codigo_ac.required' => 'O campo código é obrigatório.',
             'potencia.required' => 'O campo potencia é obrigatório.',
             'tipo.required' => 'O campo tipo é obrigatório.',
 
@@ -113,7 +111,6 @@ class AirConditionersManager extends Component
     {
         $this->reset([
             'cliente_id',
-            'codigo_ac',
             'ambiente',
             'modelo',
             'marca',
@@ -136,37 +133,39 @@ class AirConditionersManager extends Component
         $this->validate();
 
         try {
-            DB::beginTransaction();
+            DB::transaction(function () {
 
-            $ac = AirConditioning::create([
-                'cliente_id' => $this->cliente_id,
-                'codigo_ac' => $this->codigo_ac,
-                'ambiente' => $this->ambiente,
-                'modelo' => $this->modelo,
-                'marca' => $this->marca,
-                'potencia' => $this->potencia,
-                'tipo' => $this->tipo,
-                'prox_higienizacao' => null
-            ]);
+                $novoCodigo = AirConditioning::gerarCodigo($this->cliente_id);
 
-            $ac->address()->create([
-                'cep' => $this->cep,
-                'rua' => $this->rua,
-                'numero' => $this->numero,
-                'bairro' => $this->bairro,
-                'complemento' => $this->complemento,
-                'cidade' => $this->cidade,
-                'uf' => $this->uf
-            ]);
+                $ac = AirConditioning::create([
+                    'cliente_id' => $this->cliente_id,
+                    'codigo_ac' => $novoCodigo,
+                    'ambiente' => $this->ambiente,
+                    'modelo' => $this->modelo,
+                    'marca' => $this->marca,
+                    'potencia' => $this->potencia,
+                    'tipo' => $this->tipo,
+                    'prox_higienizacao' => null
+                ]);
 
-            DB::commit();
+                $ac->address()->create([
+                    'cep' => $this->cep,
+                    'rua' => $this->rua,
+                    'numero' => $this->numero,
+                    'bairro' => $this->bairro,
+                    'complemento' => $this->complemento,
+                    'cidade' => $this->cidade,
+                    'uf' => $this->uf
+                ]);
+            });
 
             $this->dispatch('notify-success', 'Ar-condicionado cadastrado com sucesso!');
             $this->dispatch('airConditioners-refresh');
-        } catch (Exception $e) {
-            DB::rollBack();
-        } finally {
+
             $this->closeModal();
+
+        } catch (Exception $e) {
+            $this->dispatch('notify-error', $e->getMessage());
         }
     }
 
@@ -182,7 +181,7 @@ class AirConditionersManager extends Component
         if ($this->equipmentId) {
             $ac = AirConditioning::find($this->equipmentId);
 
-            if ($ac->servicos()->withTrashed()->exists()) {
+            if ($ac->orderServices()->withTrashed()->exists()) {
                 $this->dispatch('notify-error', 'Não se pode deletar um ar-condicionado com serviço vinculado.');
                 $this->closeModal();
                 return ;
@@ -240,7 +239,6 @@ class AirConditionersManager extends Component
             if ($ac) {
                 $ac->update([
                     'cliente_id' => $this->cliente_id,
-                    'codigo_ac' => $this->codigo_ac,
                     'ambiente' => $this->ambiente,
                     'modelo' => $this->modelo,
                     'marca' => $this->marca,
