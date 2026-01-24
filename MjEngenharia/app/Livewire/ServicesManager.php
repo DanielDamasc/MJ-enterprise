@@ -34,6 +34,7 @@ class ServicesManager extends Component
     public array $detalhes = [];
 
     // Outros Atributos.
+    public $showView = false;
     public $showCreate = false;
     public $showDelete = false;
     public $showEdit = false;
@@ -44,6 +45,7 @@ class ServicesManager extends Component
     public $cliente_label = '';
     public $status_label = '';
     public $tipo_label = '';
+    public $executor_label = '';
 
     protected function rules()
     {
@@ -104,8 +106,46 @@ class ServicesManager extends Component
 
     public function closeModal()
     {
-        $this->showCreate = $this->showDelete = $this->showEdit = $this->showConfirm = $this->showCancel = false;
+        $this->showView = $this->showCreate = $this->showDelete = $this->showEdit = $this->showConfirm = $this->showCancel = false;
         $this->resetValidation();
+    }
+
+    private function fillFields($id)
+    {
+        $service = OrderService::with('airConditioners')->find($id);
+
+        if ($service) {
+            $this->acs_disponiveis = AirConditioning::where('cliente_id', $service->cliente_id)->get();
+            $this->cliente_label = $service->client->cliente ?? 'Cliente não encontrado';
+            $this->status_label = $service->status->label();
+            $this->tipo_label = $service->tipo;
+
+            $this->cliente_id = $service->cliente_id;
+            $this->executor_id = $service->executor_id;
+            $this->tipo = $service->tipo;
+            $this->data_servico = $service->data_servico;
+            $this->status = $service->status->value;
+            $this->detalhes = $service->detalhes;
+
+            $this->ac_ids = $service->airConditioners->pluck('id')->toArray();
+            // Tenta pegar o valor unitário do primeiro AC na pivot.
+            $firstAc = $service->airConditioners->first();
+            $this->valor = $firstAc ? $firstAc->pivot->valor : 0;
+
+            // Apenas para a visualização.
+            $this->executor_label = $service->user->name ?? 'Executor não encontrado';
+        }
+    }
+
+    #[On('show')]
+    public function show($id)
+    {
+        $this->serviceId = $id;
+        $this->showView = true;
+
+        if ($this->serviceId) {
+            $this->fillFields($this->serviceId);
+        }
     }
 
     public function openCreate()
@@ -155,7 +195,7 @@ class ServicesManager extends Component
             // 4. Lógica de atualizar a próxima higienização.
             if ($this->tipo == 'higienizacao' && $this->status == ServiceStatus::CONCLUIDO->value) {
                 $proxData = $os->proximaHigienizacao($this->data_servico);
-                
+
                 $os->airConditioners()->update([
                     'prox_higienizacao' => $proxData
                 ]);
@@ -273,24 +313,7 @@ class ServicesManager extends Component
         $this->showEdit = true;
 
         if ($this->serviceId) {
-            $service = OrderService::with('airConditioners')->find($this->serviceId);
-
-            $this->acs_disponiveis = AirConditioning::where('cliente_id', $service->cliente_id)->get();
-            $this->cliente_label = $service->client->cliente ?? 'Cliente não encontrado';
-            $this->status_label = $service->status->label();
-            $this->tipo_label = $service->tipo;
-
-            $this->cliente_id = $service->cliente_id;
-            $this->executor_id = $service->executor_id;
-            $this->tipo = $service->tipo;
-            $this->data_servico = $service->data_servico;
-            $this->status = $service->status->value;
-            $this->detalhes = $service->detalhes;
-
-            $this->ac_ids = $service->airConditioners->pluck('id')->toArray();
-            // Tenta pegar o valor unitário do primeiro AC na pivot.
-            $firstAc = $service->airConditioners->first();
-            $this->valor = $firstAc ? $firstAc->pivot->valor : 0;
+            $this->fillFields($this->serviceId);
         }
     }
 

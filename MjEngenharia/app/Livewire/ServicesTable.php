@@ -150,6 +150,11 @@ final class ServicesTable extends PowerGridComponent
     public function actions(OrderService $row): array
     {
         return [
+            Button::add('show')
+                ->slot(Blade::render('<x-heroicon-o-eye class="w-5 h-5" />'))
+                ->class('text-primary-600 hover:text-primary-800 p-1 transition-colors')
+                ->dispatchTo('services-manager', 'show', ['id' => $row->id]),
+
             Button::add('done')
                 ->slot(Blade::render('<x-heroicon-o-check-circle class="w-5 h-5" />'))
                 ->class('text-green-600 hover:text-green-800 p-1 transition-colors')
@@ -175,6 +180,10 @@ final class ServicesTable extends PowerGridComponent
     public function actionRules($row): array
     {
        return [
+            Rule::button('show')
+               ->when(fn($row) => $row->status == ServiceStatus::AGENDADO)
+               ->hide(),
+
            Rule::button('done')
                ->when(fn($row) => $row->status != ServiceStatus::AGENDADO)
                ->hide(),

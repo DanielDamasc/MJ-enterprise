@@ -22,6 +22,166 @@
         @livewire('servicesTable')
     </div>
 
+    @if ($showView)
+        <div class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-primary-950/75 backdrop-blur-sm p-4 md:inset-0 h-modal md:h-full transition-opacity">
+
+            <div class="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto bg-white rounded-xl shadow-2xl transform transition-all">
+
+                {{-- HEADER --}}
+                <div class="px-6 pt-4 flex justify-between items-center sticky top-0 bg-white z-10 border-b border-gray-100 pb-4">
+                    <h3 class="text-xl font-bold text-primary-900">
+                        Visualizar Ordem de Serviço
+                    </h3>
+                    <button wire:click="closeModal" type="button" class="text-primary-400 bg-transparent hover:bg-primary-50 hover:text-primary-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center transition-colors">
+                        <x-heroicon-o-x-mark class="w-5 h-5" />
+                    </button>
+                </div>
+
+                <div class="p-6 space-y-8">
+
+                    {{-- SEÇÃO 1: QUEM E ONDE --}}
+                    <div>
+                        <h4 class="text-sm uppercase tracking-wide text-blue-600 font-bold mb-4 border-b pb-2">
+                            1. Cliente e Equipamentos
+                        </h4>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5">
+
+                            {{-- CLIENTE --}}
+                            <div class="col-span-1 md:col-span-1 lg:col-span-6">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Cliente
+                                    <span class="text-red-500">*</span>
+                                </label>
+                                <div class="h-10 bg-gray-100 border border-gray-200 rounded-lg flex items-center px-3 text-gray-600 cursor-not-allowed select-none">
+                                    {{ $cliente_label }}
+                                </div>
+                            </div>
+
+                            {{-- EXECUTOR --}}
+                            <div class="col-span-1 md:col-span-1 lg:col-span-6">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Técnico Responsável (Executor)
+                                    <span class="text-red-500">*</span>
+                                </label>
+                                <div class="h-10 bg-gray-100 border border-gray-200 rounded-lg flex items-center px-3 text-gray-600 cursor-not-allowed select-none">
+                                    {{ $executor_label }}
+                                </div>
+                            </div>
+
+                            {{-- LISTA DE AR-CONDICIONADOS (Checkboxes) --}}
+                            <div class="col-span-1 md:col-span-2 lg:col-span-12">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Equipamentos para o Serviço
+                                    <span class="text-red-500">*</span>
+                                </label>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-h-60 overflow-y-auto border border-gray-200 p-3 rounded-lg bg-gray-50">
+                                    @foreach($acs_disponiveis as $ac)
+                                        @if (in_array($ac->id, $ac_ids))
+                                            <label class="flex items-start space-x-3 p-3 bg-white border border-gray-200 rounded-lg cursor-pointer hover:border-blue-400 hover:shadow-sm transition-all group">
+                                                <div class="flex items-center h-5">
+                                                    <x-heroicon-s-check-circle class="w-5 h-5 text-blue-600" />
+                                                </div>
+                                                <div class="text-sm">
+                                                    <p class="font-bold text-gray-800 group-hover:text-blue-700 transition-colors">{{ $ac->codigo_ac }}</p>
+                                                    <p class="text-gray-600 text-xs mt-0.5">{{ $ac->ambiente }} • {{ $ac->marca ? $ac->marca : 'N/A' }} • {{ $ac->potencia }} BTUs</p>
+                                                </div>
+                                            </label>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- SEÇÃO 2: DADOS DO SERVIÇO --}}
+                    <div>
+                        <h4 class="text-sm uppercase tracking-wide text-blue-600 font-bold mb-4 border-b pb-2">
+                            2. Detalhes do Serviço
+                        </h4>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5">
+
+                            {{-- TIPO --}}
+                            <div class="col-span-1 md:col-span-1 lg:col-span-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de Serviço
+                                    <span class="text-red-500">*</span>
+                                </label>
+                                <div class="h-10 bg-gray-100 border border-gray-200 rounded-lg flex items-center px-3 text-gray-600 cursor-not-allowed select-none">
+                                    {{ $tipo_label }}
+                                </div>
+                            </div>
+
+                            {{-- DATA --}}
+                            <div class="col-span-1 md:col-span-1 lg:col-span-3">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Data de Realização
+                                    <span class="text-red-500">*</span>
+                                </label>
+                                <div class="h-10 bg-gray-100 border border-gray-200 rounded-lg flex items-center px-3 text-gray-700 select-none">
+                                    <x-heroicon-o-calendar class="w-4 h-4 mr-2 text-gray-400"/>
+                                    {{ \Carbon\Carbon::parse($data_servico)->format('d/m/Y') }}
+                                </div>
+                            </div>
+
+                            {{-- VALOR --}}
+                            <div class="col-span-1 md:col-span-1 lg:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Valor Unitário (R$)
+                                    <span class="text-red-500">*</span>
+                                </label>
+                                <div class="h-10 bg-gray-100 border border-gray-200 rounded-lg flex items-center px-3 text-gray-700 select-none font-mono">
+                                    {{ number_format($valor, 2, ',', '.') }}
+                                </div>
+                            </div>
+
+                            {{-- STATUS --}}
+                            <div class="col-span-1 md:col-span-1 lg:col-span-3">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Status Atual
+                                    <span class="text-red-500">*</span>
+                                </label>
+                                <div class="h-10 bg-gray-100 border border-gray-200 rounded-lg flex items-center px-3 text-gray-600 cursor-not-allowed select-none">
+                                    {{ $status_label }}
+                                </div>
+                            </div>
+
+                            {{-- CAMPOS DINÂMICOS (JSON) --}}
+                            @if($tipo)
+                                <div class="col-span-1 md:col-span-2 lg:col-span-12 mt-2">
+                                    <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 animate-fade-in-down">
+                                        <h5 class="text-sm font-bold text-blue-800 mb-3 flex items-center">
+                                            <x-heroicon-o-clipboard-document-list class="w-4 h-4 mr-2"/>
+                                            Checklist: {{ $tipo }}
+                                        </h5>
+
+                                        @if($tipo === 'higienizacao')
+                                            <div class="flex items-center">
+                                                <input
+                                                    id="chk-cond"
+                                                    type="checkbox"
+                                                    @checked(data_get($detalhes, 'limpou_condensadora'))
+                                                    disabled
+                                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                                                >
+                                                <label for="chk-cond" class="ml-2 text-sm font-medium text-gray-900 cursor-pointer select-none">
+                                                    Limpeza da Condensadora
+                                                </label>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
+
+                        </div>
+                    </div>
+
+                    {{-- FOOTER --}}
+                    <div class="flex items-center justify-end gap-3 pt-6 border-t border-gray-100">
+                        <button type="button" wire:click="closeModal" class="text-primary-600 bg-white hover:bg-primary-50 focus:ring-4 focus:outline-none focus:ring-primary-100 rounded-lg border border-primary-200 text-sm font-medium px-5 py-2.5 hover:text-primary-900 focus:z-10 transition-colors">
+                            Fechar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
     @if ($showCreate || $showEdit)
         <div class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-primary-950/75 backdrop-blur-sm p-4 md:inset-0 h-modal md:h-full transition-opacity">
 
