@@ -23,7 +23,8 @@ class ClientFactory extends Factory
             'contato' => fake()->name(),
             'telefone' => $this->gerarTelefoneCelular(),
             'email' => fake()->unique()->safeEmail(),
-            'tipo' => Arr::random(['residencial', 'comercial'])
+            'tipo' => Arr::random(['residencial', 'comercial']),
+            'ultima_notificacao' => null
         ];
     }
 

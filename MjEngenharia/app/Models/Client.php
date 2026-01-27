@@ -18,7 +18,13 @@ class Client extends Model
         'contato',
         'telefone',
         'email',
-        'tipo' // residencial ou comercial
+        'tipo', // residencial ou comercial
+        'ultima_notificacao'
+    ];
+
+    // Converte automaticamente o dado que vem do banco para o datetime do Carbon.
+    protected $casts = [
+        'ultima_notificacao' => 'datetime',
     ];
 
     public function getActivitylogOptions(): LogOptions
