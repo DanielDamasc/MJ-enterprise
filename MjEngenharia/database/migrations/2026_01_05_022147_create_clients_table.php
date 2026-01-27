@@ -18,7 +18,10 @@ return new class extends Migration
             $table->string('telefone', 11); // Tamanho padrão de 11 para telefone
             $table->string('email')->nullable(); // Email pode ser nulo
             $table->string('tipo'); // residencial ou comercial
+
+            // Atributos de controle de notificação do cliente.
             $table->timestamp('ultima_notificacao')->nullable();
+            $table->integer('qtd_notificacoes')->default(0);
 
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();

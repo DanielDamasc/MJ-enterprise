@@ -19,7 +19,8 @@ class Client extends Model
         'telefone',
         'email',
         'tipo', // residencial ou comercial
-        'ultima_notificacao'
+        'ultima_notificacao',
+        'qtd_notificacoes'
     ];
 
     // Converte automaticamente o dado que vem do banco para o datetime do Carbon.

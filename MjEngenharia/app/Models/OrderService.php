@@ -68,6 +68,12 @@ class OrderService extends Model
                     'prox_higienizacao' => $proxData
                 ]);
             }
+
+            // Atualiza atributos de notificação de cliente.
+            $this->client->update([
+                'ultima_notificacao' => null,
+                'qtd_notificacoes' => 0,
+            ]);
         });
     }
 
