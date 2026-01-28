@@ -276,7 +276,7 @@
                         <textarea
                             wire:model="observacoes_executor"
                             rows="4"
-                            class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 placeholder-gray-400 text-sm p-3"
+                            class="w-full bg-blue-50 border-blue-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 placeholder-gray-400 text-sm p-3"
                             placeholder="Adicione observações relevantes sobre o serviço antes de concluir..."
                         ></textarea>
                     </div>
