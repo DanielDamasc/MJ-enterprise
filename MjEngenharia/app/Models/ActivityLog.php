@@ -33,6 +33,11 @@ class ActivityLog extends Model
 
     public function getCauserLabelAttribute()
     {
+        // 1. Se não tem causador, quem fez foi o sistema.
+        if (is_null($this->causer_id)) {
+            return 'Sistema Automático';
+        }
+
         return $this->causer?->name ?? 'Usuário Excluído';
     }
 }
