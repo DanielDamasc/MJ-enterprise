@@ -15,22 +15,28 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $admin = User::create([
-            'name' => 'Administrador',
-            'email' => 'asd@asd.com',
-            'email_verified_at' => now(),
-            'password' => Hash::make('asdasdasd'),
-        ]);
+        if (env('DEV_ADMIN_EMAIL') && env('DEV_ADMIN_PASSWORD')) {
+            $dev = User::firstOrCreate(
+                ['email' => env('DEV_ADMIN_EMAIL')],
+                [
+                    'name' => env('DEV_ADMIN_NAME', 'Desenvolvedor'),
+                    'email_verified_at' => now(),
+                    'password' => Hash::make(env('DEV_ADMIN_PASSWORD')),
+                ]
+            );
+            $dev->assignRole('adm');
+        }
 
-        $admin->assignRole('adm');
-
-        $executor = User::create([
-            'name' => 'Executor 1',
-            'email' => 'dandamasceno04@gmail.com',
-            'email_verified_at' => now(),
-            'password' => Hash::make('asdasdasd'),
-        ]);
-
-        $executor->assignRole('executor');
+        if (env('OWNER_ADMIN_EMAIL') && env('OWNER_ADMIN_PASSWORD')) {
+            $owner = User::firstOrCreate(
+                ['email' => env('OWNER_ADMIN_EMAIL')],
+                [
+                    'name' => env('OWNER_ADMIN_NAME', 'Administrador'),
+                    'email_verified_at' => now(),
+                    'password' => Hash::make(env('OWNER_ADMIN_PASSWORD')),
+                ]
+            );
+            $owner->assignRole('adm');
+        }
     }
 }
