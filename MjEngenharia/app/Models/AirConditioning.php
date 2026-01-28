@@ -71,7 +71,7 @@ class AirConditioning extends Model
         return $this->morphOne(Address::class, 'addressable');
     }
 
-    public function orderServices()
+    public function servicos()
     {
         return $this->belongsToMany(OrderService::class,
             'order_service_items',

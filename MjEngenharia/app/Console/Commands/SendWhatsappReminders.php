@@ -51,7 +51,7 @@ class SendWhatsappReminders extends Command
                     ->where('ultima_notificacao', '<', $segundoAviso); // Já se passaram dois meses
             });
         })
-        ->whereHas('air_conditioners', function ($q) use ($start, $end) {
+        ->whereHas('airConditioners', function ($q) use ($start, $end) {
             $q->whereBetween('prox_higienizacao', [$start, $end]);
         })
         ->whereDoesntHave('servicos', function ($q) {

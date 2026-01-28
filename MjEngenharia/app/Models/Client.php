@@ -37,13 +37,13 @@ class Client extends Model
     protected static function booted()
     {
         static::deleting(function ($client) {
-            $client->air_conditioners->each(function ($ac) {
+            $client->airConditioners->each(function ($ac) {
                 $ac->delete();
             });
         });
     }
 
-    public function air_conditioners()
+    public function airConditioners()
     {
         return $this->hasMany(AirConditioning::class, 'cliente_id');
     }

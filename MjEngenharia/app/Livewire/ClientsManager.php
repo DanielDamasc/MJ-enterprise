@@ -76,9 +76,9 @@ class ClientsManager extends Component
     {
         $this->clientId = $id;
 
-        $client = Client::with('air_conditioners')->find($this->clientId);
+        $client = Client::with('airConditioners')->find($this->clientId);
         if ($client) {
-            $this->equipmentList = $client->air_conditioners;
+            $this->equipmentList = $client->airConditioners;
         }
 
         $this->showDetails = true;
