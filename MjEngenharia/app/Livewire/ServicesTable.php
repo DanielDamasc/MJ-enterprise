@@ -88,6 +88,7 @@ final class ServicesTable extends PowerGridComponent
                 );
             })
             ->add('status')
+            ->add('observacoes_executor')
             ->add('detalhes')
             ->add('created_at');
     }

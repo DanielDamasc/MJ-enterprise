@@ -23,6 +23,8 @@ return new class extends Migration
             $table->decimal('total', 10, 2);
             $table->string('status')->default('agendado');
 
+            $table->text('observacoes_executor')->nullable();
+
             $table->json('detalhes')->nullable();
 
             $table->softDeletes();

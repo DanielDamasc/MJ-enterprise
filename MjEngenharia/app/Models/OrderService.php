@@ -27,6 +27,8 @@ class OrderService extends Model
         'total', // Valor total, persistido como soma dos valores unitários
         'status', // enum
 
+        'observacoes_executor', // Observações adicionadas pelo executor ao concluir uma OS
+
         // Campo Json para atributos específicos
         'detalhes' // limpou_condensadora
     ];

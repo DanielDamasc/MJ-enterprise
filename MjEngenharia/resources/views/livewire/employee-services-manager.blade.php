@@ -233,4 +233,69 @@
             </div>
         </div>
     @endif
+
+    @if($showFinishModal)
+        <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-gray-900/80 backdrop-blur-sm transition-opacity">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in-up">
+
+                <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                    <div class="flex flex-col gap-1">
+                        <h3 class="text-lg font-bold text-primary-900">Finalizar Serviço</h3>
+                        <p class="text-sm text-gray-500">Confirme os detalhes da execução.</p>
+                    </div>
+                    <button wire:click="closeFinishModal" class="text-primary-400 bg-transparent hover:bg-primary-50 hover:text-primary-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center transition-colors">
+                        <x-heroicon-o-x-mark class="w-6 h-6" />
+                    </button>
+                </div>
+
+                <div class="p-6 space-y-4">
+
+                    {{-- Aviso Visual se for parcial --}}
+                    @if($isPartial)
+                        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded-r">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <x-heroicon-s-exclamation-triangle class="h-5 w-5 text-yellow-400" />
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm text-yellow-700 font-bold">
+                                        Conclusão Parcial
+                                    </p>
+                                    <p class="text-sm text-yellow-600 mt-1">
+                                        Apenas os equipamentos selecionados serão considerados. Ao clicar em confirmar, a ordem de serviço será finalizada <strong>parcialmente</strong>.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">
+                            Observações do Técnico <span class="text-gray-400 font-normal">(Opcional)</span>
+                        </label>
+                        <textarea
+                            wire:model="observacoes_executor"
+                            rows="4"
+                            class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 placeholder-gray-400 text-sm p-3"
+                            placeholder="Adicione observações relevantes sobre o serviço antes de concluir..."
+                        ></textarea>
+                    </div>
+                </div>
+
+                <div class="p-5 border-t border-gray-100 bg-gray-50 flex justify-end gap-3">
+                    <button wire:click="closeFinishModal"
+                            class="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg text-sm font-bold hover:bg-gray-50 transition">
+                        Cancelar
+                    </button>
+
+                    <button wire:click="finalizarServico"
+                            wire:loading.attr="disabled"
+                            class="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-bold hover:bg-green-700 shadow-md flex items-center transition disabled:opacity-50">
+                        <span wire:loading.remove wire:target="finalizarServico">Confirmar e Finalizar</span>
+                        <span wire:loading wire:target="finalizarServico">Processando...</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>

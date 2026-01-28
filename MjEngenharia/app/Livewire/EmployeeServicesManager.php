@@ -11,9 +11,19 @@ use Livewire\Component;
 
 class EmployeeServicesManager extends Component
 {
+    // --- Modais e Visualização ---
     public $showEquipmentsModal = false;
+    public $showFinishModal = false;
+
+    // --- Dados do Serviço ---
     public $selectedService = null;
     public array $selectedEquipmentsIds = [];
+
+    // --- Dados para Finalização do Serviço ---
+    public $observacoes_executor = '';
+    public $idsFinais = [];
+    public $idServicoFinal = null;
+    public $isPartial = false; // bool
 
     public function showEquipments($serviceId)
     {
@@ -32,6 +42,15 @@ class EmployeeServicesManager extends Component
         $this->selectedService = null;
     }
 
+    public function closeFinishModal()
+    {
+        $this->showFinishModal = false;
+        $this->observacoes_executor = '';
+        $this->idsFinais = [];
+        $this->idServicoFinal = null;
+        $this->isPartial = false;
+    }
+
     public function concluirTotal($serviceId)
     {
         $service = OrderService::with('airConditioners')
@@ -47,7 +66,7 @@ class EmployeeServicesManager extends Component
         $allIds = $service->airConditioners->pluck('id')->toArray();
 
         // Usa todos os IDs, conclusão comum.
-        $this->processarConclusao($service, $allIds);
+        $this->showConfirmacao($serviceId, $allIds, false);
     }
 
     public function concluirParcial()
@@ -58,17 +77,42 @@ class EmployeeServicesManager extends Component
 
         // Validando se algum equipamento foi selecionado.
         if (empty($this->selectedEquipmentsIds)) {
-            $this->dispatch('notify-error', 'Selecione pelo menos um equipamento em que o serviço foi realizado.');
+            $this->dispatch('notify-error', 'Selecione pelo menos um equipamento.');
             return ;
         }
 
+        // Se a quantidade de equipamentos atendidos for menor que o total, o serviço é parcial.
+        $totalEquipamentos = $this->selectedService->airConditioners->count();
+        $totalSelecionados = count($this->selectedEquipmentsIds);
+        $isPartial = $totalSelecionados < $totalEquipamentos;
+
+        // Usa apenas os IDs que o usuário marcou.
+        $this->showConfirmacao($this->selectedService->id, $this->selectedEquipmentsIds, $isPartial);
+    }
+
+    private function showConfirmacao($serviceId, $ids, $isPartial)
+    {
+        $this->idServicoFinal = $serviceId;
+        $this->idsFinais = $ids;
+        $this->isPartial = $isPartial;
+        $this->observacoes_executor = ''; // Limpa observações anteriores.
+
+        $this->showFinishModal = true;
+    }
+
+    public function finalizarServico()
+    {
         $service = OrderService::with('airConditioners')
-            ->where('id', $this->selectedService->id)
+            ->where('id', $this->idServicoFinal)
             ->where('executor_id', auth()->id())
             ->first();
 
-        // Usa apenas os IDs que o usuário marcou.
-        $this->processarConclusao($service, $this->selectedEquipmentsIds);
+        if ($service) {
+            $this->processarConclusao($service, $this->idsFinais);
+        } else {
+            $this->dispatch('notify-error', 'Erro ao processar serviço.');
+            $this->closeFinishModal();
+        }
     }
 
     private function processarConclusao(OrderService $service, array $ids)
@@ -91,17 +135,23 @@ class EmployeeServicesManager extends Component
 
                 // 2. Atualiza o serviço com o novo total.
                 $service->update([
-                    'total' => $novoTotal
+                    'total' => $novoTotal,
+                    'observacoes_executor' => $this->observacoes_executor,
                 ]);
 
                 // 3. Chama o método para realmente concluir o serviço, considerando somente os equipamentos selecionados.
                 $service->concluir();
             });
 
-            $this->closeEquipments();
             $this->dispatch('notify-success', 'Serviço concluído com sucesso!');
+
         } catch (Exception $e) {
             $this->dispatch('notify-error', $e->getMessage());
+
+        } finally {
+            // Fecha os modais.
+            $this->closeFinishModal();
+            $this->closeEquipments();
         }
     }
 
