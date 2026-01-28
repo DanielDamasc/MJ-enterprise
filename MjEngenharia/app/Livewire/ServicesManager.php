@@ -31,6 +31,7 @@ class ServicesManager extends Component
     public $data_servico = '';
     public $valor = '';
     public $status = ServiceStatus::AGENDADO->value;
+    public $observacoes_executor = '';
     public array $detalhes = [];
 
     // Outros Atributos.
@@ -134,6 +135,8 @@ class ServicesManager extends Component
 
             // Apenas para a visualização.
             $this->executor_label = $service->user->name ?? 'Executor não encontrado';
+
+            $this->observacoes_executor = $service->observacoes_executor ?? null;
         }
     }
 

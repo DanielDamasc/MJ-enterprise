@@ -168,6 +168,22 @@
                                 </div>
                             @endif
 
+                            @if($observacoes_executor)
+                                <div class="col-span-1 md:col-span-2 lg:col-span-12 mt-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        Observações do Executor
+                                    </label>
+                                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-start gap-3">
+                                        <div class="flex-shrink-0 mt-0.5">
+                                            <x-heroicon-o-chat-bubble-left-ellipsis class="w-5 h-5 text-yellow-600" />
+                                        </div>
+                                        <p class="text-sm text-gray-800 leading-relaxed break-words">
+                                            {{ $observacoes_executor }}
+                                        </p>
+                                    </div>
+                                </div>
+                            @endif
+
                         </div>
                     </div>
 
