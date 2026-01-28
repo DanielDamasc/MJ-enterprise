@@ -79,12 +79,16 @@
                                     @endif
                                 @endforeach
 
-                                {{-- Se tiver mais que 3, mostra o botão "Ver todos" --}}
-                                @if($service->airConditioners->count() > 3)
+                                {{-- Se tiver mais que 1, mostra o botão "Ver todos" --}}
+                                @if($service->airConditioners->count() > 1)
                                     <div class="pt-1 text-center">
                                         <button wire:click="showEquipments({{ $service->id }})"
                                                 class="text-xs font-bold text-blue-600 hover:text-blue-800 hover:underline w-full py-1">
-                                            + Ver outros {{ $service->airConditioners->count() - 3 }} equipamentos
+                                            @if ($service->airConditioners->count() > 3)
+                                                + Ver outros {{ $service->airConditioners->count() - 3 }} equipamentos
+                                            @else
+                                                + Ver lista de equipamentos
+                                            @endif
                                         </button>
                                     </div>
                                 @endif

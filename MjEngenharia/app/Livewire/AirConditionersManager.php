@@ -86,7 +86,7 @@ class AirConditionersManager extends Component
             'verify' => false,
         ])
         ->withUserAgent('MjEngenharia')
-        ->timeout(5)
+        ->timeout(10)
         ->get("https://viacep.com.br/ws/{$cep}/json/");
 
         if ($response->successful() && !isset($response['erro'])) {
