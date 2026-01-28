@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class Address extends Model
 {
-    use LogsActivity;
+    use HasFactory, LogsActivity;
     protected $table = 'addresses';
 
     protected $fillable = [
