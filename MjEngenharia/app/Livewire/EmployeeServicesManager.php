@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Enums\ServiceStatus;
+use App\Models\AirConditioning;
 use App\Models\OrderService;
 use DB;
 use Exception;
@@ -131,26 +132,50 @@ class EmployeeServicesManager extends Component
         try {
             DB::transaction(function () use ($service, $ids) {
 
+                // Variáveis para a regra de negócio da instalação.
+                $todosIdsOS = $service->airConditioners->pluck('id')->toArray();
+                $idsRejeitados = array_diff($todosIdsOS, $ids);
+
+                // Regra de negócio comum.
                 $pivotData = [];
                 $novoTotal = 0;
 
-                // 1. Atualiza a pivot para manter somente os equipamentos selecionados.
-                // Recalcula o novo total do serviço considerando somente os selecionados.
+                // Atualiza a pivot para manter somente os equipamentos selecionados, recalcula o novo total.
                 foreach ($service->airConditioners as $ac) {
                     if (in_array($ac->id, $ids)) {
                         $pivotData[$ac->id] = ['valor' => $ac->pivot->valor];
                         $novoTotal += $ac->pivot->valor;
                     }
                 }
+
+                // Atualiza OS removendo os rejeitados
                 $service->airConditioners()->sync($pivotData);
 
-                // 2. Atualiza o serviço com o novo total.
+                // Regra de negócio para instalação, deleta os equipamentos em caso de conclusão parcial.
+                if ($service->tipo == 'instalacao') {
+
+                    foreach ($idsRejeitados as $idRejeitado) {
+                        $ac = AirConditioning::find($idRejeitado);
+
+                        if ($ac) {
+                            // Verifica se existem outros serviços vinculados, caso exista, não pode deletar o AC.
+                            $hasServices = $ac->servicos()->exists();
+
+                            if (!$hasServices) {
+                                $ac->delete();
+                                $ac->address?->delete();
+                            }
+                        }
+                    }
+                }
+
+                // Atualiza o serviço com o novo total.
                 $service->update([
                     'total' => $novoTotal,
                     'observacoes_executor' => $this->observacoes_executor,
                 ]);
 
-                // 3. Chama o método para realmente concluir o serviço, considerando somente os equipamentos selecionados.
+                // Chama o método para realmente concluir o serviço, considerando somente os equipamentos selecionados.
                 $service->concluir();
             });
 

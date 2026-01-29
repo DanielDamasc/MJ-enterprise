@@ -303,6 +303,20 @@ class ServicesManager extends Component
                     'status' => ServiceStatus::CANCELADO->value
                 ]);
 
+                // Para instalação, caso o serviço seja cancelado, deleta os equipamentos do banco.
+                if ($service->tipo == 'instalacao') {
+                    foreach ($service->airConditioners as $ac) {
+                        if ($ac->servicos()->count() <= 1) {
+                            // Apaga o vínculo com a tabela pivot antes de deletar.
+                            $ac->servicos()->detach();
+
+                            // Deleta o AC e o endereço vinculado.
+                            $ac->delete();
+                            $ac->address?->delete();
+                        }
+                    }
+                }
+
                 $this->dispatch('notify-success', 'Ordem de serviço cancelada.');
             } else {
                 $this->dispatch('notify-error', 'Apenas serviços agendados podem ser cancelados.');

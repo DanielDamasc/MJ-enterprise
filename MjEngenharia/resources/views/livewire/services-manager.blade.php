@@ -355,6 +355,7 @@
                                     <select wire:model.live="tipo" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
                                         <option value="">Selecione...</option>
                                         <option value="higienizacao">Higienização</option>
+                                        <option value="instalacao">Instalação</option>
                                         <option value="manutencao">Manutenção</option>
                                         <option value="carga_gas">Carga de Gás</option>
                                         <option value="correcao_vazamento">Correção de Vazamento</option>

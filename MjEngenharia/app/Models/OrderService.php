@@ -62,8 +62,8 @@ class OrderService extends Model
                 'status' => ServiceStatus::CONCLUIDO->value,
             ]);
 
-            // Atualiza a data da próxima higienização.
-            if ($this->tipo == 'higienizacao') {
+            // Atualiza a data da próxima higienização se for higienização ou instalação.
+            if ($this->tipo == 'higienizacao' || $this->tipo == 'instalacao') {
                 $proxData = $this->proximaHigienizacao($this->data_servico);
 
                 $this->airConditioners()->update([

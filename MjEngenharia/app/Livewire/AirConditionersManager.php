@@ -49,7 +49,7 @@ class AirConditionersManager extends Component
             'modelo' => 'nullable|string|max:100',
             'marca' => 'nullable|string|max:50',
             'potencia' => 'required|integer|min:1',
-            
+
             // Administrador tem a liberdade de adicionar a data da próxima higienização
             'prox_higienizacao' => 'nullable|date',
 
@@ -149,7 +149,7 @@ class AirConditionersManager extends Component
                     'marca' => $this->marca,
                     'potencia' => $this->potencia,
                     'tipo' => $this->tipo,
-                    'prox_higienizacao' => $this->prox_higienizacao ?? null
+                    'prox_higienizacao' => $this->prox_higienizacao ? $this->prox_higienizacao : null
                 ]);
 
                 $ac->address()->create([
