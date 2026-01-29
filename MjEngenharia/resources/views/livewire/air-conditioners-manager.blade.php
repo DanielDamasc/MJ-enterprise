@@ -102,14 +102,32 @@
                                 @error('tipo') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>
 
-                            @if ($showEdit && $prox_higienizacao)
-                                <div class="col-span-1 md:col-span-1 lg:col-span-3">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Próxima Higienização
+                            <div class="col-span-1 md:col-span-1 lg:col-span-3">
+                                @if ($showCreate)
+                                    <div class="flex items-center mb-1 gap-2">
+                                        <label class="block text-sm font-medium text-gray-700">
+                                            Próxima Higienização
+                                        </label>
+
+                                        <div class="relative group">
+                                            <x-heroicon-o-question-mark-circle class="w-4 h-4 text-blue-400 cursor-help" />
+
+                                            <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-56 p-2 bg-gray-800 text-white text-xs rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 text-center pointer-events-none">
+
+                                                Quando concluída uma ordem de serviço, o sistema calcula automaticamente a data da próxima higienização. Adicione agora apenas se julgar necessário.
+
+                                                <div class="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @else
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                        Próxima Higienização
                                     </label>
-                                    <input type="date" wire:model="prox_higienizacao" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
-                                    @error('prox_higienizacao') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
-                                </div>
-                            @endif
+                                @endif
+                                <input type="date" wire:model="prox_higienizacao" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
+                                @error('prox_higienizacao') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                            </div>
                         </div>
                     </div>
 

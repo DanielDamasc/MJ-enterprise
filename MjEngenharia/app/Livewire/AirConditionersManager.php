@@ -49,6 +49,9 @@ class AirConditionersManager extends Component
             'modelo' => 'nullable|string|max:100',
             'marca' => 'nullable|string|max:50',
             'potencia' => 'required|integer|min:1',
+            
+            // Administrador tem a liberdade de adicionar a data da próxima higienização
+            'prox_higienizacao' => 'nullable|date',
 
             'tipo' => ['required', Rule::in(['hw', 'k7', 'piso_teto'])],
 
@@ -83,7 +86,7 @@ class AirConditionersManager extends Component
         }
 
         $response = Http::withOptions([
-            'verify' => false,
+            'verify' => true,
         ])
         ->withUserAgent('MjEngenharia')
         ->timeout(10)
@@ -115,6 +118,7 @@ class AirConditionersManager extends Component
             'modelo',
             'marca',
             'potencia',
+            'prox_higienizacao',
             'tipo',
             'cep',
             'rua',
@@ -145,7 +149,7 @@ class AirConditionersManager extends Component
                     'marca' => $this->marca,
                     'potencia' => $this->potencia,
                     'tipo' => $this->tipo,
-                    'prox_higienizacao' => null
+                    'prox_higienizacao' => $this->prox_higienizacao ?? null
                 ]);
 
                 $ac->address()->create([
