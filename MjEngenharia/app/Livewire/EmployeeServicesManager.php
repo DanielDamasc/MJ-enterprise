@@ -25,11 +25,22 @@ class EmployeeServicesManager extends Component
     public $idServicoFinal = null;
     public $isPartial = false; // bool
 
+    public function toggleEquipment($acId)
+    {
+        $acId = (int) $acId;
+
+        if (in_array($acId, $this->selectedEquipmentsIds)) {
+            // Remove e re-indexa o array (evita que os índices fiquem quebrados)
+            $this->selectedEquipmentsIds = array_values(array_diff($this->selectedEquipmentsIds, [$acId]));
+        } else {
+            // Adiciona no array
+            $this->selectedEquipmentsIds[] = $acId;
+        }
+    }
+
     public function showEquipments($serviceId)
     {
-        $this->selectedService = OrderService::with(['airConditioners' => function($query) {
-            $query->orderBy('codigo_ac');
-        }])->find($serviceId);
+        $this->selectedService = OrderService::with('airConditioners')->find($serviceId);
 
         $this->selectedEquipmentsIds = $this->selectedService->airConditioners->pluck('id')->toArray();
 

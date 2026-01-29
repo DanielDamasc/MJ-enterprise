@@ -70,8 +70,8 @@
                                 @foreach($service->airConditioners->take(3) as $ac)
                                     <div class="flex justify-between items-center text-sm">
                                         <div class="truncate pr-2">
-                                            <span class="font-bold text-gray-700">{{ $ac->marca ? $ac->marca : 'Marca N/A' }}</span>
-                                            <span class="text-xs text-gray-500 block">{{ $ac->ambiente }}</span>
+                                            <span class="font-bold text-gray-700">{{ $ac->marca ? $ac->marca : 'N/A' }}</span>
+                                            <span class="text-xs text-gray-500 block">{{ $ac->ambiente ? $ac->ambiente : 'N/A' }}</span>
                                         </div>
                                     </div>
                                     @if(!$loop->last)
@@ -168,32 +168,36 @@
 
                     {{-- Agrupamento opcional: Se quiser agrupar visualmente --}}
                     <div class="divide-y divide-gray-200">
-                        @foreach($selectedService->airConditioners as $ac)
-                            <label class="p-4 bg-white flex items-start hover:bg-gray-50 transition
+                        @foreach($selectedService->airConditioners->sortBy('codigo_ac', SORT_NATURAL) as $ac)
+                            <label wire:key="ac-{{ $ac->id }}"
+                                    class="p-4 bg-white flex items-start hover:bg-gray-50 transition
                                         {{ in_array($ac->id, $selectedEquipmentsIds) ? 'ring-1 ring-blue-500' : 'opacity-60 hover:opacity-100' }}">
-                                {{-- Checkbox Visual (apenas visual para ajudar o tecnico) --}}
+                                {{-- Checkbox para conclusão parcial --}}
                                 <div class="flex-shrink-0 mt-1 mr-3">
                                     <input type="checkbox"
                                             value="{{ $ac->id }}"
-                                            wire:model.live="selectedEquipmentsIds"
+                                            wire:click.stop="toggleEquipment({{ $ac->id }})"
+                                            @checked(in_array($ac->id, $selectedEquipmentsIds))
                                             class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
                                 </div>
 
                                 <div class="flex-grow select-none">
                                     <div class="flex justify-between">
-                                        <h4 class="font-bold text-gray-800 text-sm">{{ $ac->marca ? $ac->marca : 'Marca N/A' }}</h4>
+                                        <h4 class="font-bold text-gray-800 text-sm">{{ $ac->marca ? $ac->marca : 'N/A' }}</h4>
                                         <span class="text-sm font-mono font-bold text-gray-600">
                                             {{ $ac->codigo_ac }}
                                         </span>
                                     </div>
                                     <p class="text-sm text-gray-600 mt-1">
                                         <span class="font-semibold text-blue-600 rounded text-xs uppercase">
-                                            {{ $ac->ambiente }}
+                                            {{ $ac->ambiente ? $ac->ambiente : 'N/A' }}
                                         </span>
-                                        • {{ $ac->potencia }} BTUs • {{ $ac->modelo ? $ac->modelo : 'Modelo N/A' }}
+                                        • {{ $ac->potencia }} BTUs • {{ $ac->modelo ? $ac->modelo : 'N/A' }}
                                     </p>
                                     @if($ac->pivot->valor > 0)
                                         <p class="text-sm text-green-600 mt-1">Valor Unitário: <strong>R$ {{ $ac->pivot->valor }}</strong></p>
+                                    @elseif($ac->pivot->valor == 0)
+                                        <p class="text-sm text-green-600 mt-1">Valor Unitário: <strong>R$ 0,00</strong></p>
                                     @endif
                                 </div>
                             </label>

@@ -76,15 +76,29 @@
                                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-h-60 overflow-y-auto border border-gray-200 p-3 rounded-lg bg-gray-50">
                                     @foreach($acs_disponiveis as $ac)
                                         @if (in_array($ac->id, $ac_ids))
-                                            <label class="flex items-start space-x-3 p-3 bg-white border border-gray-200 rounded-lg cursor-pointer hover:border-blue-400 hover:shadow-sm transition-all group">
-                                                <div class="flex items-center h-5">
-                                                    <x-heroicon-s-check-circle class="w-5 h-5 text-blue-600" />
+                                            <div class="flex flex-col justify-between p-3 bg-white border border-blue-200 rounded-lg shadow-sm ring-1 ring-blue-100">
+
+                                                {{-- Dados do AC --}}
+                                                <div class="flex items-start space-x-3 mb-3">
+                                                    <div class="flex-shrink-0">
+                                                        <x-heroicon-s-check-circle class="w-5 h-5 text-blue-600" />
+                                                    </div>
+                                                    <div class="text-sm">
+                                                        <p class="font-bold text-gray-800">{{ $ac->codigo_ac }}</p>
+                                                        <p class="text-gray-600 text-xs mt-0.5">
+                                                            {{ $ac->ambiente ? $ac->ambiente : 'N/A' }} • {{ $ac->marca ? $ac->marca : 'N/A' }} • {{ $ac->potencia }} BTUs
+                                                        </p>
+                                                    </div>
                                                 </div>
-                                                <div class="text-sm">
-                                                    <p class="font-bold text-gray-800 group-hover:text-blue-700 transition-colors">{{ $ac->codigo_ac }}</p>
-                                                    <p class="text-gray-600 text-xs mt-0.5">{{ $ac->ambiente }} • {{ $ac->marca ? $ac->marca : 'N/A' }} • {{ $ac->potencia }} BTUs</p>
+
+                                                {{-- Valor do AC --}}
+                                                <div class="flex items-center justify-between pt-2 border-t border-gray-100 mt-auto">
+                                                    <span class="text-[10px] text-gray-500 font-bold uppercase">Valor Cobrado</span>
+                                                    <div class="text-sm font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded border border-blue-100">
+                                                        R$ {{ number_format($ac_valores[$ac->id] ?? 0, 2, ',', '.') }}
+                                                    </div>
                                                 </div>
-                                            </label>
+                                            </div>
                                         @endif
                                     @endforeach
                                 </div>
@@ -121,13 +135,12 @@
                                 </div>
                             </div>
 
-                            {{-- VALOR --}}
+                            {{-- VALOR TOTAL --}}
                             <div class="col-span-1 md:col-span-1 lg:col-span-2">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Valor Unitário (R$)
-                                    <span class="text-red-500">*</span>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Valor Total (R$)
                                 </label>
-                                <div class="h-10 bg-gray-100 border border-gray-200 rounded-lg flex items-center px-3 text-gray-700 select-none font-mono">
-                                    {{ number_format($valor, 2, ',', '.') }}
+                                <div class="h-10 bg-gray-100 border border-gray-200 rounded-lg flex items-center px-3 text-gray-700 select-none">
+                                    {{ number_format($valor_total, 2, ',', '.') }}
                                 </div>
                             </div>
 
@@ -265,19 +278,39 @@
                                 </label>
 
                                 @if(count($acs_disponiveis) > 0)
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-h-60 overflow-y-auto border border-gray-200 p-3 rounded-lg bg-gray-50">
+                                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 max-h-80 overflow-y-auto border border-gray-200 p-3 rounded-lg bg-gray-50">
                                         @foreach($acs_disponiveis as $ac)
-                                            <label class="flex items-start space-x-3 p-3 bg-white border border-gray-200 rounded-lg cursor-pointer hover:border-blue-400 hover:shadow-sm transition-all group">
-                                                <div class="flex items-center h-5">
-                                                    <input type="checkbox" wire:model="ac_ids" value="{{ $ac->id }}"
-                                                        class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                                                    >
-                                                </div>
-                                                <div class="text-sm">
-                                                    <p class="font-bold text-gray-800 group-hover:text-blue-700 transition-colors">{{ $ac->codigo_ac }}</p>
-                                                    <p class="text-gray-600 text-xs mt-0.5">{{ $ac->ambiente }} • {{ $ac->marca ? $ac->marca : 'N/A' }} • {{ $ac->potencia }} BTUs</p>
-                                                </div>
-                                            </label>
+                                            <div
+                                                wire:key="ac-{{ $ac->id }}"
+                                                class="flex items-center justify-between p-3 bg-white border rounded-lg transition-all {{ in_array($ac->id, $ac_ids) ? 'border-blue-500 shadow-md ring-1 ring-blue-500' : 'border-gray-200 hover:border-blue-300' }}"
+                                            >
+                                                {{-- Checkbox e Dados do AC --}}
+                                                <label class="flex items-start space-x-3 cursor-pointer flex-1">
+                                                    <div class="flex items-center h-5 mt-1">
+                                                        <input type="checkbox" wire:model.live="ac_ids" value="{{ $ac->id }}"
+                                                            class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                                        >
+                                                    </div>
+                                                    <div class="text-sm">
+                                                        <p class="font-bold text-gray-800">{{ $ac->codigo_ac }}</p>
+                                                        <p class="text-gray-500 text-xs">{{ $ac->ambiente }} • {{ $ac->marca ? $ac->marca : 'N/A' }} • {{ $ac->potencia }} BTUs</p>
+                                                    </div>
+                                                </label>
+
+                                                {{-- Campo de Preço (Só aparece se selecionado) --}}
+                                                @if(in_array($ac->id, $ac_ids))
+                                                    <div class="ml-4 w-32 animate-fade-in-right">
+                                                        <label class="text-[10px] text-gray-500 font-bold uppercase">Valor (R$)</label>
+                                                        <input
+                                                            type="number"
+                                                            step="0.01"
+                                                            wire:model="ac_valores.{{ $ac->id }}"
+                                                            placeholder="0.00"
+                                                            class="h-8 w-full text-right bg-blue-50 border border-blue-200 rounded text-sm focus:ring-blue-500 focus:border-blue-500"
+                                                        >
+                                                    </div>
+                                                @endif
+                                            </div>
                                         @endforeach
                                     </div>
                                 @else
@@ -337,15 +370,6 @@
                                 </label>
                                 <input type="date" wire:model="data_servico" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
                                 @error('data_servico') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
-                            </div>
-
-                            {{-- VALOR --}}
-                            <div class="col-span-1 md:col-span-1 lg:col-span-2">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Valor Unitário (R$)
-                                    <span class="text-red-500">*</span>
-                                </label>
-                                <input type="number" step="0.01" wire:model="valor" placeholder="0.00" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
-                                @error('valor') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>
 
                             {{-- STATUS --}}

@@ -29,7 +29,8 @@ class ServicesManager extends Component
     // Atributos Normais.
     public $tipo = '';
     public $data_servico = '';
-    public $valor = '';
+    public array $ac_valores = [];
+    public $valor_total = 0;
     public $status = ServiceStatus::AGENDADO->value;
     public $observacoes_executor = '';
     public array $detalhes = [];
@@ -58,7 +59,8 @@ class ServicesManager extends Component
             'ac_ids.*' => 'exists:air_conditioners,id',
 
             'tipo' => 'required|string',
-            'valor' => 'required|numeric|min:0',
+            'ac_valores' => 'required|array|min:1',
+            'ac_valores.*' => 'required|numeric|min:0',
             'status' => ['required', new Enum(ServiceStatus::class)],
         ];
 
@@ -92,17 +94,11 @@ class ServicesManager extends Component
 
     public function updatedClienteId($value)
     {
-        $this->reset('ac_ids', 'acs_disponiveis');
+        $this->reset('ac_ids', 'acs_disponiveis', 'ac_valores');
 
         if ($value) {
             $this->acs_disponiveis = AirConditioning::where('cliente_id', $value)->get();
         }
-    }
-
-    protected function calculateTotal()
-    {
-        $qntACs = count($this->ac_ids);
-        return $qntACs * $this->valor;
     }
 
     public function closeModal()
@@ -129,13 +125,17 @@ class ServicesManager extends Component
             $this->detalhes = $service->detalhes;
 
             $this->ac_ids = $service->airConditioners->pluck('id')->toArray();
-            // Tenta pegar o valor unitário do primeiro AC na pivot.
-            $firstAc = $service->airConditioners->first();
-            $this->valor = $firstAc ? $firstAc->pivot->valor : 0;
+
+            // Iterando na relation e pegando os valores da pivot.
+            $this->ac_valores = [];
+            $this->valor_total = 0;
+            foreach ($service->airConditioners as $ac) {
+                $this->ac_valores[$ac->id] = $ac->pivot->valor;
+                $this->valor_total += $ac->pivot->valor;
+            }
 
             // Apenas para a visualização.
             $this->executor_label = $service->user->name ?? 'Executor não encontrado';
-
             $this->observacoes_executor = $service->observacoes_executor ?? null;
         }
     }
@@ -160,7 +160,7 @@ class ServicesManager extends Component
             'executor_id',
             'tipo',
             'data_servico',
-            'valor',
+            'ac_valores',
             'status',
             'detalhes',
         ]);
@@ -172,10 +172,22 @@ class ServicesManager extends Component
     {
         $this->validate();
 
-        // 1. Calculando o valor total do serviço.
-        $total = $this->calculateTotal();
+        DB::transaction(function() {
 
-        DB::transaction(function() use ($total) {
+            // 1. Prepara os dados da pivot e calcula o total.
+            $pivotData = [];
+            $total = 0;
+            foreach ($this->ac_ids as $acId) {
+                if (isset($this->ac_valores[$acId]) && $this->ac_valores[$acId] != '') {
+                    $preco = (float) $this->ac_valores[$acId];
+                } else {
+                    $preco = 0;
+                }
+                $pivotData[$acId] = ['valor' => $preco];
+                $total += $preco;
+            }
+
+            // 2. Cria a OS.
             $os = OrderService::create([
                 'cliente_id' => $this->cliente_id,
                 'executor_id' => $this->executor_id,
@@ -185,12 +197,6 @@ class ServicesManager extends Component
                 'detalhes' => $this->detalhes,
                 'total' => $total
             ]);
-
-            // 2. Prepara os dados para inserir na tabela pivô.
-            $pivotData = [];
-            foreach ($this->ac_ids as $acId) {
-                $pivotData[$acId] = ['valor' => $this->valor];
-            }
 
             // 3. Salva os dados na tabela pivô.
             $os->airConditioners()->attach($pivotData);
@@ -325,16 +331,27 @@ class ServicesManager extends Component
     {
         $this->validate();
 
-        // 1. Calculando o valor total do serviço.
-        $total = $this->calculateTotal();
-
         $service = OrderService::find($this->serviceId);
 
         // Verifica se o status é agendado.
         if ($service->status === ServiceStatus::AGENDADO) {
 
-            DB::transaction(function () use ($service, $total) {
+            DB::transaction(function () use ($service) {
 
+                // 1. Prepara os dados da pivot e calcula o total.
+                $pivotData = [];
+                $total = 0;
+                foreach ($this->ac_ids as $acId) {
+                    if (isset($this->ac_valores[$acId]) && $this->ac_valores[$acId] != '') {
+                        $preco = (float) $this->ac_valores[$acId];
+                    } else {
+                        $preco = 0;
+                    }
+                    $pivotData[$acId] = ['valor' => $preco];
+                    $total += $preco;
+                }
+
+                // 2. Atualiza a OS.
                 $service->update([
                     // Somente alguns atributos podem ser atualizados.
                     'executor_id' => $this->executor_id,
@@ -342,12 +359,6 @@ class ServicesManager extends Component
                     'detalhes' => $this->detalhes,
                     'total' => $total
                 ]);
-
-                // 2. Prepara os dados para atualizar a tabela pivô.
-                $pivotData = [];
-                foreach ($this->ac_ids as $acId) {
-                    $pivotData[$acId] = ['valor' => $this->valor];
-                }
 
                 // 3. Atualiza os dados da tabela pivô.
                 $service->airConditioners()->sync($pivotData);
