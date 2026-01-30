@@ -3,6 +3,8 @@
 namespace App\Livewire;
 
 use App\Models\User;
+use App\Services\EmployeeService;
+use Exception;
 use Hash;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
@@ -12,6 +14,13 @@ use Str;
 
 class EmployeeManager extends Component
 {
+    protected EmployeeService $employeeService;
+
+    public function boot(EmployeeService $employeeService)
+    {
+        $this->employeeService = $employeeService;
+    }
+
     public $name = '';
     public $email = '';
     public $showCreate = false;
@@ -55,48 +64,20 @@ class EmployeeManager extends Component
     {
         $this->validate();
 
-        $user = User::create([
-            'name' => $this->name,
-            'email' => $this->email,
-            'password' => Hash::make(Str::random(40)) // Senha aleatória que será redefinida.
-        ]);
+        try {
+            $this->employeeService->create([
+                'name' => $this->name,
+                'email' => $this->email,
+            ]);
 
-        $user->assignRole('executor'); // Atribui o perfil de executor.
+            $this->closeModal();
+            $this->dispatch('notify-success', 'Executor cadastrado com sucesso!');
+            $this->dispatch('employee-refresh');
 
-        $this->showCreate = false;
-        $this->dispatch('notify-success', 'Executor cadastrado com sucesso!');
+        } catch (Exception $e) {
+            $this->dispatch('notify-error', $e->getMessage());
 
-        $this->dispatch('employee-refresh');
-    }
-
-    #[On('confirm-delete')]
-    public function confirmDelete($id)
-    {
-        $this->userId = $id;
-        $this->showDelete = true;
-    }
-
-    public function delete()
-    {
-        if ($this->userId) {
-            $user = User::find($this->userId);
-
-            if ($user->servicos()->withTrashed()->exists()) {
-                $this->dispatch('notify-error', 'Não se pode deletar um executor com serviço vinculado.');
-                $this->closeModal();
-                return ;
-            }
-
-            if ($user) {
-                $user->delete();
-                $this->dispatch('notify-success', 'Executor deletado com sucesso.');
-            }
         }
-
-        $this->showDelete = false;
-        $this->userId = null;
-
-        $this->dispatch('employee-refresh');
     }
 
     #[On('open-edit')]
@@ -119,16 +100,49 @@ class EmployeeManager extends Component
         $user = User::find($this->userId);
 
         if ($user) {
-            $user->update([
-                'name' => $this->name,
-                'email' => $this->email,
-            ]);
+            try {
+                $this->employeeService->update($user,[
+                    'name' => $this->name,
+                    'email' => $this->email,
+                ]);
+
+                $this->closeModal();
+                $this->dispatch('notify-success', 'Dados atualizados com sucesso!');
+                $this->dispatch('employee-refresh');
+
+            } catch (Exception $e) {
+                $this->dispatch('notify-error', $e->getMessage());
+
+            }
         }
+    }
 
-        $this->showEdit = false;
-        $this->dispatch('notify-success', 'Dados atualizados com sucesso!');
+    #[On('confirm-delete')]
+    public function confirmDelete($id)
+    {
+        $this->userId = $id;
+        $this->showDelete = true;
+    }
 
-        $this->dispatch('employee-refresh');
+    public function delete()
+    {
+        if ($this->userId) {
+            $user = User::find($this->userId);
+
+            try {
+                $this->employeeService->delete($user);
+                $this->dispatch('notify-success', 'Executor deletado com sucesso.');
+                $this->dispatch('employee-refresh');
+
+            } catch (Exception $e) {
+                $this->dispatch('notify-error', $e->getMessage());
+
+            } finally {
+                $this->userId = null;
+                $this->closeModal();
+
+            }
+        }
     }
 
     #[Layout('layouts.app')]
