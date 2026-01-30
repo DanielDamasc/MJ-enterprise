@@ -95,7 +95,7 @@
                                                 <div class="flex items-center justify-between pt-2 border-t border-gray-100 mt-auto">
                                                     <span class="text-[10px] text-gray-500 font-bold uppercase">Valor Cobrado</span>
                                                     <div class="text-sm font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded border border-blue-100">
-                                                        R$ {{ number_format($ac_valores[$ac->id] ?? 0, 2, ',', '.') }}
+                                                        R$ {{ number_format($ac_precos[$ac->id] ?? 0, 2, ',', '.') }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -304,7 +304,7 @@
                                                         <input
                                                             type="number"
                                                             step="0.01"
-                                                            wire:model="ac_valores.{{ $ac->id }}"
+                                                            wire:model="ac_precos.{{ $ac->id }}"
                                                             placeholder="0.00"
                                                             class="h-8 w-full text-right bg-blue-50 border border-blue-200 rounded text-sm focus:ring-blue-500 focus:border-blue-500"
                                                         >

@@ -7,6 +7,7 @@ use App\Models\AirConditioning;
 use App\Models\Client;
 use App\Models\OrderService;
 use App\Models\User;
+use App\Services\ServiceService;
 use Carbon\Carbon;
 use DB;
 use Exception;
@@ -17,6 +18,13 @@ use Livewire\Component;
 
 class ServicesManager extends Component
 {
+    protected ServiceService $serviceService;
+
+    public function boot(ServiceService $serviceService)
+    {
+        $this->serviceService = $serviceService;
+    }
+
     public $serviceId = '';
     // Chaves Estrangeiras.
     public array $ac_ids = [];
@@ -29,7 +37,7 @@ class ServicesManager extends Component
     // Atributos Normais.
     public $tipo = '';
     public $data_servico = '';
-    public array $ac_valores = [];
+    public array $ac_precos = [];
     public $valor_total = 0;
     public $status = ServiceStatus::AGENDADO->value;
     public $observacoes_executor = '';
@@ -59,8 +67,8 @@ class ServicesManager extends Component
             'ac_ids.*' => 'exists:air_conditioners,id',
 
             'tipo' => 'required|string',
-            'ac_valores' => 'required|array|min:1',
-            'ac_valores.*' => 'required|numeric|min:0',
+            'ac_precos' => 'required|array|min:1',
+            'ac_precos.*' => 'required|numeric|min:0',
             'status' => ['required', new Enum(ServiceStatus::class)],
         ];
 
@@ -94,7 +102,7 @@ class ServicesManager extends Component
 
     public function updatedClienteId($value)
     {
-        $this->reset('ac_ids', 'acs_disponiveis', 'ac_valores');
+        $this->reset('ac_ids', 'acs_disponiveis', 'ac_precos');
 
         if ($value) {
             $this->acs_disponiveis = AirConditioning::where('cliente_id', $value)->get();
@@ -127,10 +135,10 @@ class ServicesManager extends Component
             $this->ac_ids = $service->airConditioners->pluck('id')->toArray();
 
             // Iterando na relation e pegando os valores da pivot.
-            $this->ac_valores = [];
+            $this->ac_precos = [];
             $this->valor_total = 0;
             foreach ($service->airConditioners as $ac) {
-                $this->ac_valores[$ac->id] = $ac->pivot->valor;
+                $this->ac_precos[$ac->id] = $ac->pivot->valor;
                 $this->valor_total += $ac->pivot->valor;
             }
 
@@ -160,7 +168,7 @@ class ServicesManager extends Component
             'executor_id',
             'tipo',
             'data_servico',
-            'ac_valores',
+            'ac_precos',
             'status',
             'detalhes',
         ]);
@@ -172,49 +180,71 @@ class ServicesManager extends Component
     {
         $this->validate();
 
-        DB::transaction(function() {
-
-            // 1. Prepara os dados da pivot e calcula o total.
-            $pivotData = [];
-            $total = 0;
-            foreach ($this->ac_ids as $acId) {
-                if (isset($this->ac_valores[$acId]) && $this->ac_valores[$acId] != '') {
-                    $preco = (float) $this->ac_valores[$acId];
-                } else {
-                    $preco = 0;
-                }
-                $pivotData[$acId] = ['valor' => $preco];
-                $total += $preco;
-            }
-
-            // 2. Cria a OS.
-            $os = OrderService::create([
+        try {
+            $this->serviceService->create(
+                $this->ac_ids,
+                $this->ac_precos,
+                [
                 'cliente_id' => $this->cliente_id,
                 'executor_id' => $this->executor_id,
                 'tipo' => $this->tipo,
                 'data_servico' => $this->data_servico,
                 'status' => $this->status,
                 'detalhes' => $this->detalhes,
-                'total' => $total
+                'total' => null
             ]);
 
-            // 3. Salva os dados na tabela pivô.
-            $os->airConditioners()->attach($pivotData);
+            $this->closeModal();
+            $this->dispatch('notify-success', 'Ordem de Serviço criada com sucesso!');
+            $this->dispatch('service-refresh');
 
-            // 4. Lógica de atualizar a próxima higienização.
-            if ($this->tipo == 'higienizacao' && $this->status == ServiceStatus::CONCLUIDO->value) {
-                $proxData = $os->proximaHigienizacao($this->data_servico);
+        } catch (Exception $e) {
+            $this->dispatch('notify-error', $e->getMessage());
 
-                $os->airConditioners()->update([
-                    'prox_higienizacao' => $proxData
-                ]);
-            }
-        });
+        }
+    }
 
-        $this->closeModal();
+    #[On('open-edit')]
+    public function openEdit($id)
+    {
+        $this->serviceId = $id;
+        $this->showEdit = true;
 
-        $this->dispatch('notify-success', 'Ordem de Serviço criada com sucesso!');
-        $this->dispatch('service-refresh');
+        if ($this->serviceId) {
+            $this->fillFields($this->serviceId);
+        }
+    }
+
+    #[On('edit')]
+    public function edit()
+    {
+        $this->validate();
+
+        $service = OrderService::find($this->serviceId);
+
+        try {
+            $this->serviceService->update(
+                $service,
+                $this->ac_ids,
+                $this->ac_precos,
+            [
+                'executor_id' => $this->executor_id,
+                'data_servico' => $this->data_servico,
+                'detalhes' => $this->detalhes,
+                'total' => null
+            ]);
+
+            $this->closeModal();
+            $this->dispatch('notify-success', 'Dados atualizados com sucesso!');
+            $this->dispatch('service-refresh');
+
+        } catch (Exception $e) {
+            $this->dispatch('notify-error', $e->getMessage());
+
+        } finally {
+            $this->serviceId = null;
+
+        }
     }
 
     #[On('confirm-delete')]
@@ -230,21 +260,20 @@ class ServicesManager extends Component
         if ($this->serviceId) {
             $service = OrderService::find($this->serviceId);
 
-            if ($service) {
-                if ($service->status == ServiceStatus::CONCLUIDO) {
-                    $this->dispatch('notify-error', 'Não é possível excluir um serviço já finalizado!');
-                    return ;
-                }
-
-                $service->delete();
+            try {
+                $this->serviceService->delete($service);
                 $this->dispatch('notify-success', 'Serviço movido para a lixeira.');
+                $this->dispatch('service-refresh');
+
+            } catch (Exception $e) {
+                $this->dispatch('notify-error', $e->getMessage());
+
+            } finally {
+                $this->serviceId = null;
+                $this->closeModal();
+
             }
         }
-
-        $this->closeModal();
-        $this->serviceId = null;
-
-        $this->dispatch('service-refresh');
     }
 
     #[On('confirm-service-done')]
@@ -297,97 +326,20 @@ class ServicesManager extends Component
                 return ;
             }
 
-            // O serviço só pode ser cancelado se ele estiver agendado.
-            if ($service->status == ServiceStatus::AGENDADO) {
-                $service->update([
-                    'status' => ServiceStatus::CANCELADO->value
-                ]);
-
-                // Para instalação, caso o serviço seja cancelado, deleta os equipamentos do banco.
-                if ($service->tipo == 'instalacao') {
-                    foreach ($service->airConditioners as $ac) {
-                        if ($ac->servicos()->count() <= 1) {
-                            // Apaga o vínculo com a tabela pivot antes de deletar.
-                            $ac->servicos()->detach();
-
-                            // Deleta o AC e o endereço vinculado.
-                            $ac->delete();
-                            $ac->address?->delete();
-                        }
-                    }
-                }
-
+            try {
+                $this->serviceService->cancel($service);
                 $this->dispatch('notify-success', 'Ordem de serviço cancelada.');
-            } else {
-                $this->dispatch('notify-error', 'Apenas serviços agendados podem ser cancelados.');
+                $this->dispatch('service-refresh');
+
+            } catch (Exception $e) {
+                $this->dispatch('notify-error', $e->getMessage());
+
+            } finally {
+                $this->serviceId = null;
+                $this->closeModal();
+
             }
         }
-
-        $this->closeModal();
-        $this->serviceId = null;
-
-        $this->dispatch('service-refresh');
-    }
-
-    #[On('open-edit')]
-    public function openEdit($id)
-    {
-        $this->serviceId = $id;
-        $this->showEdit = true;
-
-        if ($this->serviceId) {
-            $this->fillFields($this->serviceId);
-        }
-    }
-
-    #[On('edit')]
-    public function edit()
-    {
-        $this->validate();
-
-        $service = OrderService::find($this->serviceId);
-
-        // Verifica se o status é agendado.
-        if ($service->status === ServiceStatus::AGENDADO) {
-
-            DB::transaction(function () use ($service) {
-
-                // 1. Prepara os dados da pivot e calcula o total.
-                $pivotData = [];
-                $total = 0;
-                foreach ($this->ac_ids as $acId) {
-                    if (isset($this->ac_valores[$acId]) && $this->ac_valores[$acId] != '') {
-                        $preco = (float) $this->ac_valores[$acId];
-                    } else {
-                        $preco = 0;
-                    }
-                    $pivotData[$acId] = ['valor' => $preco];
-                    $total += $preco;
-                }
-
-                // 2. Atualiza a OS.
-                $service->update([
-                    // Somente alguns atributos podem ser atualizados.
-                    'executor_id' => $this->executor_id,
-                    'data_servico' => $this->data_servico,
-                    'detalhes' => $this->detalhes,
-                    'total' => $total
-                ]);
-
-                // 3. Atualiza os dados da tabela pivô.
-                $service->airConditioners()->sync($pivotData);
-
-            });
-
-            $this->dispatch('notify-success', 'Dados atualizados com sucesso!');
-        } else {
-            $this->dispatch('notify-error', 'Apenas serviços agendados podem ser editados.');
-        }
-
-        $this->closeModal();
-        $this->serviceId = null;
-
-        $this->dispatch('service-refresh');
     }
 
     #[Layout('layouts.app')]
