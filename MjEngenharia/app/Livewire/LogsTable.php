@@ -23,8 +23,7 @@ final class LogsTable extends PowerGridComponent
         $this->showCheckBox();
 
         return [
-            PowerGrid::header()
-                ->showSearchInput(),
+            PowerGrid::header(),
             PowerGrid::footer()
                 ->showPerPage()
                 ->showRecordCount(),
@@ -47,13 +46,19 @@ final class LogsTable extends PowerGridComponent
             ->add('id')
             ->add('log_name')
             ->add('description')
-            ->add('subject_type')
-            ->add('event')
+            ->add('subject_type', function(ActivityLog $model) {
+                return $model->subject_type_label;
+            })
+            ->add('event', function(ActivityLog $model) {
+                return $model->event_label;
+            })
             ->add('subject_id')
-            ->add('causer_type')
+            ->add('causer_type', function(ActivityLog $model) {
+                return $model->causer_role;
+            })
             ->add('causer_id')
             ->add('causer_name', function(ActivityLog $model) {
-                return $model->causer_label;
+                return $model->causer_name;
             })
             ->add('properties')
             ->add('updated_at');
@@ -71,21 +76,18 @@ final class LogsTable extends PowerGridComponent
             //     ->sortable()
             //     ->searchable(),
 
-            Column::make('Event', 'event')
-                ->sortable()
-                ->searchable(),
+            Column::make('Evento', 'event')
+                ->sortable(),
 
-            Column::make('Subject type', 'subject_type')
-                ->sortable()
-                ->searchable(),
+            Column::make('Tipo do Alvo', 'subject_type')
+                ->sortable(),
 
-            Column::make('Subject id', 'subject_id'),
-            Column::make('Causer type', 'causer_type')
-                ->sortable()
-                ->searchable(),
+            Column::make('Id do Alvo', 'subject_id'),
+            Column::make('Tipo do Causador', 'causer_type')
+                ->sortable(),
 
             // Column::make('Causer id', 'causer_id'),
-            Column::make('Causer Name', 'causer_name'),
+            Column::make('Nome do Causador', 'causer_name'),
             // Column::make('Properties', 'properties')
             //     ->sortable()
             //     ->searchable(),
@@ -93,7 +95,7 @@ final class LogsTable extends PowerGridComponent
             // Column::make('Created at', 'created_at_formatted', 'created_at')
             //     ->sortable(),
 
-            Column::make('Make at', 'updated_at')
+            Column::make('Realizado em', 'updated_at')
                 ->sortable()
                 ->searchable(),
 
