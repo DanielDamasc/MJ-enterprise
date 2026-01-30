@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\AirConditioning;
 use App\Models\Client;
 use App\Models\User;
+use App\Services\AirConditioningService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -16,6 +17,13 @@ use Livewire\Component;
 
 class AirConditionersManager extends Component
 {
+    protected AirConditioningService $acService;
+
+    public function boot(AirConditioningService $acService)
+    {
+        $this->acService = $acService;
+    }
+
     // Atributos de Ar-condicionado.
     public $cliente_id = null;
     public $prox_higienizacao = '';
@@ -137,70 +145,34 @@ class AirConditionersManager extends Component
         $this->validate();
 
         try {
-            DB::transaction(function () {
-
-                $novoCodigo = AirConditioning::gerarCodigo($this->cliente_id);
-
-                $ac = AirConditioning::create([
-                    'cliente_id' => $this->cliente_id,
-                    'codigo_ac' => $novoCodigo,
-                    'ambiente' => $this->ambiente,
-                    'modelo' => $this->modelo,
-                    'marca' => $this->marca,
-                    'potencia' => $this->potencia,
-                    'tipo' => $this->tipo,
-                    'prox_higienizacao' => $this->prox_higienizacao ? $this->prox_higienizacao : null
-                ]);
-
-                $ac->address()->create([
-                    'cep' => $this->cep,
-                    'rua' => $this->rua,
-                    'numero' => $this->numero,
-                    'bairro' => $this->bairro,
-                    'complemento' => $this->complemento,
-                    'cidade' => $this->cidade,
-                    'uf' => $this->uf
-                ]);
-            });
-
-            $this->dispatch('notify-success', 'Ar-condicionado cadastrado com sucesso!');
-            $this->dispatch('airConditioners-refresh');
+            $this->acService->create(
+            [
+                'cliente_id' => $this->cliente_id,
+                'codigo_ac' => null,
+                'ambiente' => $this->ambiente,
+                'modelo' => $this->modelo,
+                'marca' => $this->marca,
+                'potencia' => $this->potencia,
+                'tipo' => $this->tipo,
+                'prox_higienizacao' => $this->prox_higienizacao ? $this->prox_higienizacao : null
+            ],
+        [
+                'cep' => $this->cep,
+                'rua' => $this->rua,
+                'numero' => $this->numero,
+                'bairro' => $this->bairro,
+                'complemento' => $this->complemento,
+                'cidade' => $this->cidade,
+                'uf' => $this->uf
+            ]);
 
             $this->closeModal();
+            $this->dispatch('notify-success', 'Ar-condicionado cadastrado com sucesso!');
+            $this->dispatch('airConditioners-refresh');
 
         } catch (Exception $e) {
             $this->dispatch('notify-error', $e->getMessage());
         }
-    }
-
-    #[On('confirm-delete')]
-    public function confirmDelete($id)
-    {
-        $this->equipmentId = $id;
-        $this->showDelete = true;
-    }
-
-    public function delete()
-    {
-        if ($this->equipmentId) {
-            $ac = AirConditioning::find($this->equipmentId);
-
-            if ($ac->servicos()->withTrashed()->exists()) {
-                $this->dispatch('notify-error', 'Não se pode deletar um ar-condicionado com serviço vinculado.');
-                $this->closeModal();
-                return ;
-            }
-
-            if ($ac) {
-                $ac->delete();
-                $this->dispatch('notify-success', 'Equipamento deletado com sucesso.');
-            }
-        }
-
-        $this->closeModal();
-        $this->equipmentId = null;
-
-        $this->dispatch('airConditioners-refresh');
     }
 
     #[On('open-edit')]
@@ -235,44 +207,66 @@ class AirConditionersManager extends Component
     {
         $this->validate();
 
-        try {
-            DB::beginTransaction();
+        $ac = AirConditioning::with('address')->find($this->equipmentId);
 
-            $ac = AirConditioning::with('address')->find($this->equipmentId);
-
-            if ($ac) {
-                $ac->update([
+        if ($ac) {
+            try {
+                $this->acService->update($ac,
+                [
                     'cliente_id' => $this->cliente_id,
                     'ambiente' => $this->ambiente,
                     'modelo' => $this->modelo,
                     'marca' => $this->marca,
                     'potencia' => $this->potencia,
                     'tipo' => $this->tipo,
-
-                    'prox_higienizacao' => $this->prox_higienizacao ? $this->prox_higienizacao : null,
+                    'prox_higienizacao' => $this->prox_higienizacao ? $this->prox_higienizacao : null
+                ],
+            [
+                    'cep' => $this->cep,
+                    'rua' => $this->rua,
+                    'numero' => $this->numero,
+                    'bairro' => $this->bairro,
+                    'complemento' => $this->complemento,
+                    'cidade' => $this->cidade,
+                    'uf' => $this->uf
                 ]);
 
-                $ac->address()->updateOrCreate(
-            [],
-            [
-                        'cep' => $this->cep,
-                        'rua' => $this->rua,
-                        'numero' => $this->numero,
-                        'bairro' => $this->bairro,
-                        'complemento' => $this->complemento,
-                        'cidade' => $this->cidade,
-                        'uf' => $this->uf
-                    ]);
+                $this->closeModal();
+                $this->dispatch('notify-success', 'Dados atualizados com sucesso!');
+                $this->dispatch('airConditioners-refresh');
+
+            } catch (Exception $e) {
+                $this->dispatch('notify-error', $e->getMessage());
+
             }
+        }
+    }
 
-            DB::commit();
+    #[On('confirm-delete')]
+    public function confirmDelete($id)
+    {
+        $this->equipmentId = $id;
+        $this->showDelete = true;
+    }
 
-            $this->dispatch('notify-success', 'Dados atualizados com sucesso!');
-            $this->dispatch('airConditioners-refresh');
-        } catch (Exception $e) {
-            DB::rollBack();
-        } finally {
-            $this->closeModal();
+    public function delete()
+    {
+        if ($this->equipmentId) {
+            $ac = AirConditioning::find($this->equipmentId);
+
+            try {
+                $this->acService->delete($ac);
+                $this->dispatch('notify-success', 'Ar-condicionado deletado com sucesso.');
+                $this->dispatch('airConditioners-refresh');
+
+            } catch (Exception $e) {
+                $this->dispatch('notify-error', $e->getMessage());
+
+            } finally {
+                $this->equipmentId = null;
+                $this->closeModal();
+
+            }
         }
     }
 
