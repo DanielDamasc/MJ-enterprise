@@ -10,6 +10,7 @@ use App\Livewire\Login;
 use App\Livewire\LogsManager;
 use App\Livewire\ResetPassword;
 use App\Livewire\ServicesManager;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -25,9 +26,19 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
 
     Route::get('/logout', function () {
-        Auth::logout();
+
+        // Verifica se existe alguem logado para aplicar bloqueio de logs.
+        if (Auth::check()) {
+            User::withoutEvents(function () {
+                Auth::logout();
+            });
+        } else {
+            Auth::logout();
+        }
+
         session()->invalidate();
         session()->regenerateToken();
+
         return redirect()->route('login');
     })->name('logout');
 
