@@ -23,7 +23,7 @@ class ServiceService
             $os->airConditioners()->attach($calculo['pivot']);
 
             // 4. Atualiza a próxima higienização se for concluído.
-            if ($os->tipo == 'higienizacao' && $os->status == ServiceStatus::CONCLUIDO->value) {
+            if (in_array($os->tipo, ['higienizacao', 'instalacao']) && $os->status == ServiceStatus::CONCLUIDO) {
                 $proxData = $os->proximaHigienizacao($os->data_servico);
 
                 $os->airConditioners()->update([
@@ -82,7 +82,7 @@ class ServiceService
                 // 3. Regra para INSTALAÇÃO, caso o serviço seja cancelado, deleta os AC.
                 $this->deleteAC($orderService);
             });
-            
+
         } else {
             throw new Exception('Apenas serviços agendados podem ser cancelados.');
 
