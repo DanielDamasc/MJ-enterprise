@@ -30,8 +30,10 @@ class ForgotPassword extends Component
         if ($status === Password::RESET_LINK_SENT) {
             $this->email = '';
             session()->flash('status', __($status));
+            $this->dispatch('notify-success', 'Link de recuperação de senha enviado com sucesso.');
         } else {
             $this->addError('email', __($status));
+            $this->dispatch('notify-error', __($status));
         }
     }
 
