@@ -6,3 +6,8 @@ use Illuminate\Support\Facades\Artisan;
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
+
+// Roda este comando diariamente as 9 horas.
+Schedule::command('app:send-whatsapp-reminders')
+    ->dailyAt('09:00')
+    ->timezone('America/Sao_Paulo');
