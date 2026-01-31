@@ -39,6 +39,19 @@ class OrderService extends Model
         'detalhes' => 'array',
     ];
 
+    protected static $tipoLabels = [
+        'higienizacao' => 'Higienização',
+        'instalacao' => 'Instalação',
+        'manutencao' => 'Manutenção',
+        'carga_gas' => 'Carga de Gás',
+        'correcao_vazamento' => 'Correção de Vazamento',
+    ];
+
+    public function getTipoLabelAttribute()
+    {
+        return self::$tipoLabels[$this->tipo] ?? ucfirst($this->tipo);
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()

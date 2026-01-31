@@ -26,6 +26,18 @@
 
                     <div class="p-4 flex-grow space-y-4">
 
+                        <div class="flex items-center pb-4 border-b border-gray-100 mb-2">
+                            <div class="p-2 bg-blue-50 rounded-lg mr-3">
+                                <x-heroicon-o-wrench-screwdriver class="w-6 h-6 text-blue-600" />
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Serviço</p>
+                                <h3 class="text-lg font-extrabold text-gray-800 capitalize leading-none">
+                                    {{ $service->tipo_label }}
+                                </h3>
+                            </div>
+                        </div>
+
                         @if ($address)
                             <div class="flex items-start">
                                 <div class="flex-shrink-0 mt-1">
