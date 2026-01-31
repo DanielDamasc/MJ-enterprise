@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\User;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
@@ -30,8 +31,16 @@ class Login extends Component
     {
         $this->validate();
 
-        // Tenta autenticar
-        if (Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
+        // Tenta logar.
+        $loggedIn = User::withoutEvents(function () {
+            return Auth::attempt(
+                ['email' => $this->email, 'password' => $this->password],
+                $this->remember
+            );
+        });
+
+        // Se funcionou, autentica, atribui role, e redireciona.
+        if ($loggedIn) {
             session()->regenerate();
 
             $user = Auth::user();

@@ -24,6 +24,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+
+        'remember_token',
+        'email_verified_at',
     ];
 
     /**
@@ -39,7 +42,8 @@ class User extends Authenticatable
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logFillable();
+            ->logFillable()
+            ->logExcept(['password', 'remember_token', 'email_verified_at', 'updated_at']);
     }
 
     /**

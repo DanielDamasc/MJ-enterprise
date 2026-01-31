@@ -45,7 +45,15 @@ class ResetPassword extends Component
                     'password' => Hash::make($password)
                 ])->setRememberToken(Str::random(60));
 
+                $user->disableLogging();
                 $user->save();
+                $user->enableLogging();
+
+                activity()
+                    ->event('Alterou Senha')
+                    ->causedBy($user)
+                    ->performedOn($user)
+                    ->log('Redefiniu a senha através do link de redefinição.');
 
                 event(new PasswordReset($user));
             }
@@ -57,6 +65,7 @@ class ResetPassword extends Component
         }
 
         $this->addError('email', __($status));
+        $this->dispatch('notify-error', __($status));
     }
 
     #[Layout('layouts.guest')]
