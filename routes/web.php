@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 // ---------- GRUPO DE ROTAS PÚBLICAS ----------
 Route::middleware('guest')->group(function () {
-    Route::get('/login', Login::class)->name('login');
+    Route::get('/login', Login::class)->name('login')->middleware('throttle:5,1');
 
     Route::get('/forgot-password', ForgotPassword::class)->name('forgot-password');
     Route::get('/reset-password/{token}', ResetPassword::class)->name('password.reset');
