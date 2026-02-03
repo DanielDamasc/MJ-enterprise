@@ -16,6 +16,7 @@ class RoleSeeder extends Seeder
         // 1. Adiciona os Perfis.
         $roleAdmin = Role::create(['name' => 'adm']);
         $roleExecutor = Role::create(['name' => 'executor']);
+        $roleAssistente = Role::create(['name' => 'assistente']);
 
         // 2. Atribui as Permissões.
 

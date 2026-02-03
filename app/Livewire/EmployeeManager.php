@@ -5,12 +5,10 @@ namespace App\Livewire;
 use App\Models\User;
 use App\Services\EmployeeService;
 use Exception;
-use Hash;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
 use Livewire\Component;
-use Str;
 
 class EmployeeManager extends Component
 {
@@ -23,6 +21,7 @@ class EmployeeManager extends Component
 
     public $name = '';
     public $email = '';
+    public $perfil = '';
     public $showCreate = false;
     public $showDelete = false;
     public $showEdit = false;
@@ -37,14 +36,19 @@ class EmployeeManager extends Component
                 'email',
                 Rule::unique('users', 'email')->ignore($this->userId),
             ],
+            'perfil' => [
+                'required',
+                Rule::in(['assistente', 'executor']),
+            ]
         ];
     }
 
     protected $messages = [
         'name.required' => 'O campo nome é obrigatório.',
         'email.required' => 'O campo email é obrigatório.',
+        'perfil.required' => 'O campo perfil é obrigatório.',
         'email.email' => 'Informe um endereço de email válido.',
-        'email.unique' => 'O email já foi cadastrado.',
+        'email.unique' => 'O email já foi cadastrado.', 
     ];
 
     public function closeModal()
@@ -55,7 +59,7 @@ class EmployeeManager extends Component
 
     public function openCreate()
     {
-        $this->reset(['name', 'email', 'userId']);
+        $this->reset(['name', 'email', 'perfil', 'userId']);
         $this->resetValidation();
         $this->showCreate = true;
     }
@@ -68,7 +72,7 @@ class EmployeeManager extends Component
             $this->employeeService->create([
                 'name' => $this->name,
                 'email' => $this->email,
-            ]);
+            ], $this->perfil);
 
             $this->closeModal();
             $this->dispatch('notify-success', 'Executor cadastrado com sucesso!');
@@ -90,6 +94,7 @@ class EmployeeManager extends Component
             $user = User::find($this->userId);
             $this->name = $user->name;
             $this->email = $user->email;
+            $this->perfil = $user->getRoleNames()->first();
         }
     }
 
@@ -104,7 +109,7 @@ class EmployeeManager extends Component
                 $this->employeeService->update($user,[
                     'name' => $this->name,
                     'email' => $this->email,
-                ]);
+                ], $this->perfil);
 
                 $this->closeModal();
                 $this->dispatch('notify-success', 'Dados atualizados com sucesso!');

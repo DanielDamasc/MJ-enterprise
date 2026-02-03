@@ -49,40 +49,40 @@
                 @endrole
 
                 @role('adm')
-                    <a href="/executores" wire:navigate
+                    <a href="/colaboradores" wire:navigate
                         class="flex items-center px-4 py-3 rounded-lg transition-colors
-                            {{ request()->is('executores') ? 'bg-secondary-700 text-white' : 'text-primary-200 hover:bg-primary-800 hover:text-white' }}">
+                            {{ request()->is('colaboradores') ? 'bg-secondary-700 text-white' : 'text-primary-200 hover:bg-primary-800 hover:text-white' }}">
                         <x-heroicon-s-briefcase class="h-5 w-5 mr-2" />
-                        <span class="font-semibold text-md">Executores</span>
+                        <span class="font-semibold text-md">Colaboradores</span>
                     </a>
                 @endrole
 
-                @role('adm')
+                @hasrole(['adm', 'assistente'])
                     <a href="/clientes" wire:navigate
                         class="flex items-center px-4 py-3 rounded-lg transition-colors
                             {{ request()->is('clientes') ? 'bg-secondary-700 text-white' : 'text-primary-200 hover:bg-primary-800 hover:text-white' }}">
                         <x-heroicon-s-users class="w-5 h-5 mr-2" />
                         <span class="font-semibold text-md">Clientes</span>
                     </a>
-                @endrole
+                @endhasrole
 
-                @role('adm')
+                @hasrole(['adm', 'assistente'])
                     <a href="/ar-condicionados" wire:navigate
                         class="flex items-center px-4 py-3 rounded-lg transition-colors
                             {{ request()->is('ar-condicionados') ? 'bg-secondary-700 text-white' : 'text-primary-200 hover:bg-primary-800 hover:text-white' }}">
                         <x-ionicon-snow-outline class="w-5 h-5 mr-2" />
                         <span class="font-semibold text-md">Ar-condicionados</span>
                     </a>
-                @endrole
+                @endhasrole
 
-                @role('adm')
+                @hasrole(['adm', 'assistente'])
                     <a href="/servicos" wire:navigate
                         class="flex items-center px-4 py-3 rounded-lg transition-colors
                             {{ request()->is('servicos') ? 'bg-secondary-700 text-white' : 'text-primary-200 hover:bg-primary-800 hover:text-white' }}">
                         <x-heroicon-s-clipboard-document-check class="w-5 h-5 mr-2" />
                         <span class="font-semibold text-md">Ordens de Serviço</span>
                     </a>
-                @endrole
+                @endhasrole
 
                 @role('adm')
                     <a href="/logs" wire:navigate

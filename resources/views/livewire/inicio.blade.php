@@ -13,14 +13,14 @@
     {{-- mobile: 1 coluna | tablet: 2 colunas | desktop: 3 colunas --}}
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
 
-        {{-- CARD 1: EXECUTORES --}}
-        <a  href="{{ route('executores') }}"
+        {{-- CARD 1: COLABORADORES --}}
+        <a  href="{{ route('colaboradores') }}"
             wire:navigate
             class="block relative overflow-hidden bg-white rounded-xl border border-gray-100 p-6 shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-1">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-500">
-                        Total de Executores
+                        Total de Colaboradores
                     </p>
                     <p class="mt-2 text-3xl font-bold text-gray-900">
                         {{ $this->totalEmployees }}

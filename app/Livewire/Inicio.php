@@ -20,7 +20,7 @@ class Inicio extends Component
     #[Computed]
     public function totalEmployees()
     {
-        return User::role('executor')->count();
+        return User::role(['executor', 'assistente'])->count();
     }
 
     #[Computed]

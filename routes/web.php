@@ -45,7 +45,7 @@ Route::middleware('auth')->group(function () {
     // ----- ROTAS DO ADMIN -----
     Route::group(['middleware' => ['role:adm']], function () {
         Route::get('/', Inicio::class);
-        Route::get('/executores', EmployeeManager::class)->name('executores');
+        Route::get('/colaboradores', EmployeeManager::class)->name('colaboradores');
         Route::get('/clientes', ClientsManager::class)->name('clientes');
         Route::get('/ar-condicionados', AirConditionersManager::class)->name('ar-condicionados');
         Route::get('/servicos', ServicesManager::class)->name('servicos');

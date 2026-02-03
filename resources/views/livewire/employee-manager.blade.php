@@ -3,17 +3,17 @@
 
         <div>
             <h1 class="text-2xl font-bold text-primary-900 tracking-tight">
-                Gerenciamento de Executores
+                Gerenciamento de Colaboradores
             </h1>
             <p class="text-sm text-primary-600 mt-1">
-                Visualize e gerencie os executores da MJ Engenharia.
+                Visualize e gerencie os colaboradores da MJ Engenharia.
             </p>
         </div>
 
         <div>
             <button wire:click="openCreate" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-secondary-500 hover:bg-secondary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary-500 transition-all">
                 <x-heroicon-o-plus class="w-5 h-5 mr-1"/>
-                Novo Executor
+                Novo Colaborador
             </button>
         </div>
     </div>
@@ -31,7 +31,7 @@
 
                     <div class="flex items-center justify-between p-5 border-b border-primary-50 rounded-t">
                         <h3 class="text-xl font-bold text-primary-900">
-                            {{ $showCreate ? 'Novo Executor' : 'Editar Executor' }}
+                            {{ $showCreate ? 'Novo Colaborador' : 'Editar Colaborador' }}
                         </h3>
 
                         <button wire:click="closeModal" type="button" class="text-primary-400 bg-transparent hover:bg-primary-50 hover:text-primary-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center transition-colors">
@@ -44,7 +44,7 @@
 
                             <div class="space-y-4">
                                 <div>
-                                    <label class="block mb-1 text-sm font-medium text-primary-700">Nome do Executor
+                                    <label class="block mb-1 text-sm font-medium text-primary-700">Nome do Colaborador
                                         <span class="text-red-500">*</span>
                                     </label>
                                     <input type="text" wire:model="name"
@@ -54,13 +54,25 @@
                                 </div>
 
                                 <div>
-                                    <label class="block mb-1 text-sm font-medium text-primary-700">E-mail do Executor
+                                    <label class="block mb-1 text-sm font-medium text-primary-700">E-mail do Colaborador
                                         <span class="text-red-500">*</span>
                                     </label>
                                     <input type="email" wire:model="email"
                                         class="bg-primary-50 border border-primary-200 text-primary-900 text-sm rounded-lg focus:ring-secondary-500 focus:border-secondary-500 block w-full p-2.5"
-                                        placeholder="executor@exemplo.com">
+                                        placeholder="colaborador@exemplo.com">
                                     @error('email') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                </div>
+
+                                <div>
+                                    <label class="block mb-1 text-sm font-medium text-primary-700">Perfil do Colaborador
+                                        <span class="text-red-500">*</span>
+                                    </label>
+                                    <select wire:model="perfil" class="bg-primary-50 border border-primary-200 text-primary-900 text-sm rounded-lg focus:ring-secondary-500 focus:border-secondary-500 block w-full p-2.5">
+                                        <option value="">Selecione...</option>
+                                        <option value="assistente">Assistente</option>
+                                        <option value="executor">Executor</option>
+                                    </select>
+                                    @error('perfil') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                                 </div>
                             </div>
 
@@ -97,7 +109,7 @@
                         </div>
 
                         <h3 class="mb-5 text-lg font-normal text-gray-600">
-                            Tem certeza que deseja excluir este executor?
+                            Tem certeza que deseja excluir este colaborador?
                         </h3>
 
                         <p class="text-sm text-gray-800 mb-6">
