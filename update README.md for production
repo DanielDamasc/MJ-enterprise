@@ -4,14 +4,15 @@
 
 **Project Name:** MJ Engenharia
 
-**Purpose:** Sistema web completo para gerenciar clientes, equipamentos, executores, e ordens de serviço.
-Notificações de clientes, geração de relatórios e dashboards, e otimização dos processos da MJ Engenharia. 
+**Purpose:** Sistema web completo para gerenciar clientes, equipamentos, empregados, ordens de serviço, e mais.
+Notificações de clientes, geração de relatórios, controle e exportação de ordens de serviço, e otimização dos processos empresariais. 
 
 **Target Users:**
 - Administradores
+- Assistentes Administrativos
 - Executores
 
-**Status:** Em desenvolvimento
+**Status:** Em produção ⚙️
 
 ---
 
@@ -20,7 +21,7 @@ Notificações de clientes, geração de relatórios e dashboards, e otimizaçã
 1. **Automatizar o controle dos serviços** para os administradores
 2. **Automatizar a visualização de agendamentos** para os executores
 3. **Automatizar envio de notificações** para os clientes
-4. **Automatizar a produção de relatórios e documentos**
+4. **Automatizar os processos de geração de relatórios e comprovantes**
 
 ---
 
@@ -28,15 +29,14 @@ Notificações de clientes, geração de relatórios e dashboards, e otimizaçã
 
 ### Requirements
 - PHP 8.2+
-- Composer
-- Node.js & NPM
+- Composer 2.8
+- Node.js 24 & NPM 11 
 - MySQL
 
 ### Quick Start
 ```bash
 # Clone repository
-git clone https://github.com/DanielDamasc/MjEngenharia.git
-cd MjEngenharia
+git clone https://github.com/DanielDamasc/MJ-enterprise.git
 
 # Install dependencies
 composer install
@@ -64,10 +64,7 @@ php artisan serve
 
 ### Priority 1 (High Impact)
 - [ ] **Sistema de Notificações**
-  - Email para clientes sobre agendamentos
-  - Envio de WhatsApp para lembretes
-  - Alertas de higienizações vencendo
-  - Histórico de notificações
+  - Histórico mais detalhado de notificações
 
 - [ ] **Relatórios Exportáveis**
   - PDF de ordens de serviço
@@ -78,9 +75,6 @@ php artisan serve
 - [ ] **Dashboard com KPIs**
   - Informações gerais do sistema
   - Gráficos com informações relevantes
-
-- [ ] **Histórico de Alterações**
-  - Auditoria de ações (quem fez o quê)
 
 - [ ] **PWA (Progressive Web App)**
   - Uso offline para técnicos
@@ -94,11 +88,11 @@ php artisan serve
 ## 👥 Team & Contacts
 
 **Developer:** Daniel Damasceno Meira
-**GitHub:** https://github.com/DanielDamasc/MjEngenharia
-**Repository:** https://github.com/DanielDamasc/MjEngenharia.git
+**GitHub:** https://github.com/DanielDamasc
+**Repository:** https://github.com/DanielDamasc/MJ-enterprise
 
 ---
 
-**Last Updated:** 13/01/2026
+**Last Updated:** 03/02/2026
 **Laravel Version:** 12.0
 **PHP Version:** 8.2+
