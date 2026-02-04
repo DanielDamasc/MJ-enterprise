@@ -49,6 +49,10 @@ class Login extends Component
                 return redirect()->to('/servicos-executor');
             }
 
+            if ($user->hasRole('assistente')) {
+                return redirect()->to('/clientes');
+            }
+
             return redirect()->to('/');
         }
 

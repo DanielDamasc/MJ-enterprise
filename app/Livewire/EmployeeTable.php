@@ -50,7 +50,7 @@ final class EmployeeTable extends PowerGridComponent
             ->add('name')
             ->add('email')
             ->add('perfil', function (User $model) {
-                $model->getRoleNames()->first();
+                return ucfirst($model->getRoleNames()->first()) ?? 'N/A';
             })
             ->add('created_at');
     }
@@ -67,9 +67,7 @@ final class EmployeeTable extends PowerGridComponent
                 ->sortable()
                 ->searchable(),
 
-            Column::make('Perfil', 'perfil')
-                ->sortable()
-                ->searchable(),
+            Column::make('Perfil', 'perfil'),
 
             // Column::make('Created at', 'created_at')
             //     ->sortable()

@@ -46,10 +46,14 @@ Route::middleware('auth')->group(function () {
     Route::group(['middleware' => ['role:adm']], function () {
         Route::get('/', Inicio::class);
         Route::get('/colaboradores', EmployeeManager::class)->name('colaboradores');
+        Route::get('/logs', LogsManager::class)->name('logs');
+    });
+
+    // ----- ROTAS DO ADMIN OU ASSISTENTE -----
+    Route::group(['middleware' => ['role:adm|assistente']], function () {
         Route::get('/clientes', ClientsManager::class)->name('clientes');
         Route::get('/ar-condicionados', AirConditionersManager::class)->name('ar-condicionados');
         Route::get('/servicos', ServicesManager::class)->name('servicos');
-        Route::get('/logs', LogsManager::class)->name('logs');
     });
 
     // ----- ROTAS DO EXECUTOR -----
