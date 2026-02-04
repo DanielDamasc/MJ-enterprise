@@ -6,6 +6,7 @@ use App\Enums\ServiceStatus;
 use Carbon\Carbon;
 use DB;
 use Exception;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -25,6 +26,7 @@ class OrderService extends Model
         // Atributos
         'tipo',
         'data_servico',
+        'horario',
         'total', // Valor total, persistido como soma dos valores unitários
         'status', // enum
 
@@ -46,6 +48,17 @@ class OrderService extends Model
         'carga_gas' => 'Carga de Gás',
         'correcao_vazamento' => 'Correção de Vazamento',
     ];
+
+    protected function horario(): Attribute
+    {
+        return Attribute::make(
+            // Quando lê do banco transforma em Carbon.
+            get: fn ($value) => $value ? Carbon::parse($value)->format('H:i') : null,
+
+            // Quando salva, se vier vazio vira null, senão salva no formato.
+            set: fn ($value) => $value ? Carbon::parse($value)->format('H:i:s') : null,
+        );
+    }
 
     public function getTipoLabelAttribute()
     {

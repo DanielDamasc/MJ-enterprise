@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('marca')->nullable();
             $table->integer('potencia');
             $table->string('tipo');
+            $table->string('tipo_gas')->nullable();
 
             $table->timestamps();
         });

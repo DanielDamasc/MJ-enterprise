@@ -135,6 +135,17 @@
                                 </div>
                             </div>
 
+                            {{-- HORÁRIO --}}
+                            <div class="col-span-1 md:col-span-1 lg:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    Horário
+                                </label>
+                                <div class="h-10 bg-gray-100 border border-gray-200 rounded-lg flex items-center px-3 text-gray-700 select-none">
+                                    <x-heroicon-o-clock class="w-4 h-4 mr-2 text-gray-400"/>
+                                    {{ $horario }}
+                                </div>
+                            </div>
+
                             {{-- VALOR TOTAL --}}
                             <div class="col-span-1 md:col-span-1 lg:col-span-2">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Valor Total (R$)
@@ -371,6 +382,15 @@
                                 </label>
                                 <input type="date" wire:model="data_servico" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
                                 @error('data_servico') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                            </div>
+
+                            {{-- HORÁRIO --}}
+                            <div class="col-span-1 md:col-span-1 lg:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    Horário
+                                </label>
+                                <input type="time" wire:model="horario" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
+                                @error('horario') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>
 
                             {{-- STATUS --}}

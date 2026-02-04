@@ -36,6 +36,7 @@ class OrderServiceFactory extends Factory
 
             'tipo' => fake()->randomElement(['higienizacao', 'instalacao', 'manutencao', 'carga_gas', 'correcao_vazamento']),
             'data_servico' => fake()->dateTimeBetween('now', '+1 month'),
+            'horario' => fake()->time(),
             'status' => ServiceStatus::AGENDADO,
             'total' => 0,
             'observacoes_executor' => null,
