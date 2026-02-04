@@ -20,7 +20,6 @@ return new class extends Migration
 
             $table->string('tipo');
             $table->date('data_servico');
-            $table->time('horario')->nullable();
             $table->decimal('total', 10, 2);
             $table->string('status')->default('agendado');
 
