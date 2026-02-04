@@ -350,7 +350,7 @@
                                     <div class="h-10 bg-gray-100 border border-gray-200 rounded-lg flex items-center px-3 text-gray-600 cursor-not-allowed select-none">
                                         {{ $tipo_label }}
                                     </div>
-                                    <small class="text-xs text-gray-500 mt-1">O cliente não pode ser alterado na edição.</small>
+                                    <small class="text-xs text-gray-500 mt-1">O tipo de serviço não pode ser alterado na edição.</small>
                                 @else
                                     <select wire:model.live="tipo" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
                                         <option value="">Selecione...</option>
