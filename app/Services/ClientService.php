@@ -25,7 +25,7 @@ class ClientService
         $data['telefone'] = $this->limparTelefone($data['telefone']);
 
         // 2. Validação do Telefone
-        $this->validateTelefone($data['telefone'], $client->id);
+        $this->validateTelefone($data['telefone']);
 
         return $client->update($data);
     }
@@ -44,7 +44,7 @@ class ClientService
         return preg_replace('/[^0-9]/', '', $phone);
     }
 
-    private function validateTelefone($phone, $ignoreId = null)
+    private function validateTelefone($phone)
     {
         // 1. Validação de tamanho
         if (Str::of($phone)->length() !== 11) {
@@ -52,14 +52,14 @@ class ClientService
         }
 
         // 2. Validação de unicidade
-        $query = Client::where('telefone', $phone);
+        // $query = Client::where('telefone', $phone);
 
-        if ($ignoreId) {
-            $query->where('id', '!=', $ignoreId);
-        }
+        // if ($ignoreId) {
+        //     $query->where('id', '!=', $ignoreId);
+        // }
 
-        if ($query->exists()) {
-            throw new Exception("O telefone já foi cadastrado.");
-        }
+        // if ($query->exists()) {
+        //     throw new Exception("O telefone já foi cadastrado.");
+        // }
     }
 }
