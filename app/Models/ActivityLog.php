@@ -84,6 +84,10 @@ class ActivityLog extends Model
                 return 'Executor';
             }
 
+            if ($this->causer->hasRole('assistente')) {
+                return 'Assistente';
+            }
+
             // Fallback de segurança.
             return 'Usuário';
         }

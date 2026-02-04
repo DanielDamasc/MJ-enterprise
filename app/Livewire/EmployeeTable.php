@@ -3,9 +3,10 @@
 namespace App\Livewire;
 
 use App\Models\User;
-use Blade;
+
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Blade;
 use PowerComponents\LivewirePowerGrid\Button;
 use PowerComponents\LivewirePowerGrid\Column;
 use PowerComponents\LivewirePowerGrid\Facades\Filter;
@@ -34,7 +35,7 @@ final class EmployeeTable extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return User::query()->role('executor');
+        return User::query()->role(['executor', 'assistente']);
     }
 
     public function relationSearch(): array
@@ -48,6 +49,9 @@ final class EmployeeTable extends PowerGridComponent
             ->add('id')
             ->add('name')
             ->add('email')
+            ->add('perfil', function (User $model) {
+                return ucfirst($model->getRoleNames()->first()) ?? 'N/A';
+            })
             ->add('created_at');
     }
 
@@ -62,6 +66,8 @@ final class EmployeeTable extends PowerGridComponent
             Column::make('Email', 'email')
                 ->sortable()
                 ->searchable(),
+
+            Column::make('Perfil', 'perfil'),
 
             // Column::make('Created at', 'created_at')
             //     ->sortable()

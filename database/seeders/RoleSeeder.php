@@ -14,8 +14,9 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         // 1. Adiciona os Perfis.
-        $roleAdmin = Role::create(['name' => 'adm']);
-        $roleExecutor = Role::create(['name' => 'executor']);
+        $roleAdmin = Role::firstOrCreate(['name' => 'adm']);
+        $roleExecutor = Role::firstOrCreate(['name' => 'executor']);
+        $roleAssistente = Role::firstOrCreate(['name' => 'assistente']);
 
         // 2. Atribui as Permissões.
 
