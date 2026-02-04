@@ -37,6 +37,7 @@ class ServicesManager extends Component
     // Atributos Normais.
     public $tipo = '';
     public $data_servico = '';
+    public $horario = '';
     public array $ac_precos = [];
     public $valor_total = 0;
     public $status = ServiceStatus::AGENDADO->value;
@@ -65,6 +66,8 @@ class ServicesManager extends Component
 
             'ac_ids' => 'required|array|min:1',
             'ac_ids.*' => 'exists:air_conditioners,id',
+
+            'horario' => 'nullable|date_format:H:i', // HH:MM
 
             'tipo' => 'required|string',
             'ac_precos' => 'required|array|min:1',
@@ -129,6 +132,7 @@ class ServicesManager extends Component
             $this->executor_id = $service->executor_id;
             $this->tipo = $service->tipo;
             $this->data_servico = $service->data_servico;
+            $this->horario = $service->horario ?? '';
             $this->status = $service->status->value;
             $this->detalhes = $service->detalhes;
 
@@ -168,6 +172,7 @@ class ServicesManager extends Component
             'executor_id',
             'tipo',
             'data_servico',
+            'horario',
             'ac_precos',
             'status',
             'detalhes',
@@ -189,6 +194,7 @@ class ServicesManager extends Component
                 'executor_id' => $this->executor_id,
                 'tipo' => $this->tipo,
                 'data_servico' => $this->data_servico,
+                'horario' => $this->horario, // casta para null na model.
                 'status' => $this->status,
                 'detalhes' => $this->detalhes,
                 'total' => null
@@ -230,6 +236,7 @@ class ServicesManager extends Component
             [
                 'executor_id' => $this->executor_id,
                 'data_servico' => $this->data_servico,
+                'horario' => $this->horario, // casta para null na model.
                 'detalhes' => $this->detalhes,
                 'total' => null
             ]);

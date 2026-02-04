@@ -73,6 +73,7 @@ final class ServicesTable extends PowerGridComponent
             })
             ->add('tipo')
             ->add('data_servico_formatted', fn (OrderService $model) => Carbon::parse($model->data_servico)->format('d/m/Y'))
+            ->add('horario')
             ->add('total')
             ->add('status_formatted', function (OrderService $model) {
                 $color = $model->status->color();

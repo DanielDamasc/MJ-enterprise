@@ -40,6 +40,7 @@ class AirConditioningFactory extends Factory
             'tipo' => fake()->randomElement([
                 'hw', 'k7', 'piso_teto'
             ]),
+            'tipo_gas' => null,
 
             // data da próxima higienização
             'prox_higienizacao' => fake()->dateTimeBetween('now', '+6 months')->format('Y-m-d'),

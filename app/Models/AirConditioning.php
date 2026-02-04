@@ -23,6 +23,7 @@ class AirConditioning extends Model
         'marca',
         'potencia',
         'tipo',
+        'tipo_gas',
 
         // data da próxima higienização
         'prox_higienizacao',

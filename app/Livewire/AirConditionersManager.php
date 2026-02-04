@@ -32,6 +32,7 @@ class AirConditionersManager extends Component
     public $marca = '';
     public $potencia = 0;
     public $tipo = '';
+    public $tipo_gas = '';
     public $codigo_ac = '';
 
     // Atributos de Endereço.
@@ -57,6 +58,7 @@ class AirConditionersManager extends Component
             'modelo' => 'nullable|string|max:100',
             'marca' => 'nullable|string|max:50',
             'potencia' => 'required|integer|min:1',
+            'tipo_gas' => 'nullable|string|max:50',
 
             // Administrador tem a liberdade de adicionar a data da próxima higienização
             'prox_higienizacao' => 'nullable|date',
@@ -128,6 +130,7 @@ class AirConditionersManager extends Component
             'potencia',
             'prox_higienizacao',
             'tipo',
+            'tipo_gas',
             'cep',
             'rua',
             'numero',
@@ -154,6 +157,7 @@ class AirConditionersManager extends Component
                 'marca' => $this->marca,
                 'potencia' => $this->potencia,
                 'tipo' => $this->tipo,
+                'tipo_gas' => $this->tipo_gas,
                 'prox_higienizacao' => $this->prox_higienizacao ? $this->prox_higienizacao : null
             ],
         [
@@ -190,6 +194,7 @@ class AirConditionersManager extends Component
             $this->marca = $ac->marca ?? '';
             $this->potencia = $ac->potencia;
             $this->tipo = $ac->tipo;
+            $this->tipo_gas = $ac->tipo_gas ?? '';
 
             $this->prox_higienizacao = $ac->prox_higienizacao ?? '';
 
@@ -219,6 +224,7 @@ class AirConditionersManager extends Component
                     'marca' => $this->marca,
                     'potencia' => $this->potencia,
                     'tipo' => $this->tipo,
+                    'tipo_gas' => $this->tipo_gas,
                     'prox_higienizacao' => $this->prox_higienizacao ? $this->prox_higienizacao : null
                 ],
             [

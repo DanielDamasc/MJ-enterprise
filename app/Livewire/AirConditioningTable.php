@@ -62,6 +62,7 @@ final class AirConditioningTable extends PowerGridComponent
             ->add('marca')
             ->add('potencia')
             ->add('tipo')
+            ->add('tipo_gas')
             ->add('prox_higienizacao_formatted', function (AirConditioning $model) {
                 // 1. Sem data de próxima higienização
                 if (!$model->prox_higienizacao) {

@@ -102,6 +102,12 @@
                                 @error('tipo') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>
 
+                            <div class="col-span-1 md:col-span-1 lg:col-span-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de Gás</label>
+                                <input type="text" wire:model="tipo_gas" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
+                                @error('tipo_gas') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                            </div>
+
                             <div class="col-span-1 md:col-span-1 lg:col-span-3">
                                 @if ($showCreate)
                                     <div class="flex items-center mb-1 gap-2">
