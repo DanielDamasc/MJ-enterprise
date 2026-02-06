@@ -25,7 +25,7 @@
     @if ($showCreate || $showEdit)
         <div class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-primary-950/75 backdrop-blur-sm p-4 md:inset-0 h-modal md:h-full transition-opacity">
 
-            <div class="relative w-full max-w-md h-full md:h-auto">
+            <div class="relative w-full max-w-5xl h-full md:h-auto">
 
                 <div class="relative bg-white rounded-xl shadow-2xl border border-primary-100">
 
@@ -39,11 +39,11 @@
                         </button>
                     </div>
 
-                    <form wire:submit="{{ $showCreate ? 'save' : 'edit' }}">
-                        <div class="p-6 space-y-6">
+                    <form wire:submit="{{ $showCreate ? 'save' : 'edit' }}" class="p-6 space-y-8">
+                        <div class="flex flex-col gap-4">
 
-                            <div class="space-y-4">
-                                <div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5">
+                                <div class="col-span-1 md:col-span-2 lg:col-span-6">
                                     <label class="block mb-1 text-sm font-medium text-primary-700">Nome do Cliente
                                         <span class="text-red-500">*</span>
                                     </label>
@@ -53,7 +53,15 @@
                                     @error('cliente') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                                 </div>
 
-                                <div>
+                                <div class="col-span-1 md:col-span-2 lg:col-span-6">
+                                    <label class="block mb-1 text-sm font-medium text-primary-700">E-mail</label>
+                                    <input type="email" wire:model="email"
+                                        class="bg-primary-50 border border-primary-200 text-primary-900 text-sm rounded-lg focus:ring-secondary-500 focus:border-secondary-500 block w-full p-2.5"
+                                        placeholder="cliente@exemplo.com">
+                                    @error('email') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                </div>
+
+                                <div class="col-span-1 md:col-span-2 lg:col-span-4">
                                     <label class="block mb-1 text-sm font-medium text-primary-700">Pessoa de Contato
                                         <span class="text-red-500">*</span>
                                     </label>
@@ -63,29 +71,19 @@
                                     @error('contato') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                                 </div>
 
-                                <div>
-                                    <label class="block mb-1 text-sm font-medium text-primary-700">E-mail</label>
-                                    <input type="email" wire:model="email"
+                                <div class="col-span-1 md:col-span-2 lg:col-span-4">
+                                    <label class="block mb-1 text-sm font-medium text-primary-700">Telefone de Contato
+                                        <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" wire:model="telefone"
                                         class="bg-primary-50 border border-primary-200 text-primary-900 text-sm rounded-lg focus:ring-secondary-500 focus:border-secondary-500 block w-full p-2.5"
-                                        placeholder="cliente@exemplo.com">
-                                    @error('email') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                        placeholder="(00) 00000-0000"
+                                        maxlength="11"
+                                        oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                    @error('telefone') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                                 </div>
 
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block mb-1 text-sm font-medium text-primary-700">Telefone de Contato
-                                            <span class="text-red-500">*</span>
-                                        </label>
-                                        <input type="text" wire:model="telefone"
-                                            class="bg-primary-50 border border-primary-200 text-primary-900 text-sm rounded-lg focus:ring-secondary-500 focus:border-secondary-500 block w-full p-2.5"
-                                            placeholder="(00) 00000-0000"
-                                            maxlength="11"
-                                            oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                                        @error('telefone') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
-                                    </div>
-                                </div>
-
-                                <div>
+                                <div class="col-span-1 md:col-span-2 lg:col-span-4">
                                     <label class="block mb-1 text-sm font-medium text-primary-700">Tipo do Cliente
                                         <span class="text-red-500">*</span>
                                     </label>
@@ -98,9 +96,99 @@
                                 </div>
                             </div>
 
+                            <div class="pt-2 border-t border-primary-100">
+                                <button type="button"
+                                        wire:click="$toggle('showAddress')"
+                                        class="flex items-center justify-between w-full p-2 text-sm font-medium text-left text-primary-700 rounded-lg hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-200 transition-colors">
+                                    <span class="flex items-center">
+                                        {{-- Ícone de Mapa/Pin --}}
+                                        <x-heroicon-o-map-pin class="w-5 h-5 text-blue-500 mr-1" />
+                                        Adicionar Endereço do Cliente
+                                    </span>
+
+                                    {{-- Ícone de Seta (Gira quando aberto) --}}
+                                    <x-heroicon-o-chevron-down class="w-5 h-5 text-blue-500 transition-transform duration-200 {{ $showAddress ? 'rotate-180' : '' }}" />
+                                </button>
+                            </div>
+
+                            @if($showAddress)
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+                                    <div class="relative">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                                            CEP
+                                            <span wire:loading wire:target="cep" class="text-xs text-blue-600 font-normal ml-2">
+                                                Buscando...
+                                            </span>
+                                        </label>
+                                        <input type="text" wire:model.blur="cep" placeholder="00000-000" maxlength="9"
+                                            class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
+                                        @error('cep') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                    </div>
+
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Rua / Logradouro
+                                        </label>
+                                        <input type="text" wire:model="rua"
+                                            class="h-10 bg-gray-200 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3 bg-gray-50" readonly>
+                                        @error('rua') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Número
+                                        </label>
+                                        <input type="text" wire:model="numero" placeholder="100"
+                                            class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
+                                        @error('numero') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Bairro
+                                        </label>
+                                        <input type="text" wire:model="bairro"
+                                            class="h-10 bg-gray-200 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3 bg-gray-50" readonly>
+                                        @error('bairro') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Complemento</label>
+                                        <input type="text" wire:model="complemento" placeholder="Apto. 201"
+                                            class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
+                                    </div>
+
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Cidade
+                                        </label>
+                                        <input type="text" wire:model="cidade"
+                                            class="h-10 bg-gray-200 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3 bg-gray-50" readonly>
+                                        @error('cidade') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">UF
+                                        </label>
+                                        <input type="text" wire:model="uf" maxlength="2"
+                                            class="h-10 bg-gray-200 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3 bg-gray-50 uppercase" readonly>
+                                        @error('uf') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                    </div>
+                                </div>
+
+                                {{-- BOTÃO DE LIMPAR ENDEREÇO --}}
+                                <div class="flex justify-start mt-2">
+                                    <button type="button"
+                                            wire:click="clearAddress"
+                                            class="text-sm text-red-500 hover:text-red-700 hover:underline transition-colors focus:outline-none">
+                                            <span class="flex items-center">
+                                                <x-ionicon-remove-circle-outline class="w-4 h-4 mr-1"/>
+                                                Limpar campos de endereço
+                                            </span>
+                                    </button>
+                                </div>
+                            @endif
+
                         </div>
 
-                        <div class="flex items-center justify-end p-6 space-x-2 border-t border-primary-50 rounded-b bg-gray-50/50">
+                        <div class="flex items-center justify-end gap-3 pt-6 border-t border-gray-100">
 
                             <button wire:click="closeModal" type="button" class="text-primary-600 bg-white hover:bg-primary-50 focus:ring-4 focus:outline-none focus:ring-primary-100 rounded-lg border border-primary-200 text-sm font-medium px-5 py-2.5 hover:text-primary-900 focus:z-10 transition-colors">
                                 Cancelar

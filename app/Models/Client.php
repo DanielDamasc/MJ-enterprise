@@ -43,6 +43,11 @@ class Client extends Model
         });
     }
 
+    public function address()
+    {
+        return $this->morphOne(Address::class, 'addressable');
+    }
+
     public function airConditioners()
     {
         return $this->hasMany(AirConditioning::class, 'cliente_id');
