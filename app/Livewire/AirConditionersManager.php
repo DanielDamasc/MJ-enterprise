@@ -89,28 +89,21 @@ class AirConditionersManager extends Component
 
     public function updatedCep($value)
     {
-        $cep = preg_replace('/[^0-9]/', '', $value);
+        try {
+            $res = $this->acService->loadCep($value);
 
-        if (strlen($cep) != 8) {
-            return ;
-        }
+            if ($res->successful() && !isset($res['erro'])) {
+                $dados = $res->json();
 
-        $response = Http::withOptions([
-            'verify' => true,
-        ])
-        ->withUserAgent('MjEngenharia')
-        ->timeout(10)
-        ->get("https://viacep.com.br/ws/{$cep}/json/");
+                $this->rua = $dados['logradouro'];
+                $this->bairro = $dados['bairro'];
+                $this->cidade = $dados['localidade'];
+                $this->uf = $dados['uf'];
 
-        if ($response->successful() && !isset($response['erro'])) {
-            $dados = $response->json();
-
-            $this->rua = $dados['logradouro'];
-            $this->bairro = $dados['bairro'];
-            $this->cidade = $dados['localidade'];
-            $this->uf = $dados['uf'];
-
-            $this->resetValidation(['rua', 'bairro', 'cidade', 'uf']);
+                $this->resetValidation(['rua', 'bairro', 'cidade', 'uf']);
+            }
+        } catch (Exception $e) {
+            $this->dispatch('notify-error', $e->getMessage());
         }
     }
 

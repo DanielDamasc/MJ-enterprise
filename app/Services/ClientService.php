@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Client;
 use DB;
 use Exception;
+use Http;
 use Str;
 
 class ClientService
@@ -95,5 +96,27 @@ class ClientService
         // if ($query->exists()) {
         //     throw new Exception("O telefone já foi cadastrado.");
         // }
+    }
+
+    public function loadCep($value)
+    {
+        // 1. Limpa o cep
+        $cep = preg_replace('/[^0-9]/', '', $value);
+
+        // 2. Validação de tamanho
+        if (strlen($cep) != 8) {
+            throw new Exception('O CEP deve ter 8 dígitos.');
+        }
+
+        // 3. Busca da API
+        $response = Http::withOptions([
+            'verify' => true,
+        ])
+        ->withUserAgent('MjEngenharia')
+        ->timeout(10)
+        ->get("https://viacep.com.br/ws/{$cep}/json/");
+
+        // 4. Retorna a resposta
+        return $response;
     }
 }
