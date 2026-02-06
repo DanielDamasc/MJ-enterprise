@@ -37,46 +37,79 @@ class SendWhatsappRemindersJob implements ShouldQueue
     public function handle(): void
     {
         // Dados da API.
-        $token = config('services.whatsapp.token', env('WHATSAPP_TOKEN'));
-        $phoneId = config('services.whatsapp.phone_id', env('WHATSAPP_PHONE_ID'));
+        $token = config('services.whatsapp.token');
+        $phoneId = config('services.whatsapp.phone_id');
         $version = 'v22.0';
 
         // Dados do template.
         $nome = Str::of($this->client->contato)->explode(' ')->first();
         $to = $this->normalizarTelefone($this->client->telefone);
-        $meses = (string) $this->calcularUltimaHigienizacao() . ' meses';
+        $mesesCalculados = $this->calcularUltimaHigienizacao();
 
-        $payload = [
-            'messaging_product' => 'whatsapp',
-            'to' => $to,
-            'type' => 'template',
-            'template' => [
-                'name' => 'lembrete_proxima_higienizacao', // Nome do modelo
-                'language' => [
-                    'code' => 'pt_BR' // Língua da mensagem
-                ],
-                'components' => [
-                    [
-                        'type' => 'body',
-                        'parameters' => [
-                            [
-                                'type' => 'text',
-                                'text' => $nome,
-                            ],
-                            [
-                                'type' => 'text',
-                                'text' => $meses,
+        // Templates diferentes: para quando tem ou não a última higienização.
+        if (is_null($mesesCalculados)) {
+            $payload = [
+                'messaging_product' => 'whatsapp',
+                'to' => $to,
+                'type' => 'template',
+                'template' => [
+                    'name' => 'aviso_higienizacao', // Nome do modelo
+                    'language' => [
+                        'code' => 'pt_BR' // Língua da mensagem
+                    ],
+                    'components' => [
+                        [
+                            'type' => 'body',
+                            'parameters' => [
+                                [
+                                    'type' => 'text',
+                                    'text' => $nome,
+                                ],
                             ]
                         ]
-                    ]
-                ],
-            ]
-        ];
+                    ],
+                ]
+            ];
+
+            $logMeses = 'N/A';
+        } else {
+            $textoMeses = (string) $mesesCalculados . ' meses';
+
+            $payload = [
+                'messaging_product' => 'whatsapp',
+                'to' => $to,
+                'type' => 'template',
+                'template' => [
+                    'name' => 'lembrete_proxima_higienizacao', // Nome do modelo
+                    'language' => [
+                        'code' => 'pt_BR' // Língua da mensagem
+                    ],
+                    'components' => [
+                        [
+                            'type' => 'body',
+                            'parameters' => [
+                                [
+                                    'type' => 'text',
+                                    'text' => $nome,
+                                ],
+                                [
+                                    'type' => 'text',
+                                    'text' => $textoMeses,
+                                ]
+                            ]
+                        ]
+                    ],
+                ]
+            ];
+
+            $logMeses = $textoMeses;
+        }
 
         Log::info("JOB [Cliente {$this->client->id}]: Enviando Payload...", $payload);
 
+        // Chamada a API.
         $response = Http::withToken($token)
-        ->post("https://graph.facebook.com/{$version}/{$phoneId}/messages", $payload);
+            ->post("https://graph.facebook.com/{$version}/{$phoneId}/messages", $payload);
 
         Log::info("
             JOB [Cliente {$this->client->id}]:
@@ -108,8 +141,9 @@ class SendWhatsappRemindersJob implements ShouldQueue
                 // Dados extras (Payload)
                 'properties'   => [
                     'telefone_destino' => $to,
-                    'meses_calculados' => $meses,
-                    'status_api'       => 'sucesso'
+                    'meses_calculados' => $logMeses,
+                    'template_usado' => $payload['template']['name'],
+                    'status_api' => 'sucesso'
                 ],
             ]);
 
@@ -144,7 +178,7 @@ class SendWhatsappRemindersJob implements ShouldQueue
             return $diff;
         }
 
-        // Se nunca fez serviço, assume-se que é 6 meses por padrão.
-        return 6;
+        // Retorna null e envia outro template para quando não tem último serviço.
+        return null;
     }
 }
