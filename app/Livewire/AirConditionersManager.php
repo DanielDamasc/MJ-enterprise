@@ -114,6 +114,49 @@ class AirConditionersManager extends Component
         }
     }
 
+    public function clearAddress()
+    {
+        $this->reset([
+            'cep',
+            'rua',
+            'numero',
+            'bairro',
+            'complemento',
+            'cidade',
+            'uf'
+        ]);
+    }
+
+    public function updatedClienteId($value)
+    {
+        // 1. Habilitado somente para o create.
+        if ($this->showEdit) {
+            return ;
+        }
+
+        // 2. Se o usuário marcou a opção "Selecione um cliente..."
+        if (empty($value)) {
+            $this->clearAddress();
+            return ;
+        }
+
+        // 3. Busca o cliente e carrega a relation.
+        $cliente = Client::with('address')->find($value);
+
+        // 4. Se o cliente tem endereço, preenche os dados.
+        if ($cliente && $cliente->address) {
+            $this->cep = $cliente->address->cep;
+            $this->rua = $cliente->address->rua;
+            $this->numero = $cliente->address->numero;
+            $this->bairro = $cliente->address->bairro;
+            $this->complemento = $cliente->address->complemento ?? '';
+            $this->cidade = $cliente->address->cidade;
+            $this->uf = $cliente->address->uf;
+        } else {
+            $this->clearAddress();
+        }
+    }
+
     public function closeModal()
     {
         $this->showCreate = $this->showDelete = $this->showEdit = false;

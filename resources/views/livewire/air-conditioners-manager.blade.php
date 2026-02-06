@@ -48,7 +48,7 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Cliente Responsável
                                     <span class="text-red-500">*</span>
                                 </label>
-                                <select wire:model="cliente_id" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
+                                <select wire:model.live="cliente_id" class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
                                     <option value="">Selecione um cliente...</option>
                                     @foreach($clientes as $client)
                                         <option value="{{ $client->id }}">{{ $client->cliente }}</option>
