@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\AirConditioning;
 use DB;
 use Exception;
+use Http;
 
 class AirConditioningService
 {
@@ -34,6 +35,34 @@ class AirConditioningService
             throw new Exception('Não se pode deletar um ar-condicionado com serviço vinculado.');
         }
 
-        return $ac->delete();
+        return DB::transaction(function() use ($ac) {
+            // 1. Deleta o endereço vinculado.
+            $ac->address()->delete();
+
+            // 2. Deleta o equipamento.
+            return $ac->delete();
+        });
+    }
+
+    public function loadCep($value)
+    {
+        // 1. Limpa o cep
+        $cep = preg_replace('/[^0-9]/', '', $value);
+
+        // 2. Validação de tamanho
+        if (strlen($cep) != 8) {
+            throw new Exception('O CEP deve ter 8 dígitos.');
+        }
+
+        // 3. Busca da API
+        $response = Http::withOptions([
+            'verify' => true,
+        ])
+        ->withUserAgent('MjEngenharia')
+        ->timeout(10)
+        ->get("https://viacep.com.br/ws/{$cep}/json/");
+
+        // 4. Retorna a resposta
+        return $response;
     }
 }

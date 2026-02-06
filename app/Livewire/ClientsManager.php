@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Client;
 use App\Services\ClientService;
 use Exception;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
@@ -20,12 +21,24 @@ class ClientsManager extends Component
         $this->clientService = $clientService;
     }
 
+    // Atributos de Cliente.
     public $cliente = '';
     public $contato = '';
     public $telefone = '';
     public $email = '';
     public $tipo = '';
 
+    // Atributos de Endereço.
+    public $cep = '';
+    public $rua = '';
+    public $numero = '';
+    public $bairro = '';
+    public $complemento = '';
+    public $cidade = '';
+    public $uf = '';
+
+    // Outros Atributos Auxiliares.
+    public $showAddress = false;
     public $showDetails = false;
     public $showCreate = false;
     public $showDelete = false;
@@ -49,7 +62,42 @@ class ClientsManager extends Component
                 'required',
                 'string',
                 Rule::in(['residencial', 'comercial']),
-            ]
+            ],
+
+            'cep' => 'nullable|string|max:9',
+            'rua' => [
+                'nullable','string','max:255',
+                Rule::requiredIf(fn() =>
+                    $this->cep != ''
+                ),
+            ],
+            'numero' => [
+                'nullable','string','max:20',
+                Rule::requiredIf(fn() =>
+                    $this->cep != ''
+                ),
+            ],
+            'bairro' => [
+                'nullable','string','max:100',
+                Rule::requiredIf(fn() =>
+                    $this->cep != ''
+                ),
+            ],
+            'complemento' => [
+                'nullable','string','max:150',
+            ],
+            'cidade' => [
+                'nullable','string','max:100',
+                Rule::requiredIf(fn() =>
+                    $this->cep != ''
+                ),
+            ],
+            'uf' => [
+                'nullable','string','size:2',
+                Rule::requiredIf(fn() =>
+                    $this->cep != ''
+                ),
+            ],
         ];
     }
 
@@ -63,9 +111,42 @@ class ClientsManager extends Component
         'tipo.required' => 'O campo tipo é obrigatório.',
     ];
 
+    public function updatedCep($value)
+    {
+        try {
+            $res = $this->clientService->loadCep($value);
+
+            if ($res->successful() && !isset($res['erro'])) {
+                $dados = $res->json();
+
+                $this->rua = $dados['logradouro'];
+                $this->bairro = $dados['bairro'];
+                $this->cidade = $dados['localidade'];
+                $this->uf = $dados['uf'];
+
+                $this->resetValidation(['rua', 'bairro', 'cidade', 'uf']);
+            }
+        } catch (Exception $e) {
+            $this->dispatch('notify-error', $e->getMessage());
+        }
+    }
+
+    public function clearAddress()
+    {
+        $this->reset([
+            'cep',
+            'rua',
+            'numero',
+            'bairro',
+            'complemento',
+            'cidade',
+            'uf'
+        ]);
+    }
+
     public function closeModal()
     {
-        $this->showCreate = $this->showDelete = $this->showEdit = false;
+        $this->showCreate = $this->showDelete = $this->showEdit = $this->showAddress = false;
         $this->resetValidation();
     }
 
@@ -90,7 +171,15 @@ class ClientsManager extends Component
 
     public function openCreate()
     {
-        $this->reset(['cliente', 'contato', 'telefone', 'email', 'tipo', 'clientId']);
+        $this->reset([
+            'cliente',
+            'contato',
+            'telefone',
+            'email',
+            'tipo',
+            'clientId',
+        ]);
+        $this->clearAddress();
         $this->resetValidation();
         $this->showCreate = true;
     }
@@ -106,6 +195,15 @@ class ClientsManager extends Component
                 'telefone' => $this->telefone,
                 'email' => $this->email,
                 'tipo' => $this->tipo,
+            ],
+            [
+                'cep' => $this->cep,
+                'rua' => $this->rua,
+                'numero' => $this->numero,
+                'bairro' => $this->bairro,
+                'complemento' => $this->complemento,
+                'cidade' => $this->cidade,
+                'uf' => $this->uf
             ]);
 
             $this->closeModal();
@@ -130,6 +228,22 @@ class ClientsManager extends Component
             $this->telefone = $client->telefone;
             $this->email = $client->email ?? ''; // E-mail pode ser null.
             $this->tipo = $client->tipo;
+
+            // Buscando dados do endereço.
+            if ($client->address) {
+                $this->showAddress = true; // Abre o componente de endereço.
+                $this->cep = $client->address->cep;
+                $this->rua = $client->address->rua;
+                $this->numero = $client->address->numero;
+                $this->bairro = $client->address->bairro;
+                $this->complemento = $client->address->complemento ?? '';
+                $this->cidade = $client->address->cidade;
+                $this->uf = $client->address->uf;
+            } else {
+                $this->showAddress = false;
+                // Limpa caso tenha aberto um com endereço antes.
+                $this->clearAddress();
+            }
         }
     }
 
@@ -147,6 +261,15 @@ class ClientsManager extends Component
                     'telefone' => $this->telefone,
                     'email' => $this->email,
                     'tipo' => $this->tipo,
+                ],
+                [
+                    'cep' => $this->cep,
+                    'rua' => $this->rua,
+                    'numero' => $this->numero,
+                    'bairro' => $this->bairro,
+                    'complemento' => $this->complemento,
+                    'cidade' => $this->cidade,
+                    'uf' => $this->uf
                 ]);
 
                 $this->closeModal();

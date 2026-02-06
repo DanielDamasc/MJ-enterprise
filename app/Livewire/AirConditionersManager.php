@@ -89,28 +89,64 @@ class AirConditionersManager extends Component
 
     public function updatedCep($value)
     {
-        $cep = preg_replace('/[^0-9]/', '', $value);
+        try {
+            $res = $this->acService->loadCep($value);
 
-        if (strlen($cep) != 8) {
+            if ($res->successful() && !isset($res['erro'])) {
+                $dados = $res->json();
+
+                $this->rua = $dados['logradouro'];
+                $this->bairro = $dados['bairro'];
+                $this->cidade = $dados['localidade'];
+                $this->uf = $dados['uf'];
+
+                $this->resetValidation(['rua', 'bairro', 'cidade', 'uf']);
+            }
+        } catch (Exception $e) {
+            $this->dispatch('notify-error', $e->getMessage());
+        }
+    }
+
+    public function clearAddress()
+    {
+        $this->reset([
+            'cep',
+            'rua',
+            'numero',
+            'bairro',
+            'complemento',
+            'cidade',
+            'uf'
+        ]);
+    }
+
+    public function updatedClienteId($value)
+    {
+        // 1. Habilitado somente para o create.
+        if ($this->showEdit) {
             return ;
         }
 
-        $response = Http::withOptions([
-            'verify' => true,
-        ])
-        ->withUserAgent('MjEngenharia')
-        ->timeout(10)
-        ->get("https://viacep.com.br/ws/{$cep}/json/");
+        // 2. Se o usuário marcou a opção "Selecione um cliente..."
+        if (empty($value)) {
+            $this->clearAddress();
+            return ;
+        }
 
-        if ($response->successful() && !isset($response['erro'])) {
-            $dados = $response->json();
+        // 3. Busca o cliente e carrega a relation.
+        $cliente = Client::with('address')->find($value);
 
-            $this->rua = $dados['logradouro'];
-            $this->bairro = $dados['bairro'];
-            $this->cidade = $dados['localidade'];
-            $this->uf = $dados['uf'];
-
-            $this->resetValidation(['rua', 'bairro', 'cidade', 'uf']);
+        // 4. Se o cliente tem endereço, preenche os dados.
+        if ($cliente && $cliente->address) {
+            $this->cep = $cliente->address->cep;
+            $this->rua = $cliente->address->rua;
+            $this->numero = $cliente->address->numero;
+            $this->bairro = $cliente->address->bairro;
+            $this->complemento = $cliente->address->complemento ?? '';
+            $this->cidade = $cliente->address->cidade;
+            $this->uf = $cliente->address->uf;
+        } else {
+            $this->clearAddress();
         }
     }
 
