@@ -34,6 +34,12 @@ class AirConditioningService
             throw new Exception('Não se pode deletar um ar-condicionado com serviço vinculado.');
         }
 
-        return $ac->delete();
+        return DB::transaction(function() use ($ac) {
+            // 1. Deleta o endereço vinculado.
+            $ac->address()->delete();
+
+            // 2. Deleta o equipamento.
+            return $ac->delete();
+        });
     }
 }
