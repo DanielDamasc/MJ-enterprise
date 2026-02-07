@@ -9,9 +9,10 @@
         </p>
     </div>
 
-    {{-- Grid de Cards --}}
-    {{-- mobile: 1 coluna | tablet: 2 colunas | desktop: 3 colunas --}}
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <p class="text-xl text-primary-600 mb-2 font-semibold">
+        Dados Gerais
+    </p>
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-10">
 
         {{-- CARD 1: COLABORADORES --}}
         <a  href="{{ route('colaboradores') }}"
@@ -27,11 +28,11 @@
                     </p>
                 </div>
 
-                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-green-50 text-green-600">
+                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-50 text-gray-600">
                     <x-heroicon-s-briefcase class="h-6 w-6" />
                 </div>
             </div>
-            <div class="absolute bottom-0 left-0 h-1 w-full bg-green-500"></div>
+            <div class="absolute bottom-0 left-0 h-1 w-full bg-gray-500"></div>
         </a>
 
         {{-- CARD 2: CLIENTES --}}
@@ -49,13 +50,13 @@
                     </p>
                 </div>
 
-                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-50 text-gray-600">
                     {{-- Ícone (Requer blade-heroicons ou similar) --}}
                     <x-heroicon-s-users class="h-6 w-6" />
                 </div>
             </div>
             {{-- Barra decorativa inferior --}}
-            <div class="absolute bottom-0 left-0 h-1 w-full bg-blue-500"></div>
+            <div class="absolute bottom-0 left-0 h-1 w-full bg-gray-500"></div>
         </a>
 
 
@@ -73,13 +74,109 @@
                     </p>
                 </div>
 
-                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-orange-50 text-orange-600">
+                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-50 text-gray-600">
                     {{-- <x-heroicon-o-wrench-screwdriver class="h-6 w-6" /> --}}
                     <x-ionicon-snow-outline class="w-6 h-6" />
                 </div>
             </div>
-            <div class="absolute bottom-0 left-0 h-1 w-full bg-orange-500"></div>
+            <div class="absolute bottom-0 left-0 h-1 w-full bg-gray-500"></div>
+        </a>
+    </div>
+
+    <p class="text-xl text-primary-600 mb-2 font-semibold">
+        Dados dos Serviços
+    </p>
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-10">
+
+        {{-- CARD 4: SERVIÇOS AGENDADOS --}}
+        <a  href="{{ route('servicos') }}"
+            wire:navigate
+            class="block relative overflow-hidden bg-white rounded-xl border border-gray-100 p-6 shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-1">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500">
+                        Ordens de Serviço Agendadas
+                    </p>
+                    <p class="mt-2 text-3xl font-bold text-gray-900">
+                        {{ $this->totalServicosAgendados }}
+                    </p>
+                </div>
+
+                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                    {{-- <x-heroicon-o-wrench-screwdriver class="h-6 w-6" /> --}}
+                    <x-heroicon-s-clipboard-document-check class="w-6 h-6" />
+                </div>
+            </div>
+            <div class="absolute bottom-0 left-0 h-1 w-full bg-blue-500"></div>
         </a>
 
+        {{-- CARD 5: SERVIÇOS CONCLUÍDOS --}}
+        <a  href="{{ route('servicos') }}"
+            wire:navigate
+            class="block relative overflow-hidden bg-white rounded-xl border border-gray-100 p-6 shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-1">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500">
+                        Ordens de Serviço Concluídas
+                    </p>
+                    <p class="mt-2 text-3xl font-bold text-gray-900">
+                        {{ $this->totalServicosConcluidos }}
+                    </p>
+                </div>
+
+                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-green-50 text-green-600">
+                    {{-- <x-heroicon-o-wrench-screwdriver class="h-6 w-6" /> --}}
+                    <x-heroicon-s-clipboard-document-check class="w-6 h-6" />
+                </div>
+            </div>
+            <div class="absolute bottom-0 left-0 h-1 w-full bg-green-500"></div>
+        </a>
+
+        {{-- CARD 6: SERVIÇOS CANCELADOS --}}
+        <a  href="{{ route('servicos') }}"
+            wire:navigate
+            class="block relative overflow-hidden bg-white rounded-xl border border-gray-100 p-6 shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-1">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500">
+                        Ordens de Serviço Canceladas
+                    </p>
+                    <p class="mt-2 text-3xl font-bold text-gray-900">
+                        {{ $this->totalServicosCancelados }}
+                    </p>
+                </div>
+
+                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-red-50 text-red-600">
+                    {{-- <x-heroicon-o-wrench-screwdriver class="h-6 w-6" /> --}}
+                    <x-heroicon-s-clipboard-document-check class="w-6 h-6" />
+                </div>
+            </div>
+            <div class="absolute bottom-0 left-0 h-1 w-full bg-red-500"></div>
+        </a>
     </div>
+
+    <p class="text-xl text-primary-600 mb-2 font-semibold">
+        Dados do Faturamento
+    </p>
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-10">
+        <div class="block relative overflow-hidden bg-white rounded-xl border border-gray-100 p-6 shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-1">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-500">
+                        Receita Total
+                    </p>
+                    <p class="mt-2 text-3xl font-bold text-gray-900">
+                        $ {{ number_format($this->totalFaturamento, 2, ',', '.') }}
+                    </p>
+                </div>
+
+                <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-yellow-50 text-yellow-600">
+                    {{-- <x-heroicon-o-wrench-screwdriver class="h-6 w-6" /> --}}
+                    <x-heroicon-s-currency-dollar class="w-6 h-6" />
+                </div>
+            </div>
+            <div class="absolute bottom-0 left-0 h-1 w-full bg-yellow-500"></div>
+        </div>
+    </div>
+
 </div>
