@@ -165,16 +165,14 @@
 
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Rua / Logradouro
-                                    <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" wire:model="rua"
-                                    class="h-10 bg-gray-200 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3 bg-gray-50" readonly>
+                                    class="h-10 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3 bg-gray-50">
                                 @error('rua') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>
 
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Número
-                                    <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" wire:model="numero" placeholder="100"
                                     class="h-10 bg-gray-50 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3">
@@ -183,10 +181,9 @@
 
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Bairro
-                                    <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" wire:model="bairro"
-                                    class="h-10 bg-gray-200 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3 bg-gray-50" readonly>
+                                    class="h-10 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3 bg-gray-50">
                                 @error('bairro') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                             </div>
 

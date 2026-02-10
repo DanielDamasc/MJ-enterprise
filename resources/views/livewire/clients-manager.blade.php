@@ -130,7 +130,7 @@
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Rua / Logradouro
                                         </label>
                                         <input type="text" wire:model="rua"
-                                            class="h-10 bg-gray-200 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3 bg-gray-50" readonly>
+                                            class="h-10 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3 bg-gray-50">
                                         @error('rua') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                                     </div>
 
@@ -146,7 +146,7 @@
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Bairro
                                         </label>
                                         <input type="text" wire:model="bairro"
-                                            class="h-10 bg-gray-200 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3 bg-gray-50" readonly>
+                                            class="h-10 border border-gray-300 rounded-lg outline-none w-full focus:border-blue-500 focus:ring-blue-500 shadow-sm px-3 bg-gray-50">
                                         @error('bairro') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                                     </div>
 
