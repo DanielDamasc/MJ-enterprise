@@ -66,9 +66,9 @@ class AirConditionersManager extends Component
             'tipo' => ['required', Rule::in(['hw', 'k7', 'piso_teto'])],
 
             'cep' => 'required|string|max:9',
-            'rua' => 'required|string|max:255',
-            'numero' => 'required|string|max:20',
-            'bairro' => 'required|string|max:100',
+            'rua' => 'nullable|string|max:255',
+            'numero' => 'nullable|string|max:20',
+            'bairro' => 'nullable|string|max:100',
             'complemento' => 'nullable|string|max:150',
             'cidade' => 'required|string|max:100',
             'uf' => 'required|string|size:2',
@@ -83,7 +83,6 @@ class AirConditionersManager extends Component
             'tipo.required' => 'O campo tipo é obrigatório.',
 
             'cep.required' => 'O campo cep é obrigatório.',
-            'numero.required' => 'O campo numero é obrigatório.',
         ];
     }
 

@@ -67,21 +67,12 @@ class ClientsManager extends Component
             'cep' => 'nullable|string|max:9',
             'rua' => [
                 'nullable','string','max:255',
-                Rule::requiredIf(fn() =>
-                    $this->cep != ''
-                ),
             ],
             'numero' => [
                 'nullable','string','max:20',
-                Rule::requiredIf(fn() =>
-                    $this->cep != ''
-                ),
             ],
             'bairro' => [
                 'nullable','string','max:100',
-                Rule::requiredIf(fn() =>
-                    $this->cep != ''
-                ),
             ],
             'complemento' => [
                 'nullable','string','max:150',
