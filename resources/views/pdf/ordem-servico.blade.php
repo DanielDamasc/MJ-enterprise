@@ -75,10 +75,9 @@
         <thead>
             <tr>
                 <th style="width: 10%;">Cod</th>
-                <th style="width: 20%;">Marca / Tipo</th>
+                <th style="width: 25%;">Marca / Tipo</th>
                 <th style="width: 15%;">Potência</th>
-                <th style="width: 40%;">Ambiente</th>
-                <th style="width: 15%;">Valor</th>
+                <th style="width: 50%;">Ambiente</th>
             </tr>
         </thead>
         <tbody>
@@ -88,7 +87,6 @@
                     <td>{{ $ac->marca ? $ac->marca : 'N/A' }} / {{ ucfirst($ac->tipo) }}</td>
                     <td>{{ $ac->potencia }} BTUs</td>
                     <td>{{ $ac->ambiente ? $ac->ambiente : 'N/A' }}</td>
-                    <td>R$ {{ number_format($ac->pivot->valor, 2, ',', '.') }}</td>
                 </tr>
             @endforeach
         </tbody>
@@ -105,10 +103,6 @@
             <td>{{ \Carbon\Carbon::parse($os->data_servico)->format('d/m/Y') }}</td>
             <th>Horário:</th>
             <td>{{ $os->horario ? $os->horario : '--:--' }}</td>
-        </tr>
-        <tr>
-            <th>Valor Total:</th>
-            <td colspan="3">R$ {{ number_format($os->total, 2, ',', '.') }}</td>
         </tr>
     </table>
 
