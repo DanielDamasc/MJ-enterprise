@@ -5,7 +5,13 @@
     <title>Ordem de Serviço #{{ $os->id }}</title>
     <style>
         body { font-family: sans-serif; font-size: 12px; color: #333; }
-        .header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 10px; }
+        .header-table { width: 100%; border-bottom: 2px solid #333; }
+        .header-table td { vertical-align: middle; }
+        .logo-cell { width: 20%; text-align: left; }
+        .logo-cell img { max-width: 120px; height: auto; }
+        .text-cell { width: 80%; text-align: center; padding-right: 20%; }
+        .text-cell h1 { margin: 0; font-size: 22px; }
+        .text-cell p { margin: 5px 0 0 0; }
         .section-title { padding: 5px; font-weight: bold; margin-top: 15px; }
         .info-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
         .info-table th, .info-table td { padding: 8px; border: 1px solid #ddd; text-align: left; }
@@ -17,11 +23,12 @@
             width: 100%;
             text-align: center;
             z-index: -1000;
-            opacity: 0.10;
+            opacity: 0.05;
         }
         .watermark img {
             height: 800px;
         }
+        .assinaturas { page-break-inside: avoid; }
     </style>
 </head>
 <body>
@@ -31,10 +38,17 @@
         <img src="{{ public_path('img/marcadaguaMJ.jpg') }}" alt="Marca d'água">
     </div>
 
-    <div class="header">
-        <h1>Ordem de Serviço nº {{ str_pad($os->id, 5, '0', STR_PAD_LEFT) }}</h1>
-        <p>Data de Exportação: {{ now()->format('d/m/Y') }}</p>
-    </div>
+    <table class="header-table">
+        <tr>
+            <td class="logo-cell">
+                <img src="{{ public_path('img/logoMJ.jpg') }}" alt="Logo">
+            </td>
+            <td class="text-cell">
+                <h1>Ordem de Serviço nº {{ str_pad($os->id, 5, '0', STR_PAD_LEFT) }}</h1>
+                <p>Data de Exportação: {{ now()->format('d/m/Y') }}</p>
+            </td>
+        </tr>
+    </table>
 
     <div class="section-title">Dados do Cliente</div>
     <table class="info-table">
@@ -55,8 +69,6 @@
             <td colspan="3">{{ ucfirst($os->client->tipo) }}</td>
         </tr>
     </table>
-
-    <br>
 
     <div class="section-title">Equipamentos (Ar-Condicionado)</div>
     <table class="info-table" style="table-layout: fixed; word-wrap: break-word;">
@@ -82,8 +94,6 @@
         </tbody>
     </table>
 
-    <br>
-
     <div class="section-title">Dados do Serviço</div>
     <table class="info-table">
         <tr>
@@ -104,7 +114,7 @@
 
     <br><br><br>
 
-    <div style="text-align: center; margin-top: 60px;">
+    <div class="assinaturas" style="text-align: center; margin-top: 60px;">
 
         <div style="width: 350px; margin: 0 auto; border-top: 1px solid #333; padding-top: 5px;">
             Assinatura do Técnico Responsável
