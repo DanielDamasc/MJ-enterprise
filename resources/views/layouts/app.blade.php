@@ -28,7 +28,7 @@
             >
 
             <div class="h-16 px-4 flex items-center justify-between border-b border-primary-800 bg-primary-900">
-                <h1 class="text-xl font-bold">MJ Engenharia</h1>
+                <h1 class="text-xl font-bold">MJ Management</h1>
                 <button
                     class="p-2 focus:outline-none focus:bg-primary-800 hover:bg-primary-600 rounded-md lg:hidden"
                     @click="open = false">
