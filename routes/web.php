@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\OrderServiceController;
 use App\Livewire\AirConditionersManager;
 use App\Livewire\ClientsManager;
 use App\Livewire\EmployeeManager;
@@ -47,6 +48,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', Inicio::class);
         Route::get('/colaboradores', EmployeeManager::class)->name('colaboradores');
         Route::get('/logs', LogsManager::class)->name('logs');
+        Route::get('/ordem-servico/{id}/pdf', [OrderServiceController::class, 'gerarPDF'])->name('os.pdf');
     });
 
     // ----- ROTAS DO ADMIN OU ASSISTENTE -----

@@ -157,6 +157,11 @@ final class ServicesTable extends PowerGridComponent
                 ->class('text-primary-600 hover:text-primary-800 p-1 transition-colors')
                 ->dispatchTo('services-manager', 'show', ['id' => $row->id]),
 
+            Button::add('gerar-pdf')
+                ->slot(Blade::render('<x-heroicon-o-document-arrow-down class="w-5 h-5" />'))
+                ->class('text-gray-600 hover:text-gray-800 p-1 transition-colors')
+                ->route('os.pdf', ['id' => $row->id], '_blank'),
+
             Button::add('done')
                 ->slot(Blade::render('<x-heroicon-o-check-circle class="w-5 h-5" />'))
                 ->class('text-green-600 hover:text-green-800 p-1 transition-colors')
@@ -169,7 +174,7 @@ final class ServicesTable extends PowerGridComponent
 
             Button::add('edit')
                 ->slot(Blade::render('<x-heroicon-o-pencil-square class="w-5 h-5" />'))
-                ->class('text-secondary-600 hover:text-secondary-800 p-1 mr-2 transition-colors')
+                ->class('text-secondary-600 hover:text-secondary-800 p-1 transition-colors')
                 ->dispatchTo('services-manager', 'open-edit', ['id' => $row->id]),
 
             Button::add('delete')
